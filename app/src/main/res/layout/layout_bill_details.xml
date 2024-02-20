@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/size_8"
+        app:layout_constraintBottom_toTopOf="@id/btnShareInVoice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/toolbarCustom"
+                layout="@layout/custom_toolbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <LinearLayout
+                android:id="@+id/LinearBillName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbarCustom">
+
+                <TextView
+                    android:id="@+id/tvNameCompany"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/muli_bold"
+                    android:text="@string/company_name"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18" />
+
+                <TextView
+                    android:id="@+id/tvDateOfReceipt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+
+                    android:text="21 Aug 18 | Receipt"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/text_size_18" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/billsHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rectangle_5"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/LinearBillName">
+
+                <TextView
+                    android:id="@+id/headingForBills"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/muli_bold"
+                    android:padding="@dimen/size_4"
+                    android:text="@string/for_bills"
+                    android:textColor="@color/range_white"
+                    android:textSize="@dimen/text_size_18" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBillsItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/headingGrandTotals"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_15"
+                        android:layout_marginTop="@dimen/size_10"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/muli_bold"
+                        android:padding="@dimen/size_4"
+                        android:text="@string/gross_total"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_18" />
+
+                    <TextView
+
+                        android:id="@+id/tvGrandTotals"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_10"
+                        android:layout_marginEnd="@dimen/size_15"
+                        android:drawableStart="@drawable/ic_rupee_symbol"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="end"
+                        android:padding="@dimen/size_4"
+                        android:text="@string/amount_default"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_18" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/headingPaymentDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/muli_bold"
+                    android:padding="@dimen/size_8"
+                    android:text="@string/payment_details"
+                    android:textColor="@color/range_white"
+                    android:textSize="@dimen/text_size_18" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearBankDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/billsHolder">
+
+                <TextView
+                    android:id="@+id/tvBankName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/bank_name"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18" />
+
+                <TextView
+                    android:id="@+id/tvPaymentMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/bank_name"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/text_size_18" />
+
+                <TextView
+                    android:id="@+id/tvChequeDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/chq_date"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/text_size_18" />
+
+                <TextView
+                    android:id="@+id/tvStatusOfPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/status_payment"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/text_size_18" />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/muli_bold"
+                    android:text="@string/naration_text"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_18" />
+
+                <TextView
+                    android:id="@+id/tvNarration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_4"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_regular"
+
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/text_size_16" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTotalBillAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8"
+                android:layout_marginEnd="@dimen/size_15"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_rupee_symbol"
+                android:drawableTint="@color/grey"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/amount_default"
+                android:textColor="@color/grey"
+
+                android:textSize="@dimen/text_size_18"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/billsHolder" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+
+    <Button
+        android:id="@+id/btnShareInVoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="@dimen/size_8"
+        android:background="@drawable/button_rounded_corner"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_baseline_share_24"
+        android:elevation="@dimen/text_size_2"
+        android:fontFamily="@font/muli_bold"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/share_reciept"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_16"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

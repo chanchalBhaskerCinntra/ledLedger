@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_edit_qt_frame">
+    <LinearLayout
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include
+
+            layout="@layout/header_bottom_rounded"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            app:tabMode="fixed"
+            android:background="@color/white"
+            app:tabTextAppearance="@style/MyCustomTextAppearance"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabIndicatorHeight="1dp"
+            android:layout_toLeftOf="@id/option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/tab_layout"
+                android:layout_height="wrap_content"
+                android:id="@+id/option"
+                android:padding="@dimen/size_5">
+
+
+            <ImageView
+                android:layout_width="@dimen/size_20"
+                android:layout_height="3dp"
+                android:background="@drawable/horizontal_dots"
+                android:layout_marginRight="@dimen/size_5"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    </LinearLayout>
+
+</FrameLayout>

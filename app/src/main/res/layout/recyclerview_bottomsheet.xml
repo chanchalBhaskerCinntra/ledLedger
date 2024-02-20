@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+
+    android:background="#EEECF9"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+   <LinearLayout
+       android:orientation="vertical"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+      <androidx.recyclerview.widget.RecyclerView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/recyclerview"/>
+
+      <com.kingfisher.easyviewindicator.AnyViewIndicator
+          android:id="@+id/anyViewIndicator2"
+          android:layout_gravity="center"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="10dp"
+          android:gravity="center"
+          app:avi_animation_enable="false"
+          app:avi_drawable="@drawable/ic_blue_dot"
+          app:avi_drawable_unselected="@drawable/ic_grey_dot"
+          app:avi_height="10dp"
+          app:avi_margin="10dp"
+          app:avi_orientation="horizontal"
+          app:avi_width="10dp"
+          app:layout_constraintBottom_toBottomOf="parent" />
+
+   </LinearLayout>
+
+</LinearLayout>

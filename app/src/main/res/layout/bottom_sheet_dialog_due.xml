@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:background="@drawable/rounded_dialog"
+        app:layout_goneMarginTop="@dimen/size_15"
+        android:id="@+id/headingRel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/select_date"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/headingBottomSheetSelectDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_10"
+            android:fontFamily="@font/inter_regular"
+            android:text="@string/select_days"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+
+            />
+
+        <ImageView
+            android:id="@+id/ivCloseBottomSheet"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/size_10"
+            android:layout_marginEnd="@dimen/size_10"
+            android:src="@drawable/ic_cross"
+            app:tint="@color/black" />
+    </RelativeLayout>
+   <!-- <TextView
+        android:id="@+id/headingBottomSheetSelectDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/select"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivCloseBottomSheet"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/size_8"
+        android:src="@drawable/ic_cross"
+        app:layout_constraintBottom_toBottomOf="@id/headingBottomSheetSelectDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/headingBottomSheetSelectDate"
+        app:tint="@color/black" />-->
+
+    <RadioGroup
+        android:background="@color/white"
+        android:id="@+id/rgOverDue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headingRel"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbSeven"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:padding="@dimen/size_8"
+
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:text="@string/seven"/>
+        <RadioButton
+            android:id="@+id/rbFive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:padding="@dimen/size_8"
+            android:text="@string/five"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/size_8"/>
+
+        <RadioButton
+            android:id="@+id/rbTwo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:padding="@dimen/size_8"
+            android:text="@string/two"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/size_8"/>
+
+
+
+        <RadioButton
+            android:id="@+id/rbAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+          android:visibility="visible"
+            android:padding="@dimen/size_8"
+            android:text="@string/all"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="@dimen/size_8"/>
+
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tvNonDue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:visibility="gone"
+        android:text="@string/non_due"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headingRel" />
+    <TextView
+        android:id="@+id/tvlessthan30"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/lessthan30"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNonDue" />
+    <TextView
+        android:id="@+id/tvlessThan60"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/_60"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvlessthan30" />
+    <TextView
+        android:id="@+id/tvAll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/all"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/size_8"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvlessThan60" />
+
+    <TextView
+        android:id="@+id/tvLastMonthDateBottomSheetSelectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/last_month"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAll" />
+    <TextView
+        android:id="@+id/tvThisQuarterDateBottomSheetSelectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/this_quarter"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLastMonthDateBottomSheetSelectDate" />
+    <TextView
+        android:id="@+id/tvThisYearDateBottomSheetSelectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/this_year"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:textSize="18sp"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvThisQuarterDateBottomSheetSelectDate" />
+    <TextView
+        android:id="@+id/tvLastYearBottomSheetSelectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/last_year"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvThisYearDateBottomSheetSelectDate" />
+    <TextView
+        android:id="@+id/tvAllBottomSheetSelectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/all"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLastYearBottomSheetSelectDate" />
+
+    <TextView
+        android:id="@+id/tvCustomDateBottomSheetSelectDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:padding="@dimen/size_8"
+        android:text="@string/custom_date"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/size_8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAllBottomSheetSelectDate" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

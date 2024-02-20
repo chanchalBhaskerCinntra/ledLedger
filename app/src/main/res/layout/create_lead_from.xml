@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/admin_dialog_bg"
+        android:backgroundTint="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/header_bottom_rounded"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/size_30"
+                android:layout_marginEnd="@dimen/size_30"
+                android:orientation="vertical">
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_20"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/company_name_mand"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_16"
+                        android:layout_marginBottom="@dimen/size_10"/>
+
+                    <EditText
+                        android:id="@+id/companyname"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/admin_border"
+                        android:ems="10"
+                        android:imeOptions="actionNext"
+                        android:fontFamily="@font/roboto"
+                        android:inputType="textPersonName"
+                        android:hint="Company Name"
+                        android:textColor="@color/black"
+                        android:textColorHint="#ABABAB"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/name_mand"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_16"
+                        android:layout_marginBottom="@dimen/size_10"/>
+                    <EditText
+                        android:id="@+id/full_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/admin_border"
+                        android:ems="10"
+                        android:imeOptions="actionNext"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/roboto"
+                        android:inputType="textCapSentences"
+                        android:hint="Full Name"
+                        android:textColorHint="#ABABAB"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mobile_no_mand"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+                <EditText
+                    android:id="@+id/contact_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/admin_border"
+                    android:ems="10"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:hint="@string/mobile_no"
+                    android:layout_marginBottom="20dp"
+                    android:textColorHint="#ABABAB"
+                    android:textSize="14sp" />
+
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/designation"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+
+                <EditText
+                    android:id="@+id/designation"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/admin_border"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="textCapSentences"
+                    android:imeOptions="actionNext"
+                    android:layout_marginBottom="20dp"
+                    android:hint="@string/designation"
+                    android:textColorHint="#ABABAB"
+                    android:textSize="14sp" />
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/turnover"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+
+                <EditText
+                    android:id="@+id/turnover"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/admin_border"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="text"
+                    android:layout_marginBottom="20dp"
+                    android:hint="@string/turnover"
+                    android:textColorHint="#ABABAB"
+                    android:imeOptions="actionNext"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stage"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:background="@drawable/rounded_border_edit"
+                    android:layout_height="wrap_content">
+
+
+
+                <Spinner
+                    android:id="@+id/status_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_45"
+                    android:gravity="center_vertical|start"
+                    android:dropDownWidth="wrap_content"
+                    android:entries="@array/lead_status"
+                    android:forceHasOverlappingRendering="false"
+                    android:spinnerMode="dropdown"
+                    android:paddingLeft="@dimen/size_5"
+                    android:textSize="@dimen/text_size_14"
+                    android:dropDownVerticalOffset="@dimen/text_45"
+                    />
+
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/status"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="@dimen/size_20"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:background="@drawable/rounded_border_edit"
+                    android:layout_height="wrap_content">
+
+
+
+                    <Spinner
+                        android:id="@+id/leadType_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="center_vertical|start"
+                        android:dropDownWidth="wrap_content"
+                        android:forceHasOverlappingRendering="false"
+                        android:spinnerMode="dropdown"
+                        android:paddingLeft="@dimen/size_5"
+                        android:textSize="@dimen/text_size_14"
+                        android:dropDownVerticalOffset="@dimen/text_45"
+                        />
+
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/email"
+                    android:layout_marginTop="@dimen/size_20"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/admin_border"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="textWebEmailAddress"
+                    android:layout_marginBottom="20dp"
+                    android:hint="E-mail"
+                    android:textColorHint="#ABABAB"
+                    android:textSize="14sp" />
+
+                <RelativeLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <CheckBox
+                        android:id="@+id/checkBoxLoaction"
+                        android:layout_width="@dimen/size_30"
+                        android:layout_height="@dimen/size_30"
+                        android:layout_centerVertical="true"
+
+                        android:buttonTint="@color/colorPrimary"
+                        android:text="@string/free_delivery" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/size_5"
+                        android:layout_toRightOf="@id/checkBoxLoaction"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/set_to_current_loation"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_14" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:layout_marginBottom="@dimen/size_10"/>
+                <EditText
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/admin_border"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/size_20"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="textCapSentences"
+                    android:hint="Location"
+                    android:textColorHint="#ABABAB"
+                    android:textSize="14sp" />
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/source_mand"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:background="@drawable/rounded_border_edit"
+                    android:layout_height="wrap_content">
+
+
+
+                    <Spinner
+                        android:id="@+id/source_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="center_vertical|start"
+                        android:dropDownWidth="wrap_content"
+                        android:forceHasOverlappingRendering="false"
+                        android:spinnerMode="dropdown"
+                        android:paddingLeft="@dimen/size_5"
+                        android:textSize="@dimen/text_size_14"
+                        android:dropDownVerticalOffset="@dimen/text_45"
+                        />
+
+                </LinearLayout>
+
+
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/referral_option"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginTop="@dimen/size_20"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+                <EditText
+                    android:id="@+id/product_interest"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/admin_border"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/size_20"
+                    android:fontFamily="@font/roboto"
+                    android:inputType="text"
+                    android:hint="@string/referral_option"
+                    android:textColorHint="#ABABAB"
+                    android:textSize="14sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/comment"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16"
+                    android:layout_marginBottom="@dimen/size_10"/>
+
+
+                <EditText
+                    android:id="@+id/comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:background="@drawable/admin_border"
+                    android:imeOptions="actionDone"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roboto"
+                    android:gravity="start"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/comment"
+                    android:layout_marginBottom="@dimen/size_20"
+                    android:textColorHint="#ABABAB"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:visibility="visible"
+                    android:id="@+id/create"
+                    android:layout_width="135dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/rounded_corner"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/create"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="@dimen/size_20"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:backgroundTint="#4A79E4" />
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/loader"
+        android:visibility="gone"
+        style="@style/SpinKitView.Large.Circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:SpinKit_Color="@color/colorPrimary" />
+
+</RelativeLayout>
+

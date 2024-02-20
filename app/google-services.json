@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "112357814358",
+    "project_id": "ledure-e2705",
+    "storage_bucket": "ledure-e2705.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112357814358:android:e7b06fefe1d78df85c8bf7",
+        "android_client_info": {
+          "package_name": "com.cinntra.ledure"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112357814358-rudkiuklratuqaent8l3q4iqrsidmdlb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDySaGO_ajWijKxMq6w_oCVy_AjWtdbQNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112357814358-rudkiuklratuqaent8l3q4iqrsidmdlb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "112357814358-0qg39s5ko3fqqn9qg6ajcrfot2bd6lts.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cinntra.serviceSupport"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

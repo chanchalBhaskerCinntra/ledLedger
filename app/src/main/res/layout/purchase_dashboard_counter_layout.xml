@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/purchase_include_dashboard"
+    android:visibility="visible"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/sales_amount_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_20"
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_marginRight="@dimen/size_20"
+            android:elevation="2dp"
+            app:cardCornerRadius="@dimen/size_10"
+            app:cardElevation="@dimen/size_2"
+            app:cardMaxElevation="4dp"
+            app:layout_constraintEnd_toStartOf="@id/received_card"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_90"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_dashboard_sale"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/headingSale"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        android:text="Purchase"
+                        android:textColor="@color/textcolor_date_dashboard"
+                        android:textSize="@dimen/text_size_14"
+                        app:layout_constraintBottom_toBottomOf="@id/linearMonthlySPinnerTop"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/linearMonthlySPinnerTop" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/total_amnt"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:maxLines="2"
+                    android:text="0"
+                    android:textColor="@color/text_color"
+
+                    android:textSize="@dimen/text_size_13"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/received_card"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_90"
+            android:layout_marginRight="@dimen/size_20"
+            app:cardCornerRadius="@dimen/size_10"
+            app:layout_constraintBottom_toBottomOf="@+id/sales_amount_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/sales_amount_card"
+            app:layout_constraintTop_toTopOf="@id/sales_amount_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_dashboard_receipt" />
+
+                    <TextView
+                        android:id="@+id/headingReciept"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Payment"
+                        android:textColor="@color/textcolor_date_dashboard"
+                        android:textSize="@dimen/text_size_14"
+                        app:layout_constraintBottom_toBottomOf="@id/linearMonthlySPinnerTop"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/linearMonthlySPinnerTop" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/received_amount_value"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:maxLines="2"
+                    android:text="0"
+                    android:textColor="@color/text_color"
+
+                    android:textSize="@dimen/text_size_13"
+                    android:textStyle="bold" />
+
+
+                <!--                        <TextView-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_gravity="center_horizontal"-->
+                <!--                            android:layout_marginLeft="10dp"-->
+                <!--                            android:layout_marginTop="@dimen/size_10"-->
+                <!--                            android:fontFamily="@font/muli_semibold"-->
+                <!--                            android:text="@string/receipt_amount"-->
+                <!--                            android:textColor="@color/black"-->
+                <!--                            android:textSize="@dimen/text_size_12"-->
+                <!--                            android:textStyle="bold" />-->
+
+                <!--                        <LinearLayout-->
+                <!--                            android:layout_width="match_parent"-->
+                <!--                            android:layout_height="match_parent">-->
+
+
+                <!--                            <LinearLayout-->
+                <!--                                android:layout_width="match_parent"-->
+                <!--                                android:layout_height="match_parent"-->
+                <!--                                android:layout_weight="1"-->
+                <!--                                android:gravity="center"-->
+                <!--                                android:orientation="vertical">-->
+
+                <!--                              -->
+
+                <!--                                <TextView-->
+                <!--                                    android:layout_width="wrap_content"-->
+                <!--                                    android:layout_height="wrap_content"-->
+                <!--                                    android:fontFamily="@font/poppins_regular"-->
+                <!--                                    android:text="Total Amount"-->
+                <!--                                    android:textColor="@color/grey"-->
+                <!--                                    android:textSize="@dimen/text_size_10" />-->
+
+
+                <!--                            </LinearLayout>-->
+
+
+                <!--                        </LinearLayout>-->
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/payment_collection_card"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_90"
+
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_marginRight="@dimen/size_20"
+            app:cardCornerRadius="@dimen/size_10"
+            app:layout_constraintEnd_toStartOf="@id/pending_order_card"
+            app:layout_constraintStart_toStartOf="@id/sales_amount_card"
+            app:layout_constraintTop_toBottomOf="@id/sales_amount_card"
+
+            >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_dashboard_recievable"
+
+                        />
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/headingCollection"
+                            style="@style/textviewNormalHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:text="Payable"
+                            android:textColor="@color/textcolor_date_dashboard"
+                            android:textSize="@dimen/text_size_14" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/total_collection"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:maxLines="2"
+                    android:text="0"
+                    android:textColor="@color/text_color"
+
+                    android:textSize="@dimen/text_size_13"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/pending_order_card"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_90"
+
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_marginRight="@dimen/size_20"
+            app:cardCornerRadius="@dimen/size_10"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/payment_collection_card"
+            app:layout_constraintTop_toBottomOf="@id/sales_amount_card">
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="8dp"
+                        android:src="@drawable/ic_dashboard_pending"
+
+                        />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/headingPendings"
+                            style="@style/textviewNormalHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start"
+                            android:text="Pending"
+                            android:textColor="@color/textcolor_date_dashboard"
+                            android:textSize="@dimen/text_size_14" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/total_pendings"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="12dp"
+                    android:maxLines="2"
+                    android:text="0"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/text_size_13"
+
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <View
+            android:id="@+id/dividerCards"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+
+            android:layout_marginTop="16dp"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pending_order_card" />
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/comingUpp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_20"
+            android:layout_marginTop="@dimen/size_10"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerCards">
+
+            <TextView
+                android:id="@+id/upcoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_arrow_left_24dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                android:text="@string/coming_up"
+                android:textColor="@color/colour_text"
+                android:textSize="@dimen/text_size_12">
+
+            </TextView>
+
+            <ImageView
+                android:id="@+id/arr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_arrow_left_24dp"
+                android:visibility="invisible" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cominguprecyvlerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_20"
+            android:layout_marginTop="@dimen/size_10"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/comingUpp" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/recentactivitits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_20"
+            android:layout_marginTop="@dimen/size_10"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cominguprecyvlerview">
+
+            <TextView
+                android:id="@+id/recent_activity"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:text="@string/recent_act"
+                android:textColor="@color/colour_text"
+                android:textSize="@dimen/text_size_12">
+
+            </TextView>
+
+            <ImageView
+                android:id="@+id/arr1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/size_5"
+                android:src="@drawable/forword_arrow" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recentrecyvlerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_20"
+            android:layout_marginTop="@dimen/size_10"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recentactivitits" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

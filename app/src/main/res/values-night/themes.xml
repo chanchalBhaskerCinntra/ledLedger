@@ -1,0 +1,102 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.CinntraSales" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="ThemeOverlay.CinntraSales.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+        <item name="fullscreenTextColor">@color/light_blue_A400</item>
+    </style>
+
+    <style name="SwitchTheme" parent="">
+        <item name="android:colorControlActivated" tools:ignore="NewApi">@color/colorPrimary</item>
+    </style>
+
+
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <style name="FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+
+        <!-- Add these -->
+        <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
+        <item name="materialCalendarFullscreenTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar</item>
+    </style>
+
+
+    <style name="textviewNormalHeading" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/inter_light</item>
+    </style>
+
+    <style name="inputLayoutPhone" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:textColor">@color/colorPrimary</item>
+
+        <item name="background">@color/white</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColorHint">@color/lightGrey</item>
+        <item name="boxBackgroundColor">@color/lightGrey</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="errorEnabled">false</item>
+        <item name="hintEnabled">false</item>
+        <item name="hintTextColor">@color/lightGrey</item>
+        <item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>
+
+
+    </style>
+
+    <style name="inputBasicEdittext" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:textColor">@color/colorPrimary</item>
+
+        <item name="background">@color/white</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColorHint">@color/grey</item>
+        <item name="boxBackgroundColor">@color/lightGrey</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="errorEnabled">false</item>
+        <item name="hintEnabled">false</item>
+        <item name="hintTextColor">@color/grey</item>
+        <item name="shapeAppearance">?attr/shapeAppearanceSmallComponent</item>
+
+
+    </style>
+
+    <!-- It helps change color when you press and slide on Switch -->
+    <style name="MyIOSSwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">#F50000</item>
+        <item name="android:colorForeground">#e4e4e4</item>
+    </style>
+</resources>

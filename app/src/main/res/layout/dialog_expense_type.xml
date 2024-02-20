@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_margin="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvExpenseType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_20"
+            android:fontFamily="@font/muli_semibold"
+            android:gravity="center"
+            android:text="Choose Expense Type"
+            android:textColor="@color/black"
+            android:textSize="@dimen/size_20" />
+
+    <RadioGroup
+        android:id="@+id/rgExpenseType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbHotel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hotel" />
+
+        <RadioButton
+            android:id="@+id/rbTravel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Travel" />
+
+        <RadioButton
+            android:id="@+id/rbCab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cab" />
+
+        <RadioButton
+            android:id="@+id/rbPublic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Public" />
+
+        <RadioButton
+            android:id="@+id/rbTransport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transport" />
+
+
+
+
+    </RadioGroup>
+
+        <Button
+            android:id="@+id/btnSelectedExpense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_20"
+            android:paddingStart="@dimen/size_10"
+            android:paddingEnd="@dimen/size_10"
+            android:background="@drawable/button_rounded_corner"
+            android:backgroundTint="@color/colorPrimary"
+            android:fontFamily="@font/muli_semibold"
+            android:gravity="center"
+            android:text="@string/done"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_12" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_5"
+        android:layout_marginRight="@dimen/size_5"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/size_5"
+        app:cardElevation="@dimen/size_5"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <RelativeLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginTop="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                android:layout_marginBottom="@dimen/size_5">
+
+                <TextView
+                    android:id="@+id/customerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="@dimen/size_2"
+
+                    android:layout_toLeftOf="@id/map_icon"
+                    android:fontFamily="@font/muli_bold"
+                    android:singleLine="true"
+                    android:text="ABC Pvt. ltd."
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_16" />
+
+                <TextView
+                    android:id="@+id/cardNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/customerName"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="Pankaj"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/product"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cardNumber"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:fontFamily="@font/inter_regular"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_10" />
+
+                <TextView
+                    android:id="@+id/account_balance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="Account Balance : "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/date"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:layout_toLeftOf="@id/credit_limit"
+                    android:layout_toRightOf="@id/account_balance"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="1"
+                    android:text=" Rs. 0"
+                    android:textColor="@color/safron_barChart"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cardNumber"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="20/10/2020"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/credit_limit_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/product"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="right"
+                    android:text="N/A"
+                    android:textColor="@color/safron_barChart"
+                    android:textSize="@dimen/text_size_12" />
+
+                <TextView
+                    android:id="@+id/credit_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/product"
+                    android:layout_marginBottom="@dimen/size_2"
+                    android:layout_toLeftOf="@id/credit_limit_value"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="Credit Limit : "
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_12" />
+
+                <ImageView
+                    android:id="@+id/map_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8"
+                    android:layout_toLeftOf="@id/gps_icon"
+                    android:background="@drawable/ic_direction_map_icon"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/gps_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/ic_group_1227" />
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/size_10">
+
+
+                <LinearLayout
+                    android:id="@+id/paymentview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:background="@drawable/button_rounded_corner"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    app:elevation="@dimen/size_5">
+
+                    <TextView
+                        android:id="@+id/payment_collection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/size_5"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="   Payment  Collection  ₹  "
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_10" />
+                </LinearLayout>
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    style="@style/Widget.AppCompat.RatingBar.Indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="-20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    android:progressTint="@color/safron_barChart"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:theme="@style/Widget.AppCompat.RatingBar.Indicator"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:layout_width="@dimen/text_size_12"
+                    android:layout_height="@dimen/text_size_12"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/size_10"
+                    android:layout_toLeftOf="@id/status"
+                    android:background="@drawable/ic_green_dot" />
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/size_20"
+                    android:text="Active"
+                    android:textColor="@color/green"
+                    android:textSize="@dimen/text_size_14" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

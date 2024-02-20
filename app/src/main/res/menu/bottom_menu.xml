@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/reportBottomMenu"
+        android:icon="@drawable/ic_report_dashboard_deselected"
+        android:contentDescription=""
+        android:title="Report"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/partyBottomMenu"
+        android:icon="@drawable/ic_party_dashboard_deselected"
+        android:contentDescription=""
+        android:title="Party"
+        android:visible="true"
+        app:showAsAction="always"/>
+
+<!--    <item
+        android:id="@+id/purchaseBottomMenu"
+        android:icon="@drawable/ic_barchart_white_dashboard"
+        android:contentDescription=""
+        android:title="Purchase"
+        app:showAsAction="always"/>-->
+
+
+    <!--<item
+        android:id="@+id/add_contact"
+        android:contentDescription=""
+        android:title=""
+        app:showAsAction="always"/>-->
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/selected_home_icon"
+        android:contentDescription=""
+        android:title="Dashboard"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/itemListDashboardMenu"
+        android:icon="@drawable/ic_item_dashboard_deselected"
+        android:contentDescription=""
+        android:title="Items"
+        app:showAsAction="always"/>
+
+
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_more_menu_dashboard_deselected"
+        android:iconTint="@color/icon_color_default"
+        android:contentDescription=""
+        android:title="More"
+        app:showAsAction="always"/>
+
+</menu>

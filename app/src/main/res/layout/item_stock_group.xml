@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <ImageButton
+        android:id="@+id/ivArrowDrop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/size_8"
+        android:src="@drawable/ic_arrow_up"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/viewItem"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <LinearLayout
+
+        android:id="@+id/linearDetailsItemsDashboard"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_45"
+        android:layout_margin="@dimen/size_2"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/viewItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivArrowDrop"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_20"
+            android:layout_weight="70"
+            android:gravity="start"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvItemName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@font/inter_regular"
+                android:text="Item Name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_14" />
+
+            <TextView
+                android:id="@+id/tvtotAlPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:drawableStart="@drawable/ic_rupee_symbol"
+                android:drawableTint="@color/grey"
+                android:fontFamily="@font/inter_regular"
+                android:text="3729"
+                android:visibility="visible"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_size_14" />
+
+
+            <TextView
+                android:id="@+id/tvStandardPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@font/inter_regular"
+                android:text="Std price: 50"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_size_14" />
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tvQuantityNos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="top"
+            android:layout_marginEnd="@dimen/size_20"
+            android:layout_weight="30"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="end"
+            android:text="00 nos"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_14" />
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/viewItem"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/text_size_2"
+        android:layout_marginTop="@dimen/size_2"
+        android:background="@color/devider_color_reports"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearDetailsItemsDashboard"
+
+
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintInnerItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewItem"
+
+
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvInnerStockItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            tools:listitem="@layout/item_inner_stock" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

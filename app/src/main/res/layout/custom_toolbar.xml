@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.appcompat.widget.Toolbar
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/toolbar"
+        android:foregroundTint="@color/white"
+        android:background="@drawable/rectangle_5"
+        android:visibility="visible"
+        app:menu="@menu/transaction_menu"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_collapseMode="pin"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/ic_arrow_back_white_24"
+        app:title=""
+
+        app:titleTextColor="@color/white"
+        app:popupTheme="@style/Theme.CinntraSales.PopupOverlay" >
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+</FrameLayout>

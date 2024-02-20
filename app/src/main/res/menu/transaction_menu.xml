@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.learn2crack.recyclerviewsearch.MainActivity">
+    <group
+        android:checkableBehavior="single">
+
+
+
+        <item
+            android:id="@+id/search"
+            android:icon="@drawable/ic_search"
+            android:title="Search"
+            android:iconTint="@color/white"
+            app:showAsAction="always"/>
+<!--            app:actionViewClass="androidx.appcompat.widget.SearchView"/>-->
+        <item
+            android:id="@+id/calendar"
+            android:icon="@drawable/ic_cal_menu"
+            android:title="Calendar"
+            android:iconTint="@color/white"
+            android:visible="true"
+            app:showAsAction="always"
+            />
+
+
+
+    </group>
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/info_trans"
+            android:icon="@drawable/ic_info"
+            android:title="@string/information"
+            android:iconTint="@color/white"
+            app:showAsAction="always"
+           />
+
+        <item
+            android:id="@+id/ledger"
+            android:visible="false"
+            android:icon="@drawable/ic_ledger"
+            android:title="Calendar"
+            android:iconTint="@color/white"
+            app:showAsAction="always"
+            />
+
+        <item
+            android:id="@+id/share_received"
+            android:icon="@drawable/ic_baseline_share_24"
+            android:title="Share"
+            android:iconTint="@color/white"
+            app:showAsAction="always"
+            android:visible="false"
+            />
+        <item
+            android:id="@+id/filterAtoZ"
+            android:icon="@drawable/ic_filter"
+            android:title="A to Z"
+            android:iconTint="@color/white"
+            android:visible="false"
+            app:showAsAction="ifRoom|collapseActionView"
+            />
+
+
+        <item
+            android:id="@+id/filterZtoA"
+            android:icon="@drawable/ic_filter"
+            android:title="Z to A"
+            android:iconTint="@color/white"
+            android:visible="false"
+            app:showAsAction="ifRoom|collapseActionView"
+            />
+
+        <item
+            android:id="@+id/filterAmount"
+            android:icon="@drawable/ic_filter"
+            android:title="Amount Desc"
+            android:iconTint="@color/white"
+            android:visible="false"
+            app:showAsAction="ifRoom|collapseActionView"
+            />
+
+        <item
+            android:id="@+id/filterAmountAsc"
+            android:icon="@drawable/ic_filter"
+            android:title="Amount Asc"
+            android:iconTint="@color/white"
+            android:visible="false"
+            app:showAsAction="ifRoom|collapseActionView"
+            />
+
+        <item
+            android:id="@+id/filterDate"
+            android:icon="@drawable/ic_filter"
+            android:title="Date"
+            android:iconTint="@color/white"
+            android:visible="false"
+            app:showAsAction="ifRoom|collapseActionView"
+            />
+
+
+        <item
+            android:id="@+id/clearAllFilter"
+            android:icon="@drawable/ic_filter"
+            android:title="Clear all filter"
+            android:iconTint="@color/white"
+            android:visible="true"
+            app:showAsAction="ifRoom|collapseActionView"
+            />
+
+
+
+
+    </group>
+</menu>
+

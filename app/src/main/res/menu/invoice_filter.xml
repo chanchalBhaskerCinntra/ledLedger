@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.learn2crack.recyclerviewsearch.MainActivity">
+    <group
+        >
+
+
+        <item
+            android:id="@+id/filter"
+            android:icon="@drawable/ic_filter"
+            android:title="Search"
+            android:iconTint="@color/white"
+            app:showAsAction="ifRoom|collapseActionView"
+            >
+            <menu >
+                <group
+
+                    >
+                    <item
+                        android:id="@+id/all"
+                        android:title="All Invoice"/>
+
+                    <item
+                        android:id="@+id/my"
+                        android:title="Customer name"/>
+                    <item
+                        android:id="@+id/my_team"
+                        app:showAsAction="never"
+                        android:visible="false"
+                        android:title="Posting Date"/>
+                    <item
+                        android:id="@+id/valid"
+                        android:title="Valid Date"/>
+                    <item
+                        android:id="@+id/newest"
+                        android:title="Newest Invoices"/>
+                    <item
+                        android:id="@+id/oldest"
+                        android:visible="false"
+                        app:showAsAction="never"
+                        android:title="Oldest Invoices"/>
+
+                </group>
+
+
+
+
+            </menu>
+
+        </item>
+
+        <item
+            android:id="@+id/search"
+            android:icon="@drawable/ic_search"
+            android:title="Search"
+            android:iconTint="@color/white"
+            app:showAsAction="ifRoom|collapseActionView"
+            app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    </group>
+</menu>
+
+

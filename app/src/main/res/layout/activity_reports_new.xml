@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/report_back"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <FrameLayout
+        android:id="@+id/MainReport"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/green_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+                        <include layout="@layout/custom_toolbar_filter" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+
+                    android:id="@+id/top_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_70"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/size_25"
+                        android:background="@color/transparent"
+                        android:orientation="vertical">
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/salesvalue"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignTop="@id/type_dropdown"
+                                android:layout_alignBottom="@id/type_dropdown"
+                                android:layout_toStartOf="@id/type_dropdown"
+                                android:fontFamily="@font/inter_regular"
+                                android:gravity="end"
+                                android:text="Loading..."
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_size_22"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/type_dropdown"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <!-- <Spinner
+                                 android:id="@+id/type_dropdown"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="@dimen/size_30"
+                                 android:layout_alignParentRight="true"
+                                 android:layout_gravity="right"
+                                 android:background="@drawable/spinner_background_round"
+                                 android:entries="@array/report_type"
+                                 android:fontFamily="@font/inter_regular"
+                                 android:gravity="start"
+                                 android:minWidth="@dimen/size_90"
+                                 android:padding="@dimen/size_5"
+                                 style="@style/mySpinnerItemStyle"
+                                 android:spinnerMode="dropdown"
+                                 android:textColor="@color/white"
+                                 android:visibility="visible" />-->
+
+                            <Spinner
+                                android:id="@+id/type_dropdown"
+                                style="@style/mySpinnerItemStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_gravity="right"
+                                android:backgroundTint="@color/white"
+                                android:entries="@array/type_gross_net"
+                                android:textSize="@dimen/text_size_12"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableRight="@drawable/ic_baseline_arrow_drop_down_24"
+                                android:fontFamily="@font/inter_regular"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="Gross"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_12"
+                                android:visibility="gone" />
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/from_to_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/size_5"
+                            android:drawableLeft="@drawable/ic_small_cal_white"
+                            android:drawablePadding="@dimen/size_10"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="center_horizontal"
+                            android:text="01 Apr 2022 to 31 Mar 2023"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_12" />
+
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_1"
+                        android:layout_marginBottom="@dimen/size_1"
+                        android:background="@color/colorPrimary" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/size_25"
+                        android:paddingEnd="@dimen/size_25"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/all_customer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="Order by: "
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_size_12"
+                            android:visibility="visible" />
+
+                        <Spinner
+                            android:id="@+id/groupby_dropdown"
+
+                            style="@style/mySpinnerItemStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/ledger_dropdown"
+                            android:textSize="@dimen/text_size_12" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

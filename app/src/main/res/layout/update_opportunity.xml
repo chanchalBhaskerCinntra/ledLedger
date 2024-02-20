@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="false"
+    android:background="@color/white"
+    android:id="@+id/main_edit_qt_frame">
+<include layout="@layout/header_bottomround_edit"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+          <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/header"
+            android:scrollbars="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/size_10"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginBottom="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15">
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lead"
+                    android:id="@+id/lead"
+
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+
+                <RelativeLayout
+                    android:id="@+id/lead_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_45"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/rounded_border_edit">
+                    <EditText
+                        android:focusable="false"
+                        android:id="@+id/lead_value"
+                        android:layout_toLeftOf="@id/img12"
+                        android:background="@color/transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/lead"
+                        android:paddingRight="@dimen/size_5"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:textColorHint="@color/light_grey_box"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+                        />
+                    <ImageView
+                        android:id="@+id/img12"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/size_8"
+                        android:src="@drawable/ic_forword_arrow_black"
+                        />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/opportunity_name"
+                    android:id="@+id/opportunity_name"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <EditText
+                    android:fontFamily="@font/inter_regular"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_45"
+                    android:gravity="center_vertical"
+                    android:hint="@string/opportunity_name"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:id="@+id/opportunity_name_value"
+                    android:textColorHint="@color/light_grey_box"
+                    android:textSize="@dimen/text_size_14"
+                    android:paddingLeft="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bussiness_partner_mand"
+                    android:id="@+id/business_partner"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+
+                <RelativeLayout
+                    android:id="@+id/bussinessPartner"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/text_45"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/rounded_border_edit">
+                    <TextView
+                    android:fontFamily="@font/inter_regular"
+                     android:focusable="false"
+                     android:id="@+id/business_partner_value"
+                     android:background="@color/transparent"
+                     android:layout_width="match_parent"
+                     android:layout_height="@dimen/text_45"
+                     android:gravity="start|center_vertical"
+                     android:hint="@string/bussiness_partner"
+                     android:paddingRight="@dimen/size_5"
+                     android:inputType="text"
+                     android:maxLines="1"
+                     android:textColor="@color/black"
+                     android:imeOptions="actionNext"
+                     android:textColorHint="@color/light_grey_box"
+                     android:textSize="@dimen/text_size_14"
+                     android:paddingLeft="@dimen/size_5"
+
+                        />
+
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/contact_person_mand"
+                    android:id="@+id/contact_person"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <Spinner
+                        android:id="@+id/contact_person_spinner"
+                        android:layout_toLeftOf="@id/img1"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="center_vertical|start"
+                        android:dropDownWidth="wrap_content"
+                        android:forceHasOverlappingRendering="false"
+                        android:spinnerMode="dropdown"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+                        android:background="@null"
+                        android:dropDownVerticalOffset="@dimen/text_45"
+                        />
+                    <ImageView
+                        android:id="@+id/img1"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_bottom_arrow_black"
+                        />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_date"
+                    android:id="@+id/start_date"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:id="@+id/startDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <EditText
+                        android:focusable="false"
+                        android:id="@+id/start_date_value"
+                        android:layout_toLeftOf="@id/startcalender"
+                        android:background="@color/transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="start|center_vertical"
+                        android:hint="2021-02-11"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingRight="@dimen/size_5"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:textColorHint="@color/light_grey_box"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+
+                        />
+                    <ImageView
+                        android:focusable="false"
+                        android:id="@+id/startcalender"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_calendar_icon"
+                        />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/close_date_mand"
+                    android:id="@+id/close_date"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:id="@+id/closeDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <EditText
+                        android:focusable="false"
+                        android:id="@+id/close_date_value"
+                        android:layout_toLeftOf="@id/closeCalender"
+                        android:background="@color/transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="start|center_vertical"
+                        android:hint="2021-02-11"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingRight="@dimen/size_5"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:textColorHint="@color/light_grey_box"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+
+                        />
+                    <ImageView
+                        android:id="@+id/closeCalender"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_calendar_icon"
+                        />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/opportunity_owner"
+                    android:id="@+id/opportunity_owner"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:visibility="gone"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:id="@+id/owener"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:visibility="gone"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <EditText
+                        android:id="@+id/opportunity_owner_value"
+                        android:focusable="false"
+                        android:layout_toLeftOf="@id/arrow"
+                        android:background="@color/transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/opportunity_owner"
+                        android:paddingRight="@dimen/size_5"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:textColorHint="@color/light_grey_box"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+
+                        />
+                    <ImageView
+                      android:id="@+id/arrow"
+                      android:layout_alignParentRight="true"
+                      android:layout_centerVertical="true"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:src="@drawable/ic_forword_arrow_black"
+                        />
+
+                </RelativeLayout>
+
+                <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:text="@string/sales_employee_mand"
+                 android:id="@+id/sales_employee"
+                 android:layout_marginTop="@dimen/size_15"
+                 android:textColor="@color/black"
+                 android:textSize="@dimen/text_size_14"
+                 android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <Spinner
+                        android:id="@+id/sales_employee_spinner"
+                        android:layout_toLeftOf="@id/drov_arrow"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="center_vertical|start"
+                        android:dropDownWidth="wrap_content"
+                        android:forceHasOverlappingRendering="false"
+                        android:spinnerMode="dropdown"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+                        android:background="@null"
+                        android:dropDownVerticalOffset="@dimen/text_45"
+                        />
+                    <ImageView
+                        android:id="@+id/drov_arrow"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_bottom_arrow_black"
+                        />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/type_mand"
+                    android:id="@+id/type"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <TextView
+                        android:focusable="false"
+                        android:id="@+id/type_value"
+                        android:background="@color/transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/bussiness_partner"
+                        android:paddingRight="@dimen/size_5"
+                        android:inputType="text"
+                        android:textColor="@color/black"
+                        android:maxLines="1"
+                        android:imeOptions="actionNext"
+                        android:textColorHint="@color/light_grey_box"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"/>
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/probability"
+                    android:id="@+id/probability"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <EditText
+                    android:id="@+id/probability_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50"
+                    android:gravity="center_vertical"
+                    android:hint="0.6"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:fontFamily="@font/inter_regular"
+                    android:imeOptions="actionNext"
+                    android:textColorHint="@color/light_grey_box"
+                    android:textSize="@dimen/text_size_14"
+                    android:paddingLeft="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/potential_ammount"
+                    android:id="@+id/potential_amount"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <EditText
+                    android:id="@+id/potential_amount_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50"
+                    android:gravity="center_vertical"
+                    android:hint="Ex. 5000"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:fontFamily="@font/inter_regular"
+                    android:textColorHint="@color/light_grey_box"
+                    android:textSize="@dimen/text_size_14"
+                    android:paddingLeft="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lead_source_mand"
+                    android:id="@+id/lead_source"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingLeft="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <TextView
+                        android:focusable="false"
+                        android:clickable="false"
+                        android:textColor="@color/black"
+                        android:id="@+id/lead_source_value"
+                        android:background="@color/transparent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/bussiness_partner"
+                        android:paddingRight="@dimen/size_5"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:imeOptions="actionNext"
+                        android:textColorHint="@color/light_grey_box"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+
+                        />
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stage"
+                    android:id="@+id/stage"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:paddingRight="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit">
+                    <Spinner
+                        android:id="@+id/stage_spinner"
+                        android:layout_toLeftOf="@id/drov_arrow3"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_45"
+                        android:gravity="center_vertical|start"
+                        android:dropDownWidth="wrap_content"
+                        android:forceHasOverlappingRendering="false"
+                        android:spinnerMode="dropdown"
+                        android:textSize="@dimen/text_size_14"
+                        android:paddingLeft="@dimen/size_5"
+                        android:background="@null"
+                        android:dropDownVerticalOffset="@dimen/text_45"
+                        />
+                    <ImageView
+                        android:id="@+id/drov_arrow3"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_bottom_arrow_black"
+                        />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description_mand"
+                    android:id="@+id/description"
+                    android:layout_marginTop="@dimen/size_15"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"/>
+
+
+
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_100"
+                    android:gravity="start"
+                    android:hint="@string/description"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
+                    android:imeOptions="actionDone"
+                    android:id="@+id/description_value"
+                    android:textColorHint="@color/light_grey_box"
+                    android:textSize="@dimen/text_size_14"
+                    android:fontFamily="@font/inter_regular"
+                    android:padding="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:background="@drawable/rounded_border_edit"/>
+
+                <Button
+                    android:id="@+id/submit_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_rounded_corner"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="@string/submit"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:clickable="true"
+                    android:layout_marginBottom="@dimen/size_15"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter_regular"
+                    android:textSize="@dimen/text_size_18"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/size_15"
+                    />
+            </LinearLayout>
+
+        </ScrollView>
+    </FrameLayout>
+
+</LinearLayout>

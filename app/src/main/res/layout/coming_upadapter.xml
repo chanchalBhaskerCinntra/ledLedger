@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/size_15"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@drawable/rounded_border"
+        android:gravity="center_vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="match_parent"
+        android:id="@+id/content_lay"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/size_5"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/Textviewsize10"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginRight="@dimen/size_35"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_black"
+            android:maxLines="1"
+            android:text="Meeting with the product team"
+            android:textSize="@dimen/text_size_12" />
+
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+
+                android:id="@+id/details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:text="All the employees need to come to the conference room for the meeting"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/text_size_12" />
+
+                    </RelativeLayout>
+
+
+        <TextView
+            android:layout_gravity="right"
+            android:id="@+id/date"
+            style="@style/Textviewsize10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="24/12/2019"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/text_size_12" />
+
+
+
+
+    </LinearLayout>
+
+    <ImageView
+
+        app:layout_constraintTop_toTopOf="@id/content_lay"
+        android:layout_width="12dp"
+        android:background="@drawable/ic_vector__31_"
+        android:layout_marginRight="@dimen/size_10"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="@dimen/size_15"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

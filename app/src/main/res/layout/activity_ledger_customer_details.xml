@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_name"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include
+        android:id="@+id/loader"
+        layout="@layout/loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/quotes_header" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintCustomerDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+
+                android:id="@+id/ivCustomerProflePic"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="8dp"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/linearCustomerdetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/ibDropToViewData"
+                app:layout_constraintStart_toEndOf="@id/ivCustomerProflePic"
+                app:layout_constraintTop_toTopOf="@id/ivCustomerProflePic">
+
+                <TextView
+                    android:id="@+id/tvCustomerName"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/size_30"
+                     android:text="User Name"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+               <LinearLayout
+                   android:id="@+id/hideMore"
+                   android:orientation="vertical"
+                   android:visibility="gone"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/tvCustomerEmail"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:drawableStart="@drawable/ic_mail_red"
+                    android:drawablePadding="4dp"
+                    android:text="User Email"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCustomerMobile"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:drawableStart="@drawable/ic_phone_green"
+                    android:drawablePadding="4dp"
+
+                    android:text="User Mobile"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCustomerAddress"
+                    style="@style/textviewNormalHeading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:drawableStart="@drawable/ic_address"
+                    android:drawablePadding="4dp"
+
+                    android:text="User Address"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+               </LinearLayout>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/ibDropToViewData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_5"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_arrow_down"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ivCustomerProflePic" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintDropDown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintCustomerDetails">
+
+            <View
+                android:id="@+id/dividerGrey"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_margin="4dp"
+                android:background="@color/lightGrey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/datalinear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dividerGrey">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Zone"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvGrouptypeDropDown"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Group Value"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Credit Limit"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvCreditLimitDropDown"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Credit Limit Value"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Credit Days"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvCreditDaysDropDown"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Credit Days Value"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Gst No."
+                        android:textColor="@color/grey"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvGstNumDropDown"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="50"
+                        android:text="Gst Number Value"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/datalinear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@color/dividerColor"
+
+                />
+
+            <LinearLayout
+                android:id="@+id/linearDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constarintBarChartHolder">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="10"
+
+                    android:src="@drawable/ic_arrow_back_date" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="10"
+                        android:src="@drawable/ic_cal_figma" />
+
+                    <TextView
+                        android:id="@+id/tvDateText"
+                        style="@style/textviewNormalHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="80"
+
+                        android:gravity="center"
+
+                        android:text=""
+                        android:textColor="@color/textcolor_date_dashboard"
+                        app:layout_constraintBottom_toBottomOf="@id/linearMonthlySPinnerTop"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/linearMonthlySPinnerTop" />
+
+
+                </LinearLayout>
+
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="10"
+                    android:src="@drawable/ic_forward_date" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@color/dividerColor"
+
+                />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_50"
+                android:background="#17E5E5E5"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/relativeeSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/current_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableTint="@color/colorPrimary"
+                        android:text="Summary"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_16" />
+
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="@dimen/size_1"
+                    android:layout_height="@dimen/size_50"
+                    android:background="#CDCDCD" />
+
+                <RelativeLayout
+                    android:id="@+id/relativeSold"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_50"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/past_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Sold"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/text_size_16" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_1"
+                android:background="#CDCDCD" />
+            <!-- <com.google.android.material.tabs.TabLayout-->
+            <!-- android:id="@+id/tab_layout"-->
+            <!-- app:tabMode="fixed"-->
+            <!-- android:visibility="visible"-->
+            <!-- app:tabTextAppearance="@style/MyCustomTextAppearance"-->
+            <!-- app:tabSelectedTextColor="@color/colorPrimary"-->
+            <!-- app:tabIndicatorHeight="0dp"-->
+            <!-- android:layout_width="match_parent"-->
+            <!-- android:layout_height="wrap_content" />-->
+            <!-- <androidx.viewpager.widget.ViewPager-->
+            <!-- android:id="@+id/viewpager"-->
+            <!-- android:layout_width="match_parent"-->
+            <!-- android:layout_height="match_parent"-->
+            <!-- app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+            <FrameLayout
+                android:id="@+id/containerSummarySold"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
+
+            </FrameLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

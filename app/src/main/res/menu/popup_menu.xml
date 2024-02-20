@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/newbp"
+        android:title="New BP"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_newbp" />
+
+    <item
+        android:id="@+id/newlead"
+        android:icon="@drawable/ic_newlead"
+        app:showAsAction="ifRoom"
+        android:title="New Lead" />
+    <item
+        android:id="@+id/newopp"
+        android:icon="@drawable/ic_newopp"
+        android:title="New Opportunity"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/newcontact"
+        android:title="New Contact"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/newtask"
+        android:title="New Task"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/newevent"
+        android:title="New Event" />
+
+
+    <item
+        android:id="@+id/logcall"
+        android:title="Log a Call"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/newnote"
+        android:title="New Note" />
+
+
+
+
+</menu>
