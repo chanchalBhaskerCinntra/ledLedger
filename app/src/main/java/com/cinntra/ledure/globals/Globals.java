@@ -163,14 +163,14 @@ public class Globals {
       public static String PDFURL         = "http://ledure.bridgexd.com/assets/html/";//Live*/
 
     /************Live Development*******************/
-    public static String NewBaseUrl = "http://103.107.67.160:8002/";
+   /* public static String NewBaseUrl = "http://103.107.67.160:8002/";
     public static String PDFURL = "http://ledure.bridgexd.com/assets/newhtml/";
-    public static String ImageURL = "http://103.107.67.160:8002";
+    public static String ImageURL = "http://103.107.67.160:8002";*/
 
-    /*    *//************TestTestingONLY FOR PAYMENT_DUE*******************/
-  /*  public static String NewBaseUrl = "http://103.107.67.160:8003/";
+    /************TestTestingONLY FOR PAYMENT_DUE*******************/
+    public static String NewBaseUrl = "http://103.107.67.160:8003/";
     public static String PDFURL = "http://103.107.67.160:8003/assets/html/";
-    public static String ImageURL = "http://103.107.67.160:8003";*/
+    public static String ImageURL = "http://103.107.67.160:8003";
 
 
 

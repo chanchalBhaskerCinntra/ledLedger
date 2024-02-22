@@ -291,11 +291,18 @@ public class MainActivity_B2C extends AppCompatActivity {
             callDashboardCounter();
             callDashboardCounter_Receiable();
 
+            callPaymentDueCounter();
+            callAllDueCounter();
+
+
         } else {
             binding.typeDropdown.setSelection(1);
 
             callDashboardPurchaseCounter();
             callDashboardPurchaseCounter_Receiable();
+
+            callAllPurchaseDueCounter();
+            callPurchasePaymentDueCounter();
         }
 //todo sale purchase option is disable according to client
      /*   if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
@@ -318,6 +325,10 @@ public class MainActivity_B2C extends AppCompatActivity {
                     Prefs.putBoolean(Globals.ISPURCHASE, true);
                     callDashboardPurchaseCounter();
                     callDashboardPurchaseCounter_Receiable();
+
+                    callAllPurchaseDueCounter();
+                    callPurchasePaymentDueCounter();
+
                     saleGraphApi();
                 } else {
                     binding.contentData.salesIncludeDashboardLayout.salesIncludeDashboard.setVisibility(View.VISIBLE);
@@ -325,6 +336,10 @@ public class MainActivity_B2C extends AppCompatActivity {
                     Prefs.putBoolean(Globals.ISPURCHASE, false);
                     callDashboardCounter();
                     callDashboardCounter_Receiable();
+
+                    callPaymentDueCounter();
+                    callAllDueCounter();
+
                     saleGraphApi();
                 }
             }
@@ -335,9 +350,6 @@ public class MainActivity_B2C extends AppCompatActivity {
             }
         });
 
-
-        callPaymentDueCounter();
-        callAllDueCounter();
 
         callAttachmentAllApi();
 
@@ -507,25 +519,8 @@ public class MainActivity_B2C extends AppCompatActivity {
             }
         });
 
-        binding.contentData.purchaseIncludeDashboardLayout.pendingOrderCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity_B2C.this, PendingOrders.class));
-
-            }
-        });
-
 
         binding.contentData.salesIncludeDashboardLayout.receivedCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Prefs.putString("ForReports", "ReceiptLedger");
-                startActivity(new Intent(MainActivity_B2C.this, Reports.class));
-
-            }
-        });
-
-        binding.contentData.purchaseIncludeDashboardLayout.receivedCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Prefs.putString("ForReports", "ReceiptLedger");
@@ -544,19 +539,60 @@ public class MainActivity_B2C extends AppCompatActivity {
             }
         });
 
-        binding.contentData.purchaseIncludeDashboardLayout.salesAmountCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Prefs.putString("ForReports", "MainActivity_B2C_Ledger");
-                startActivity(new Intent(MainActivity_B2C.this, Sale_Inovice_Reports.class));
 
-            }
-        });
         binding.contentData.salesIncludeDashboardLayout.paymentCollectionCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Prefs.putString("ForReports", "Receivable");
                 startActivity(new Intent(MainActivity_B2C.this, Reports.class));
+
+            }
+        });
+
+
+        binding.contentData.salesIncludeDashboardLayout.newtypeCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putString("ForReports", "payment");
+                startActivity(new Intent(MainActivity_B2C.this, Reports.class));
+
+            }
+        });
+
+
+        binding.contentData.salesIncludeDashboardLayout.overDuecard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putString("ForReports", "overDue");
+                startActivity(new Intent(MainActivity_B2C.this, Reports.class));
+
+            }
+        });
+
+
+        binding.contentData.purchaseIncludeDashboardLayout.pendingOrderCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity_B2C.this, PendingOrders.class));
+            }
+        });
+
+
+        binding.contentData.purchaseIncludeDashboardLayout.receivedCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putString("ForReports", "ReceiptLedger");
+                startActivity(new Intent(MainActivity_B2C.this, Reports.class));
+
+            }
+        });
+
+
+        binding.contentData.purchaseIncludeDashboardLayout.salesAmountCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putString("ForReports", "MainActivity_B2C_Ledger");
+                startActivity(new Intent(MainActivity_B2C.this, Sale_Inovice_Reports.class));
 
             }
         });
@@ -570,7 +606,8 @@ public class MainActivity_B2C extends AppCompatActivity {
             }
         });
 
-        binding.contentData.salesIncludeDashboardLayout.newtypeCard.setOnClickListener(new View.OnClickListener() {
+
+        binding.contentData.purchaseIncludeDashboardLayout.newtypeCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Prefs.putString("ForReports", "payment");
@@ -580,7 +617,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         });
 
 
-        binding.contentData.salesIncludeDashboardLayout.overDuecard.setOnClickListener(new View.OnClickListener() {
+        binding.contentData.purchaseIncludeDashboardLayout.overDuecard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Prefs.putString("ForReports", "overDue");
@@ -621,6 +658,9 @@ public class MainActivity_B2C extends AppCompatActivity {
                     Prefs.putBoolean(Globals.ISPURCHASE, true);
                     callDashboardPurchaseCounter();
                     callDashboardPurchaseCounter_Receiable();
+
+                    callAllPurchaseDueCounter();
+                    callPurchasePaymentDueCounter();
                     saleGraphApi();
                 } else {
                     binding.contentData.salesIncludeDashboardLayout.salesIncludeDashboard.setVisibility(View.VISIBLE);
@@ -628,6 +668,10 @@ public class MainActivity_B2C extends AppCompatActivity {
                     Prefs.putBoolean(Globals.ISPURCHASE, false);
                     callDashboardCounter();
                     callDashboardCounter_Receiable();
+
+                    callPaymentDueCounter();
+                    callAllDueCounter();
+
                     saleGraphApi();
                 }
             }
@@ -1161,9 +1205,15 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
 
@@ -1180,9 +1230,15 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1197,9 +1253,15 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1217,9 +1279,15 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
             bottomSheetDialog.dismiss();
 
@@ -1236,9 +1304,15 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1255,9 +1329,13 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1274,9 +1352,13 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1293,9 +1375,13 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1309,9 +1395,13 @@ public class MainActivity_B2C extends AppCompatActivity {
             if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
                 callDashboardCounter();
                 callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
             } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                 callDashboardPurchaseCounter();
                 callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
             }
 
             bottomSheetDialog.dismiss();
@@ -1347,11 +1437,18 @@ public class MainActivity_B2C extends AppCompatActivity {
                 binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
                         + Globals.convertDateFormatInReadableFormat(endDate));
                 if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+
                     callDashboardCounter();
                     callDashboardCounter_Receiable();
+
+                    callPaymentDueCounter();
+                    callAllDueCounter();
                 } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
                     callDashboardPurchaseCounter();
                     callDashboardPurchaseCounter_Receiable();
+
+                    callAllPurchaseDueCounter();
+                    callPurchasePaymentDueCounter();
                 }
 
 
@@ -1424,6 +1521,101 @@ public class MainActivity_B2C extends AppCompatActivity {
                     if (response.body().getStatus() == 200) {
                         //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
                         binding.contentData.salesIncludeDashboardLayout.tvAnjaliDuePayment.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
+
+                    } else {
+                        //  Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+                    alertDialog.dismiss();
+
+
+//                    Gson gson = new GsonBuilder().create();
+//                    LeadResponse mError = new LeadResponse();
+//                    try {
+//                        String s = response.errorBody().string();
+//                        mError = gson.fromJson(s, LeadResponse.class);
+//                    } catch (IOException e) {
+//                        //handle failure to read error
+//                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
+                alertDialog.dismiss();
+
+                Toast.makeText(MainActivity_B2C.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void callAllPurchaseDueCounter() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        jsonObject.addProperty("DueDaysGroup", "-1");
+
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        call.enqueue(new Callback<ResponsePayMentDueCounter>() {
+            @Override
+            public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
+                if (response.code() == 200) {
+                    //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
+                    alertDialog.dismiss();
+                    if (response.body().getStatus() == 200) {
+                        //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
+                        binding.contentData.purchaseIncludeDashboardLayout.tvOverDueCounter.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
+
+                    } else {
+                        //  Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+                    alertDialog.dismiss();
+
+
+//                    Gson gson = new GsonBuilder().create();
+//                    LeadResponse mError = new LeadResponse();
+//                    try {
+//                        String s = response.errorBody().string();
+//                        mError = gson.fromJson(s, LeadResponse.class);
+//                    } catch (IOException e) {
+//                        //handle failure to read error
+//                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
+                alertDialog.dismiss();
+
+                Toast.makeText(MainActivity_B2C.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void callPurchasePaymentDueCounter() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        jsonObject.addProperty("DueDaysGroup", "7");
+
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        call.enqueue(new Callback<ResponsePayMentDueCounter>() {
+            @Override
+            public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
+                if (response.code() == 200) {
+                    //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
+                    alertDialog.dismiss();
+                    if (response.body().getStatus() == 200) {
+                        //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
+                        binding.contentData.purchaseIncludeDashboardLayout.tvAnjaliDuePayment.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
 
                     } else {
                         //  Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();

@@ -637,6 +637,11 @@ public interface ApiServices {
     Call<ResponsePayMentDueCounter> getPaymentDueCounter(@Body JsonObject salesEmployeeItem);
 
 
+    @POST("businesspartner/due_payable_payment_dashboard_count")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponsePayMentDueCounter> getPurchasePaymentDueCounter(@Body JsonObject salesEmployeeItem);
+
+
     @POST("businesspartner/due_payment_dashboard")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponsePaymentDueDashboardCustomerList> getPaymentDueDashboardCustomerList(@Body HashMap<String, String> salesEmployeeItem);

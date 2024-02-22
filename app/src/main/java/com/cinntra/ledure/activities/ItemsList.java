@@ -49,16 +49,16 @@ import retrofit2.Response;
 
 public class ItemsList extends MainBaseActivity implements View.OnClickListener {
 
-     @BindView(R.id.head_title)
+    @BindView(R.id.head_title)
     TextView head_title;
-     @BindView(R.id.back_press)
-     RelativeLayout back_press;
-     @BindView(R.id.itemsRecycler)
-     RecyclerView itemsRecycler;
-     @BindView(R.id.loader)
-     ProgressBar loader;
-     @BindView(R.id.no_datafound)
-     ImageView no_datafound;
+    @BindView(R.id.back_press)
+    RelativeLayout back_press;
+    @BindView(R.id.itemsRecycler)
+    RecyclerView itemsRecycler;
+    @BindView(R.id.loader)
+    ProgressBar loader;
+    @BindView(R.id.no_datafound)
+    ImageView no_datafound;
     @BindView(R.id.search)
     RelativeLayout search;
     @BindView(R.id.searchLay)
@@ -75,14 +75,17 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
     @BindView(R.id.relativeInfoView)
     RelativeLayout relativeInfoView;
 
+    @BindView(R.id.salesAndPurchaseLayout)
+    RelativeLayout salesAndPurchaseLayout;
+
     @BindView(R.id.new_quatos)
     RelativeLayout new_quatos;
-     LinearLayoutManager layoutManager;
-     int skipSize = 20;
-     int pageSize =100;
-     int pageNo =1;
+    LinearLayoutManager layoutManager;
+    int skipSize = 20;
+    int pageSize = 100;
+    int pageNo = 1;
 
-     List<DocumentLines> AllitemsList;
+    List<DocumentLines> AllitemsList;
 
     ItemsAdapter adapter;
     //private int currentPage = PAGE_START;
@@ -97,49 +100,41 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
         new_quatos.setVisibility(View.GONE);
         relativeCalView.setVisibility(View.GONE);
         relativeInfoView.setVisibility(View.GONE);
+        salesAndPurchaseLayout.setVisibility(View.VISIBLE);
         AllitemsList = new ArrayList<>();
         setDefaults();
 
         eventSearchManager();
 
 
-
-
-
-
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
 
-        if(mainHeaderLay.getVisibility()==View.GONE)
-        {
+        if (mainHeaderLay.getVisibility() == View.GONE) {
             searchLay.setVisibility(View.GONE);
             mainHeaderLay.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
 
-    private void eventSearchManager()
-    {
+    private void eventSearchManager() {
         searchView.setBackgroundColor(Color.parseColor("#00000000"));
         searchLay.setVisibility(View.VISIBLE);
         searchView.setVisibility(View.VISIBLE);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-           {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
                 return true;
             }
+
             @Override
-            public boolean onQueryTextChange(String newText)
-            {
-                if(adapter!=null){
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null) {
                     adapter.filter(newText);
                 }
                 return true;
@@ -147,21 +142,21 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
         });
 
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void setDefaults()
-       {
-    head_title.setText(getResources().getString(R.string.items));
-    back_press.setOnClickListener(this);
-           search.setOnClickListener(this);
-           AllitemsList.clear();
-           String fromwhere = String.valueOf(getIntent().getExtras().getInt("CategoryID"));
-           String warehouse = String.valueOf(getIntent().getStringExtra("warehouse"));
-         //  Toast.makeText(this, ""+warehouse, Toast.LENGTH_SHORT).show();
-           // Toast.makeText(this,fromwhere,Toast.LENGTH_SHORT).show();
-          loader.setVisibility(View.VISIBLE);
-           if (Globals.checkInternet(getApplicationContext()))
-               itemOnPageBasis(pageSize,fromwhere,warehouse);
-              // callApi(loader,fromwhere);
+    private void setDefaults() {
+        head_title.setText(getResources().getString(R.string.items));
+        back_press.setOnClickListener(this);
+        search.setOnClickListener(this);
+        AllitemsList.clear();
+        String fromwhere = String.valueOf(getIntent().getExtras().getInt("CategoryID"));
+        String warehouse = String.valueOf(getIntent().getStringExtra("warehouse"));
+        //  Toast.makeText(this, ""+warehouse, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this,fromwhere,Toast.LENGTH_SHORT).show();
+        loader.setVisibility(View.VISIBLE);
+        if (Globals.checkInternet(getApplicationContext()))
+            itemOnPageBasis(pageSize, fromwhere, warehouse);
+        // callApi(loader,fromwhere);
 
 
        /*    RecyclerViewPaginator recyclerViewPaginator = new RecyclerViewPaginator(itemsRecycler)
@@ -177,59 +172,59 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
                }
            };*/
 
-           /* Add this paginator to the onScrollListener of RecyclerView  */
-          // itemsRecycler.addOnScrollListener(recyclerViewPaginator);
-           itemsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-               @Override
-               public void onScrolled(RecyclerView recyclerView,
-                                      int dx, int dy) {
-                   super.onScrolled(recyclerView, dx, dy);
-                   int visibleItemCount = recyclerView.getLayoutManager().getChildCount();
-                   int totalItemCount = recyclerView.getLayoutManager().getItemCount();
+        /* Add this paginator to the onScrollListener of RecyclerView  */
+        // itemsRecycler.addOnScrollListener(recyclerViewPaginator);
+        itemsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView,
+                                   int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = recyclerView.getLayoutManager().getChildCount();
+                int totalItemCount = recyclerView.getLayoutManager().getItemCount();
 
-                   Log.e("Visible <==> Total ==>",""+visibleItemCount+" ==> "+totalItemCount);
-                    if(visibleItemCount==totalItemCount-5){
-                        if (Globals.checkInternet(getApplicationContext()))
-                            itemOnPageBasis(pageSize,fromwhere,warehouse);
-                    }
-               }
-           });
-       }
+                Log.e("Visible <==> Total ==>", "" + visibleItemCount + " ==> " + totalItemCount);
+                if (visibleItemCount == totalItemCount - 5) {
+                    if (Globals.checkInternet(getApplicationContext()))
+                        itemOnPageBasis(pageSize, fromwhere, warehouse);
+                }
+            }
+        });
+    }
 
     @Override
     public void onClick(View v) {
-    switch (v.getId()){
-    case R.id.back_press:
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
-        finish();
-        break;
-        case R.id.search:
-            mainHeaderLay.setVisibility(View.GONE);
-            searchLay.setVisibility(View.VISIBLE);
+        switch (v.getId()) {
+            case R.id.back_press:
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+                finish();
+                break;
+            case R.id.search:
+                mainHeaderLay.setVisibility(View.GONE);
+                searchLay.setVisibility(View.VISIBLE);
 
-            searchView.setIconifiedByDefault(true);
-            searchView.setFocusable(true);
-            searchView.setIconified(false);
-            searchView.requestFocusFromTouch();
-            break;
+                searchView.setIconifiedByDefault(true);
+                searchView.setFocusable(true);
+                searchView.setIconified(false);
+                searchView.requestFocusFromTouch();
+                break;
 
-          }
-       }
-    private void callApi(ProgressBar loader, String fromwhere)
-         {
+        }
+    }
+
+    private void callApi(ProgressBar loader, String fromwhere) {
         ItemCategoryData id = new ItemCategoryData();
         id.setCatID(fromwhere);
         id.setPriceListId("3");
         ItemViewModel model = ViewModelProviders.of(this).get(ItemViewModel.class);
-        model.getItemsList(loader,id).observe(this, new Observer<List<DocumentLines>>() {
+        model.getItemsList(loader, id).observe(this, new Observer<List<DocumentLines>>() {
             @Override
             public void onChanged(@Nullable List<DocumentLines> itemsList) {
 
-                if(itemsList == null || itemsList.size() == 0){
+                if (itemsList == null || itemsList.size() == 0) {
                     Globals.setmessage(getApplicationContext());
                     no_datafound.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     no_datafound.setVisibility(View.GONE);
                     layoutManager = new LinearLayoutManager(ItemsList.this, RecyclerView.VERTICAL, false);
                     AllitemsList.clear();
@@ -245,27 +240,26 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
 
     }
 
-    boolean dataoverFromAPI =true;
-    private void itemOnPageBasis(int pageSize,String catID,String warehouse)
-          {
-        HashMap<String,Integer> hde = new HashMap<>();
+    boolean dataoverFromAPI = true;
+
+    private void itemOnPageBasis(int pageSize, String catID, String warehouse) {
+        HashMap<String, Integer> hde = new HashMap<>();
 //        hde.put("PriceListId",1 );
 //        hde.put("PageNo",pageNo );
 //        hde.put("MaxSize",pageSize );
 //        hde.put("CatID",Integer.valueOf(catID) );
 //        hde.put("WarehouseCode", warehouse);
-              BodyItemList bodyItemList=new BodyItemList();
-              bodyItemList.setPageNo(pageNo);
-              bodyItemList.setPriceListId(1);
-              bodyItemList.setMaxSize(pageSize);
-              bodyItemList.setCatID(Integer.valueOf(catID) );
-              bodyItemList.setWarehouseCode(warehouse);
+        BodyItemList bodyItemList = new BodyItemList();
+        bodyItemList.setPageNo(pageNo);
+        bodyItemList.setPriceListId(1);
+        bodyItemList.setMaxSize(pageSize);
+        bodyItemList.setCatID(Integer.valueOf(catID));
+        bodyItemList.setWarehouseCode(warehouse);
 
         Call<ItemResponse> call = NewApiClient.getInstance().getApiService().itemAllFilter(bodyItemList);
         call.enqueue(new Callback<ItemResponse>() {
             @Override
-        public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response)
-            {
+            public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response) {
 
 
                 layoutManager = new LinearLayoutManager(ItemsList.this, RecyclerView.VERTICAL, false);
@@ -275,20 +269,20 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
                 adapter = new ItemsAdapter(ItemsList.this, AllitemsList);
                 itemsRecycler.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                if(response.body().getValue().size()==0){
+                if (response.body().getValue().size() == 0) {
                     dataoverFromAPI = false;
                     pageNo++;
                 }
                 loader.setVisibility(View.GONE);
 
             }
+
             @Override
             public void onFailure(Call<ItemResponse> call, Throwable t) {
                 loader.setVisibility(View.GONE);
             }
         });
     }
-
 
 
 }
