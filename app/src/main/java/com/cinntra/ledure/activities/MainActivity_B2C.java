@@ -305,11 +305,11 @@ public class MainActivity_B2C extends AppCompatActivity {
             callPurchasePaymentDueCounter();
         }
 //todo sale purchase option is disable according to client
-     /*   if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
+        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
             binding.typeDropdown.setVisibility(View.VISIBLE);
         } else {
             binding.typeDropdown.setVisibility(View.INVISIBLE);
-        }*/
+        }
 
         binding.typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -4141,8 +4141,12 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("FromDate", "2023-04-01");
         obj.put("ToDate", "2024-03-31");
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-
-        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+        Call<SalesGraphResponse> call;
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService().purchaseGraph(obj);
+        }
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
             public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
@@ -4180,7 +4184,12 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("ToDate", "2024-03-31");
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService().receiptGraph(obj);
+        Call<SalesGraphResponse> call;
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService().receiptGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService().receiptGraphPurchase(obj);
+        }
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
             public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
@@ -4228,7 +4237,12 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("ToDate", Globals.lastDateOfFinancialYear());
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<ResponseReceivableGraph> call = NewApiClient.getInstance().getApiService().receivableDueMonthGraph(obj);
+        Call<ResponseReceivableGraph> call;
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService().receivableDueMonthGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService().receivableDueMonthGraphPurchase(obj);
+        }
         call.enqueue(new Callback<ResponseReceivableGraph>() {
             @Override
             public void onResponse(Call<ResponseReceivableGraph> call, Response<ResponseReceivableGraph> response) {

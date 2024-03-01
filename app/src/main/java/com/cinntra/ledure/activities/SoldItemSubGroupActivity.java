@@ -22,6 +22,7 @@ import com.cinntra.ledure.databinding.ActivitySoldItemSubGroupBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.model.ResSubCatItems;
+import com.cinntra.ledure.newapimodel.ResponseItemFilterDashboard;
 import com.cinntra.ledure.newapimodel.SubGroupItemStock;
 import com.cinntra.ledure.test.ChildAdapter;
 import com.cinntra.ledure.webservices.NewApiClient;
@@ -410,7 +411,14 @@ public class SoldItemSubGroupActivity extends AppCompatActivity {
                 hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
 
-                Call<ResSubCatItems> call = NewApiClient.getInstance().getApiService().soldItemSubGroupApi(hde);
+
+
+                Call<ResSubCatItems> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApiPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApi(hde);
+                }
                 try {
                     Response<ResSubCatItems> response = call.execute();
                     if (response.isSuccessful()) {
@@ -473,7 +481,12 @@ public class SoldItemSubGroupActivity extends AppCompatActivity {
                 hde.put("CardCode", cardCode);
                 hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-                Call<ResSubCatItems> call = NewApiClient.getInstance().getApiService().soldItemSubGroupApi(hde);
+                Call<ResSubCatItems> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApiPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApi(hde);
+                }
                 try {
                     Response<ResSubCatItems> response = call.execute();
                     if (response.isSuccessful()) {

@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.MainActivity_B2C;
 import com.cinntra.ledure.adapters.ItemOnStockGroupAdapter;
@@ -85,12 +86,13 @@ public class ItemsBottomFragment extends Fragment {
         getActivity().findViewById(R.id.app_bar).setVisibility(View.GONE);
         getActivity().findViewById(R.id.date_selector).setVisibility(View.GONE);
         MainActivity_B2C.dateSPinner.setVisibility(View.GONE);
+
+
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_items_bottom, container, false);
     }
@@ -105,6 +107,9 @@ public class ItemsBottomFragment extends Fragment {
 
         filterByName = Prefs.getString(Globals.PrefsItemATOZ, "");
         filterByAmount = Prefs.getString(Globals.PrefsItemAmount, "");
+
+        //todo set defualt prefs
+        Prefs.putBoolean(Globals.ISPURCHASE, false);
         binding.filterAtozShubh.setText("Filter : A To Z");
         binding.filterAtozShubh.setVisibility(View.VISIBLE);
         if (filterByName.equalsIgnoreCase(Globals.ATOZ)) {
@@ -257,7 +262,7 @@ public class ItemsBottomFragment extends Fragment {
 
                         pageNo = 1;
                         /*  searchTextValue = "";*/
-                      //  setRecyclerViewAdapter();
+                        //  setRecyclerViewAdapter();
                         callApi(searchTextValue);
 
 
@@ -291,49 +296,7 @@ public class ItemsBottomFragment extends Fragment {
     }
 
     String groupType = "Category";
-
-    private void setUPSpinnerGroup() {
-        if (Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("admin") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Director") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Accounts")) {
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_item_item_stock, // Replace with your item array resource
-                    R.layout.spinner_textview_black_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            binding.groupbyDropdown.setAdapter(spinnerArrayAdapter);
-        } else {
-
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_item_item_stock, // Replace with your item array resource
-                    R.layout.spinner_textview_black_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            binding.groupbyDropdown.setAdapter(spinnerArrayAdapter);
-        }
-
-        binding.groupbyDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                groupType = binding.groupbyDropdown.getSelectedItem().toString();
-
-                pageNo = 1;
-                /*  searchTextValue = "";*/
-
-                if (groupType.equalsIgnoreCase("Items")) {
-                    setRecyclerViewAdapter();
-                    callApi(searchTextValue);
-                } else if (groupType.equalsIgnoreCase("Category")) {
-                    callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "");
-                } else {
-                    callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "Zone");
-                }
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-    }
+    String salePurchaseGroupType = "Sales";
 
 
     public boolean onBackPressed() {
@@ -356,12 +319,10 @@ public class ItemsBottomFragment extends Fragment {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         bindingDate = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(bindingDate.getRoot());
-        bindingDate.ivCloseBottomSheet.setOnClickListener(view ->
-        {
+        bindingDate.ivCloseBottomSheet.setOnClickListener(view -> {
             bottomSheetDialog.dismiss();
         });
-        bindingDate.tvCustomDateBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvCustomDateBottomSheetSelectDate.setOnClickListener(view -> {
 
             bottomSheetDialog.dismiss();
             dateRangeSelector();
@@ -441,8 +402,7 @@ public class ItemsBottomFragment extends Fragment {
         });
 
 
-        bindingDate.tvThisMonthBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvThisMonthBottomSheetSelectDate.setOnClickListener(view -> {
             startDatelng = Globals.thisMonthCal().getTimeInMillis();
             endDatelng = Calendar.getInstance().getTimeInMillis();
             startDate = Globals.firstDateOfMonth();
@@ -464,8 +424,7 @@ public class ItemsBottomFragment extends Fragment {
             bottomSheetDialog.dismiss();
 
         });
-        bindingDate.tvLastMonthDateBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvLastMonthDateBottomSheetSelectDate.setOnClickListener(view -> {
             startDatelng = Globals.lastMonthCal().getTimeInMillis();
             endDatelng = Globals.thisMonthCal().getTimeInMillis();
             startDate = Globals.lastMonthFirstDate();
@@ -489,8 +448,7 @@ public class ItemsBottomFragment extends Fragment {
 
             bottomSheetDialog.dismiss();
         });
-        bindingDate.tvThisQuarterDateBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvThisQuarterDateBottomSheetSelectDate.setOnClickListener(view -> {
             startDatelng = Globals.thisQuarterCal().getTimeInMillis();
             endDatelng = Calendar.getInstance().getTimeInMillis();
             startDate = Globals.lastQuarterFirstDate();
@@ -513,8 +471,7 @@ public class ItemsBottomFragment extends Fragment {
 
             bottomSheetDialog.dismiss();
         });
-        bindingDate.tvThisYearDateBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvThisYearDateBottomSheetSelectDate.setOnClickListener(view -> {
             startDatelng = Globals.thisyearCal().getTimeInMillis();
             endDatelng = Calendar.getInstance().getTimeInMillis();
             startDate = Globals.firstDateOfFinancialYear();
@@ -536,8 +493,7 @@ public class ItemsBottomFragment extends Fragment {
 
             bottomSheetDialog.dismiss();
         });
-        bindingDate.tvLastYearBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvLastYearBottomSheetSelectDate.setOnClickListener(view -> {
             startDatelng = Globals.lastyearCal().getTimeInMillis();
             endDatelng = Globals.thisyearCal().getTimeInMillis();
             startDate = Globals.lastYearFirstDate();
@@ -560,8 +516,7 @@ public class ItemsBottomFragment extends Fragment {
 
             bottomSheetDialog.dismiss();
         });
-        bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";
             binding.loader.setVisibility(View.VISIBLE);
@@ -640,11 +595,90 @@ public class ItemsBottomFragment extends Fragment {
         binding.toolbarItemDashBoard.search.setVisibility(View.VISIBLE);
         binding.toolbarItemDashBoard.newQuatos.setVisibility(View.GONE);
         binding.toolbarItemDashBoard.back.setVisibility(View.GONE);
+
+        //todo sale purchase option is disable according to client
+        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
+            binding.toolbarItemDashBoard.salesAndPurchaseLayout.setVisibility(View.VISIBLE);
+        } else {
+            binding.toolbarItemDashBoard.salesAndPurchaseLayout.setVisibility(View.INVISIBLE);
+        }
+      //  binding.toolbarItemDashBoard.salesAndPurchaseLayout.setVisibility(View.VISIBLE);
+
         binding.toolbarItemDashBoard.filterView.setOnClickListener(view -> {
             //      openpopup();
 
             openNewPopUpCustomize();
         });
+
+
+        //todo set zone --
+        if (Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("admin") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Director") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Accounts")) {
+            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                    R.array.data_type, // Replace with your item array resource
+                    R.layout.spinner_white_textview);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.toolbarItemDashBoard.typeDropdown.setAdapter(spinnerArrayAdapter);
+        } else {
+
+            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                    R.array.data_type, // Replace with your item array resource
+                    R.layout.spinner_white_textview);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.toolbarItemDashBoard.typeDropdown.setAdapter(spinnerArrayAdapter);
+        }
+
+        binding.toolbarItemDashBoard.typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                salePurchaseGroupType = binding.toolbarItemDashBoard.typeDropdown.getSelectedItem().toString();
+                pageNo = 1;
+                searchTextValue = "";
+                binding.toolbarItemDashBoard.searchView.setQuery("", false);
+                if (salePurchaseGroupType.equals("Sales")) {
+                    //  Prefs.putString(Globals.forSalePurchase, Globals.Sale);
+                    Prefs.putBoolean(Globals.ISPURCHASE, false);
+                    if (groupType.equalsIgnoreCase("Items")) {
+                        callApi(searchTextValue);
+
+                    } else if (groupType.equalsIgnoreCase("Category")) {
+
+
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "");
+
+
+                    } else {
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "Zone");
+
+                    }
+
+                } else {
+                    //  Prefs.putString(Globals.forSalePurchase, Globals.Purchase);
+                    Prefs.putBoolean(Globals.ISPURCHASE, true);
+                    if (groupType.equalsIgnoreCase("Items")) {
+                        callApi(searchTextValue);
+
+                    } else if (groupType.equalsIgnoreCase("Category")) {
+
+
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "");
+
+
+                    } else {
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "Zone");
+
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
     }
 
 
@@ -805,9 +839,7 @@ public class ItemsBottomFragment extends Fragment {
             boolean isAtLastItem = firstVisibleitempositon + visibleItemCount >= totalItemCount;
             boolean isNotAtBeginning = firstVisibleitempositon >= 0;
             boolean isTotaolMoreThanVisible = totalItemCount >= Globals.QUERY_PAGE_SIZE;
-            boolean shouldPaginate =
-                    isNotLoadingAndNotLastPage && isNotAtBeginning && isAtLastItem && isTotaolMoreThanVisible
-                            && isScrollingpage;
+            boolean shouldPaginate = isNotLoadingAndNotLastPage && isNotAtBeginning && isAtLastItem && isTotaolMoreThanVisible && isScrollingpage;
 
             if (isScrollingpage && (visibleItemCount + firstVisibleitempositon == totalItemCount)) {
                 binding.loader.setVisibility(View.VISIBLE);
@@ -884,8 +916,16 @@ public class ItemsBottomFragment extends Fragment {
                     hde.put(Globals.payLoadOrderByAMt, filterByAmount);
                 }
 
+                Call<ResponseItemDashboard> call;
 
-                Call<ResponseItemDashboard> call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                }
+
+
                 try {
                     Response<ResponseItemDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -898,7 +938,7 @@ public class ItemsBottomFragment extends Fragment {
                                     if (response.body().getData().size() > 0) {
                                         binding.noDatafound.setVisibility(View.GONE);
                                         AllitemsList.addAll(response.body().getData());
-                                        adapter = new ItemStockAdapter(requireContext(), AllitemsList);
+                                        adapter = new ItemStockAdapter(requireContext(), AllitemsList, "");
                                         adapter.AllData(AllitemsList);
                                         layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
                                         binding.rvItemDash.setLayoutManager(layoutManager);
@@ -1016,8 +1056,14 @@ public class ItemsBottomFragment extends Fragment {
                     hde.put(Globals.payLoadOrderByAMt, filterByAmount);
                 }
 
+                Call<ResponseItemDashboard> call;
 
-                Call<ResponseItemDashboard> call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                }
                 try {
                     Response<ResponseItemDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1057,8 +1103,7 @@ public class ItemsBottomFragment extends Fragment {
     private void openpopup() {
 // .addItem(new PowerMenuItem("New BP",R.drawable.ic_newbp, false)) // add an item.
 
-        PowerMenu powerMenu = new PowerMenu.Builder(requireContext())
-                .addItem(new PowerMenuItem("A to Z", R.drawable.ic_filter_black, false)) // aad an item list.
+        PowerMenu powerMenu = new PowerMenu.Builder(requireContext()).addItem(new PowerMenuItem("A to Z", R.drawable.ic_filter_black, false)) // aad an item list.
                 .addItem(new PowerMenuItem("Z to A", R.drawable.ic_filter_black, false)) // aad an item list.
                 .addItem(new PowerMenuItem("Amount Desc", R.drawable.ic_rupee_symbol, false)) // aad an item list.
                 .addItem(new PowerMenuItem("Amount Asc", R.drawable.ic_rupee_symbol, false)) // aad an item list.
@@ -1066,15 +1111,7 @@ public class ItemsBottomFragment extends Fragment {
                 .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT) // Animation start point (TOP | LEFT).
                 .setMenuRadius(10f) // sets the corner radius.
                 .setMenuShadow(10f) // sets the shadow.
-                .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                .setTextGravity(Gravity.START)
-                .setTextSize(12)
-                .setTextTypeface(Typeface.createFromAsset(requireActivity().getAssets(), "poppins_regular.ttf"))
-                .setSelectedTextColor(Color.BLACK)
-                .setWidth(Globals.pxFromDp(requireContext(), 220f))
-                .setMenuColor(Color.WHITE)
-                .setSelectedMenuColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-                .build();
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.black)).setTextGravity(Gravity.START).setTextSize(12).setTextTypeface(Typeface.createFromAsset(requireActivity().getAssets(), "poppins_regular.ttf")).setSelectedTextColor(Color.BLACK).setWidth(Globals.pxFromDp(requireContext(), 220f)).setMenuColor(Color.WHITE).setSelectedMenuColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary)).build();
         powerMenu.showAsDropDown(binding.toolbarItemDashBoard.filterView);
 
 
@@ -1179,7 +1216,14 @@ public class ItemsBottomFragment extends Fragment {
                 hde.put(Globals.payLoadOrderByName, filterByName);
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                Call<ResponseItemFilterDashboard> call;
+
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1252,7 +1296,15 @@ public class ItemsBottomFragment extends Fragment {
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                Call<ResponseItemFilterDashboard> call;
+
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                }
+
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1304,7 +1356,16 @@ public class ItemsBottomFragment extends Fragment {
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterItemsZone(hde);
+                Call<ResponseItemFilterDashboard> call;
+
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getFilterItemsZonePurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getFilterItemsZone(hde);
+                }
+
+
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {

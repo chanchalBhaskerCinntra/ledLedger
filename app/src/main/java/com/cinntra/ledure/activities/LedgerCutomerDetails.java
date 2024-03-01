@@ -168,6 +168,11 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
         //listener = (MyFragmentListener) this;
         //listenerCustomer = (MyFragmentCustomerListener) this;
 
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+            activityLedgerCustomerDetailsBinding.pastText.setText("Purchase");
+        }else {
+            activityLedgerCustomerDetailsBinding.pastText.setText("Sold");
+        }
 
         filterView.setVisibility(View.GONE);
         new_quatos.setVisibility(View.GONE);

@@ -183,7 +183,14 @@ public class ItemPurchasedParticularCustomerInfo extends AppCompatActivity {
                 hde.put("ItemCode", type);
                 hde.put("FromDate", startDate);
                 hde.put("ToDate", endDate);
-                Call<ResponseItemParticularCustomerInfo> call = NewApiClient.getInstance().getApiService().getItemParticularBpLedger(hde);
+
+
+                Call<ResponseItemParticularCustomerInfo> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call =  NewApiClient.getInstance().getApiService().getItemParticularBpLedgerPurchase(hde);
+                } else {
+                    call =  NewApiClient.getInstance().getApiService().getItemParticularBpLedger(hde);
+                }
                 try {
                     Response<ResponseItemParticularCustomerInfo> response = call.execute();
                     if (response.isSuccessful()) {

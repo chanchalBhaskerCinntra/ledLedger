@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -109,8 +110,10 @@ import com.cinntra.ledure.model.SalesGraphResponse;
 import com.cinntra.ledure.newapimodel.LeadResponse;
 import com.cinntra.ledure.newapimodel.LeadValue;
 import com.cinntra.ledure.newapimodel.ResponsePayMentDueCounter;
+import com.cinntra.ledure.newapimodel.ResponseReceivableGraph;
 import com.cinntra.ledure.viewModel.CustomerViewModel;
 import com.cinntra.ledure.viewpager.GraphPagerAdapter;
+import com.cinntra.ledure.viewpager.GraphPagerPurchaseAdapter;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -260,6 +263,14 @@ public class DashboardFragmentFromActivity extends Fragment {
         });
 
 
+        builder = new AlertDialog.Builder(requireContext());
+        builder.setView(R.layout.progress_dialog_alert)
+                .setCancelable(false);
+
+
+        alertDialog = builder.create();
+
+
         //todo set sales and purchase drop down value---
         ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.data_type, // Replace with your item array resource
@@ -275,7 +286,39 @@ public class DashboardFragmentFromActivity extends Fragment {
         }
 
 
-        binding.typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        dataTypeValue = binding.typeDropdown.getSelectedItem().toString();
+
+        Log.e(TAG, "onCreate: " + dataTypeValue);
+        Log.e(TAG, "CheckPefOn--: " + Prefs.getString(Globals.IS_SALE_OR_PURCHASE, ""));
+
+
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("")) {
+            Prefs.putString(Globals.IS_SALE_OR_PURCHASE, binding.typeDropdown.getSelectedItem().toString());
+        }
+
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            binding.typeDropdown.setSelection(0);
+
+            callDashboardCounter();
+            callDashboardCounter_Receiable();
+            callPaymentDueCounter();
+            callAllDueCounter();
+            saleGraphApi();
+
+
+        } else {
+            binding.typeDropdown.setSelection(1);
+
+            callDashboardPurchaseCounter();
+            callDashboardPurchaseCounter_Receiable();
+
+            callAllPurchaseDueCounter();
+            callPurchasePaymentDueCounter();
+            saleGraphApi();
+        }
+
+
+   /*     binding.typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 dataTypeValue = binding.typeDropdown.getSelectedItem().toString();
@@ -293,6 +336,45 @@ public class DashboardFragmentFromActivity extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 dataTypeValue = binding.typeDropdown.getSelectedItem().toString();
+            }
+        });*/
+
+        binding.typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+                Prefs.putString(Globals.IS_SALE_OR_PURCHASE, binding.typeDropdown.getSelectedItem().toString());
+
+                Log.e(TAG, "onItemSelected: " + Prefs.getString(Globals.IS_SALE_OR_PURCHASE, ""));
+                if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                    binding.contentData.salesIncludeDashboardLayout.salesIncludeDashboard.setVisibility(View.GONE);
+                    binding.contentData.purchaseIncludeDashboardLayout.purchaseIncludeDashboard.setVisibility(View.VISIBLE);
+                    Prefs.putBoolean(Globals.ISPURCHASE, true);
+                    callDashboardPurchaseCounter();
+                    callDashboardPurchaseCounter_Receiable();
+
+                    callAllPurchaseDueCounter();
+                    callPurchasePaymentDueCounter();
+
+                    saleGraphApi();
+                } else {
+                    binding.contentData.salesIncludeDashboardLayout.salesIncludeDashboard.setVisibility(View.VISIBLE);
+                    binding.contentData.purchaseIncludeDashboardLayout.purchaseIncludeDashboard.setVisibility(View.GONE);
+                    Prefs.putBoolean(Globals.ISPURCHASE, false);
+                    callDashboardCounter();
+                    callDashboardCounter_Receiable();
+
+                    callPaymentDueCounter();
+                    callAllDueCounter();
+
+                    saleGraphApi();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Prefs.putString(Globals.IS_SALE_OR_PURCHASE, binding.typeDropdown.getSelectedItem().toString());
             }
         });
 
@@ -331,11 +413,11 @@ public class DashboardFragmentFromActivity extends Fragment {
         //  binding.contentData.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf("87625341")));
 
 
-        builder = new AlertDialog.Builder(requireContext());
+   /*     builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Loading....").setMessage("Please Wait").setCancelable(false);
 
 
-        alertDialog = builder.create();
+        alertDialog = builder.create();*/
 
         binding.contentData.ivGraphshubh.setOnClickListener(view1 -> {
             Log.e("TAG", "onViewCreated=======================: ");
@@ -355,7 +437,7 @@ public class DashboardFragmentFromActivity extends Fragment {
         //  binding.contentData.headingDue.setText("shubh");
         callAllDueCounter();
         callPaymentDueCounter();
-        setupChartViewPgaer();
+      //  setupChartViewPgaer();
 
         binding.contentData.linearDate.setOnClickListener(bind -> {
             showDateInDashboardBottomSheetDialog(requireContext());
@@ -452,6 +534,26 @@ public class DashboardFragmentFromActivity extends Fragment {
             }
         });
 
+
+        binding.contentData.purchaseIncludeDashboardLayout.newtypeCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putString("ForReports", "payment");
+                startActivity(new Intent(requireContext(), Reports.class));
+
+            }
+        });
+
+
+        binding.contentData.purchaseIncludeDashboardLayout.overDuecard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Prefs.putString("ForReports", "overDue");
+                startActivity(new Intent(requireContext(), Reports.class));
+
+            }
+        });
+
         binding.contentData.salesIncludeDashboardLayout.newtypeCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -526,9 +628,78 @@ public class DashboardFragmentFromActivity extends Fragment {
 
     }
 
+    private void callDashboardPurchaseCounter() {
+
+
+        HashMap<String, String> obj = new HashMap<String, String>();
+        obj.put("Filter", "");
+        obj.put("Code", "");
+        obj.put("Type", "Gross");
+        obj.put("FromDate", startDate);
+        obj.put("ToDate", endDate);
+        obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        obj.put("SearchText", "");
+        obj.put("OrderByName", "");
+        obj.put("OrderByAmt", "");
+        obj.put("PageNo", "");
+        obj.put("MaxSize", "");
+        obj.put("DueDaysGroup", "");
+
+
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+        call.enqueue(new Callback<DashboardCounterResponse>() {
+            @Override
+            public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
+                if (response.code() == 200) {
+
+                    setCounter(response.body().getData().get(0));
+
+
+                    //  lead_spiner.setAdapter(leadAdapter);
+                    //  leadAdapter.notifyDataSetChanged();
+                } else {
+
+
+                    Globals.ErrorMessage(requireContext(), response.errorBody().toString());
+               /*     Gson gson = new GsonBuilder().create();
+                    LeadResponse mError = new LeadResponse();
+                    try {
+                        String s = response.errorBody().string();
+                        mError = gson.fromJson(s, LeadResponse.class);
+                    } catch (IOException e) {
+                        //handle failure to read error
+                    }*/
+                    //Toast.makeText(CreateContact.this, msz, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DashboardCounterResponse> call, Throwable t) {
+
+
+                Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        //  callBplistApi(bp_spinner, cp_spinner);
+    }
+
+
+    private void setCounter(DashboardCounterData data) {
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            binding.contentData.salesIncludeDashboardLayout.totalAmnt.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSales())));
+            binding.contentData.salesIncludeDashboardLayout.receivedAmountValue.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalReceivePayment())));
+            binding.contentData.salesIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalPendingSales())));
+        } else {
+            binding.contentData.purchaseIncludeDashboardLayout.totalAmnt.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSales())));
+            binding.contentData.purchaseIncludeDashboardLayout.receivedAmountValue.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalReceivePayment())));
+            binding.contentData.purchaseIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalPendingSales())));
+        }
+
+    }
+
 
     private void callDashboardCounter_Receiable() {
-        alertDialog.show();
 
 
         HashMap obj = new HashMap<String, String>();
@@ -543,19 +714,23 @@ public class DashboardFragmentFromActivity extends Fragment {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
                 if (response.code() == 200) {
-                    alertDialog.dismiss();
+
                     Prefs.putString(Globals.Total_Receivables, Globals.numberToK(String.valueOf(response.body().getData().get(0).getDifferenceAmount())));
 
-                    if (dataTypeValue.equalsIgnoreCase("Sales")) {
-                        binding.contentData.salesIncludeDashboardLayout.totalCollection.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getDifferenceAmount())));
-                        binding.contentData.salesIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getTotalPendingSales())));
-                    } else {
-                        binding.contentData.purchaseIncludeDashboardLayout.totalCollection.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getDifferenceAmount())));
-                        binding.contentData.purchaseIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getTotalPendingSales())));
+                    try {
+                        if (dataTypeValue.equalsIgnoreCase("Sales")) {
+                            binding.contentData.salesIncludeDashboardLayout.totalCollection.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getDifferenceAmount())));
+                            binding.contentData.salesIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getTotalPendingSales())));
+                        } else {
+                            binding.contentData.purchaseIncludeDashboardLayout.totalCollection.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getDifferenceAmount())));
+                            binding.contentData.purchaseIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getTotalPendingSales())));
+                        }
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
                     }
 
+
                 } else {
-                    alertDialog.dismiss();
 
                     Gson gson = new GsonBuilder().create();
                     LeadResponse mError = new LeadResponse();
@@ -566,13 +741,14 @@ public class DashboardFragmentFromActivity extends Fragment {
                         //handle failure to read error
                     }
                     //Toast.makeText(CreateContact.this, msz, Toast.LENGTH_SHORT).show();
+
                 }
 
             }
 
             @Override
             public void onFailure(Call<DashboardCounterResponse> call, Throwable t) {
-                alertDialog.dismiss();
+
 
                 Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -582,7 +758,7 @@ public class DashboardFragmentFromActivity extends Fragment {
 
     private void callDashboardCounter() {
         binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to " + Globals.convertDateFormatInReadableFormat(endDate));
-        alertDialog.show();
+
 
         HashMap obj = new HashMap<String, String>();
         obj.put("Filter", "");
@@ -599,14 +775,14 @@ public class DashboardFragmentFromActivity extends Fragment {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
                 if (response.code() == 200) {
-                    alertDialog.dismiss();
+
                     if (response.body().getData().size() > 0) {
                         setCounter(response.body().getData().get(0));
                     }
 
 
                 } else {
-                    alertDialog.dismiss();
+
 
                     Gson gson = new GsonBuilder().create();
                     LeadResponse mError = new LeadResponse();
@@ -623,7 +799,7 @@ public class DashboardFragmentFromActivity extends Fragment {
 
             @Override
             public void onFailure(Call<DashboardCounterResponse> call, Throwable t) {
-                alertDialog.dismiss();
+
 
                 Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -643,7 +819,7 @@ public class DashboardFragmentFromActivity extends Fragment {
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
                 if (response.code() == 200) {
                     //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss();
+
                     if (response.body().getStatus() == 200) {
                         //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
                         binding.contentData.salesIncludeDashboardLayout.tvOverDueCounter.setText(context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
@@ -654,7 +830,6 @@ public class DashboardFragmentFromActivity extends Fragment {
 
 
                 } else {
-                    alertDialog.dismiss();
 
 
 //                    Gson gson = new GsonBuilder().create();
@@ -672,7 +847,7 @@ public class DashboardFragmentFromActivity extends Fragment {
 
             @Override
             public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
-                alertDialog.dismiss();
+
 
                 Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -690,7 +865,7 @@ public class DashboardFragmentFromActivity extends Fragment {
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
                 if (response.code() == 200) {
                     //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
-                    alertDialog.dismiss();
+
                     if (response.body().getStatus() == 200) {
                         //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
                         binding.contentData.salesIncludeDashboardLayout.tvAnjaliDuePayment.setText(context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
@@ -701,7 +876,6 @@ public class DashboardFragmentFromActivity extends Fragment {
 
 
                 } else {
-                    alertDialog.dismiss();
 
 
 //                    Gson gson = new GsonBuilder().create();
@@ -719,14 +893,14 @@ public class DashboardFragmentFromActivity extends Fragment {
 
             @Override
             public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
-                alertDialog.dismiss();
+
 
                 Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void setCounter(DashboardCounterData data) {
+/*    private void setCounter(DashboardCounterData data) {
         if (dataTypeValue.equalsIgnoreCase("Sales")) {
             binding.contentData.salesIncludeDashboardLayout.totalAmnt.setText(context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSales())));
             binding.contentData.salesIncludeDashboardLayout.receivedAmountValue.setText(context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalReceivePayment())));
@@ -736,7 +910,7 @@ public class DashboardFragmentFromActivity extends Fragment {
             binding.contentData.purchaseIncludeDashboardLayout.receivedAmountValue.setText(context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalReceivePayment())));
         }
 
-    }
+    }*/
 
 
     private void callleadDialogApi(Spinner lead_spiner) {
@@ -1083,7 +1257,7 @@ public class DashboardFragmentFromActivity extends Fragment {
     Long endDatelng = (long) 0.0;
     MaterialDatePicker<Pair<Long, Long>> materialDatePicker;
 
-    private void showDateInDashboardBottomSheetDialog(Context context) {
+ /*   private void showDateInDashboardBottomSheetDialog(Context context) {
         BottomSheetDialogSelectDateBinding bindingDate;
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         bindingDate = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
@@ -1245,11 +1419,438 @@ public class DashboardFragmentFromActivity extends Fragment {
         });
 
 
+    }*/
+
+
+    private void showDateInDashboardBottomSheetDialog(Context context) {
+        BottomSheetDialogSelectDateBinding bindingDate;
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
+        bindingDate = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
+        bottomSheetDialog.setContentView(bindingDate.getRoot());
+        bindingDate.ivCloseBottomSheet.setOnClickListener(view ->
+        {
+            bottomSheetDialog.dismiss();
+        });
+        bindingDate.tvCustomDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+
+            bottomSheetDialog.dismiss();
+            dateRangeSelector();
+
+        });
+        bindingDate.tvTodayDateBottomSheetSelectDate.setOnClickListener(view -> {
+            startDatelng = Calendar.getInstance().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.Date_yyyy_mm_dd(startDatelng);
+            endDate = Globals.Date_yyyy_mm_dd(endDatelng);
+
+            binding.contentData.tvDateText.setText("Today");
+
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+
+            bottomSheetDialog.dismiss();
+        });
+
+        bindingDate.tvYesterdayDateBottomSheetSelectDate.setOnClickListener(view -> {
+            startDatelng = Globals.yesterDayCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.Date_yyyy_mm_dd(startDatelng);
+            endDate = Globals.Date_yyyy_mm_dd(endDatelng);
+
+            binding.contentData.tvDateText.setText("Yesterday");
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+        bindingDate.tvThisWeekDateBottomSheetSelectDate.setOnClickListener(view -> {
+            startDatelng = Globals.thisWeekCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.thisWeekfirstDayOfMonth();
+            endDate = Globals.thisWeekLastDayOfMonth();
+
+            binding.contentData.tvDateText.setText("This Week");
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+
+
+        bindingDate.tvThisMonthBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDatelng = Globals.thisMonthCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.firstDateOfMonth();
+            endDate = Globals.lastDateOfMonth();
+
+            binding.contentData.tvDateText.setText("This Month");
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+            bottomSheetDialog.dismiss();
+
+        });
+        bindingDate.tvLastMonthDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDatelng = Globals.lastMonthCal().getTimeInMillis();
+            endDatelng = Globals.thisMonthCal().getTimeInMillis();
+            startDate = Globals.lastMonthFirstDate();
+            endDate = Globals.lastMonthlastDate();
+
+            binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
+                    + Globals.convertDateFormatInReadableFormat(endDate));
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+        bindingDate.tvThisQuarterDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDatelng = Globals.thisQuarterCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.lastQuarterFirstDate();
+            endDate = Globals.lastQuarterlastDate();
+
+            binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
+                    + Globals.convertDateFormatInReadableFormat(endDate));
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+        bindingDate.tvThisYearDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDatelng = Globals.thisyearCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.firstDateOfFinancialYear();
+            endDate = Globals.lastDateOfFinancialYear();
+
+            binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
+                    + Globals.convertDateFormatInReadableFormat(endDate));
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+        bindingDate.tvLastYearBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDatelng = Globals.lastyearCal().getTimeInMillis();
+            endDatelng = Globals.thisyearCal().getTimeInMillis();
+            startDate = Globals.lastYearFirstDate();
+            endDate = Globals.lastYearLastDate();
+
+            binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
+                    + Globals.convertDateFormatInReadableFormat(endDate));
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+        bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDate = "";
+            endDate = "";
+
+            binding.contentData.tvDateText.setText("All");
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
+
+
+        bottomSheetDialog.show();
+
+    }
+
+    private void dateRangeSelector() {
+
+
+        if (startDatelng == 0.0) {
+            materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().setSelection(Pair.create(MaterialDatePicker.thisMonthInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds())).build();
+        } else {
+            materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().setSelection(Pair.create(startDatelng, endDatelng)).build();
+
+        }
+
+        materialDatePicker.show(getChildFragmentManager(), "Tag_Picker");
+
+        materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>() {
+            @Override
+            public void onPositiveButtonClick(Pair<Long, Long> selection) {
+
+                // binding.loader.setVisibility(View.VISIBLE);
+                startDatelng = selection.first;
+                endDatelng = selection.second;
+                startDate = Globals.Date_yyyy_mm_dd(startDatelng);
+                endDate = Globals.Date_yyyy_mm_dd(endDatelng);
+
+                binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
+                        + Globals.convertDateFormatInReadableFormat(endDate));
+                if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+
+                    callDashboardCounter();
+                    callDashboardCounter_Receiable();
+
+                    callPaymentDueCounter();
+                    callAllDueCounter();
+                } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                    callDashboardPurchaseCounter();
+                    callDashboardPurchaseCounter_Receiable();
+
+                    callAllPurchaseDueCounter();
+                    callPurchasePaymentDueCounter();
+                }
+
+
+            }
+        });
+
+
+    }
+
+    private void callDashboardPurchaseCounter_Receiable() {
+
+
+        HashMap obj = new HashMap<String, String>();
+        obj.put("Filter", "");
+        obj.put("Code", "");
+        obj.put("Type", "Gross");
+        obj.put("FromDate", startDate);
+        obj.put("ToDate", endDate);
+        obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        obj.put("SearchText", "");
+        obj.put("OrderByName", "");
+        obj.put("OrderByAmt", "");
+        obj.put("PageNo", "");
+        obj.put("MaxSize", "");
+        obj.put("DueDaysGroup", "");
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+        call.enqueue(new Callback<DashboardCounterResponse>() {
+            @Override
+            public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
+                if (response.code() == 200) {
+
+
+                    binding.contentData.purchaseIncludeDashboardLayout.totalCollection.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getDifferenceAmount())));
+                    binding.contentData.purchaseIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getData().get(0).getTotalPendingSales())));
+
+
+                } else {
+
+
+                    Gson gson = new GsonBuilder().create();
+                    LeadResponse mError = new LeadResponse();
+                    try {
+                        String s = response.errorBody().string();
+                        mError = gson.fromJson(s, LeadResponse.class);
+                    } catch (IOException e) {
+                        //handle failure to read error
+                    }
+                    //Toast.makeText(CreateContact.this, msz, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DashboardCounterResponse> call, Throwable t) {
+
+
+                Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        //  callBplistApi(bp_spinner, cp_spinner);
+    }
+
+    private void callAllPurchaseDueCounter() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        jsonObject.addProperty("DueDaysGroup", "-1");
+
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        call.enqueue(new Callback<ResponsePayMentDueCounter>() {
+            @Override
+            public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
+                if (response.code() == 200) {
+                    //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
+
+                    if (response.body().getStatus() == 200) {
+                        //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
+                        binding.contentData.purchaseIncludeDashboardLayout.tvOverDueCounter.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
+
+                    } else {
+                        //  Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+
+
+//                    Gson gson = new GsonBuilder().create();
+//                    LeadResponse mError = new LeadResponse();
+//                    try {
+//                        String s = response.errorBody().string();
+//                        mError = gson.fromJson(s, LeadResponse.class);
+//                    } catch (IOException e) {
+//                        //handle failure to read error
+//                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
+
+
+                Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void callPurchasePaymentDueCounter() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        jsonObject.addProperty("DueDaysGroup", "7");
+
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        call.enqueue(new Callback<ResponsePayMentDueCounter>() {
+            @Override
+            public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
+                if (response.code() == 200) {
+                    //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
+
+                    if (response.body().getStatus() == 200) {
+                        //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
+                        binding.contentData.purchaseIncludeDashboardLayout.tvAnjaliDuePayment.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
+
+                    } else {
+                        //  Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+
+
+//                    Gson gson = new GsonBuilder().create();
+//                    LeadResponse mError = new LeadResponse();
+//                    try {
+//                        String s = response.errorBody().string();
+//                        mError = gson.fromJson(s, LeadResponse.class);
+//                    } catch (IOException e) {
+//                        //handle failure to read error
+//                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
+
+
+                Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
     // GraphViewPagerAdapter fakeLiveMatchAdapter;
     GraphPagerAdapter graphPagerAdapter;
+    GraphPagerPurchaseAdapter graphPagerPurchaseAdapter;
     public static View dateSPinner;
     ArrayAdapter<CharSequence> dateSpinnerAdapter;
 
@@ -1362,34 +1963,68 @@ public class DashboardFragmentFromActivity extends Fragment {
     boolean bottomNav = false;
 
     private void setupChartViewPgaer() {
-        graphPagerAdapter = new GraphPagerAdapter(requireContext());
-        binding.contentData.viewPagerChart.setAdapter(graphPagerAdapter);
-        binding.contentData.tabLayout.setupWithViewPager(binding.contentData.viewPagerChart, true);
-        binding.contentData.tabLayout.getTabAt(0).setText("Sales");
-        binding.contentData.tabLayout.getTabAt(1).setText("Receipt");
-        binding.contentData.tabLayout.getTabAt(2).setText("Receivables");
-        binding.contentData.tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    binding.contentData.topHeadingGraph.setText("Sales");
-                } else if (tab.getPosition() == 1) {
-                    binding.contentData.topHeadingGraph.setText("Receipt");
-                } else if (tab.getPosition() == 2) {
-                    binding.contentData.topHeadingGraph.setText("Receivables");
+
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")){
+            graphPagerAdapter = new GraphPagerAdapter(requireContext());
+            binding.contentData.viewPagerChart.setAdapter(graphPagerAdapter);
+            binding.contentData.tabLayout.setupWithViewPager(binding.contentData.viewPagerChart, true);
+            binding.contentData.tabLayout.getTabAt(0).setText("Sales");
+            binding.contentData.tabLayout.getTabAt(1).setText("Receipt");
+            binding.contentData.tabLayout.getTabAt(2).setText("Receivables");
+            binding.contentData.tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    if (tab.getPosition() == 0) {
+                        binding.contentData.topHeadingGraph.setText("Sales");
+                    } else if (tab.getPosition() == 1) {
+                        binding.contentData.topHeadingGraph.setText("Receipt");
+                    } else if (tab.getPosition() == 2) {
+                        binding.contentData.topHeadingGraph.setText("Receivables");
+                    }
                 }
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-            }
+                }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
 
-            }
-        });
+                }
+            });
+        }else {
+            graphPagerPurchaseAdapter = new GraphPagerPurchaseAdapter(requireContext());
+            binding.contentData.viewPagerChart.setAdapter(graphPagerPurchaseAdapter);
+            binding.contentData.tabLayout.setupWithViewPager(binding.contentData.viewPagerChart, true);
+            binding.contentData.tabLayout.getTabAt(0).setText("Purchase");
+            binding.contentData.tabLayout.getTabAt(1).setText("Payment");
+            binding.contentData.tabLayout.getTabAt(2).setText("Payable");
+            binding.contentData.tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    if (tab.getPosition() == 0) {
+                        binding.contentData.topHeadingGraph.setText("Purchase");
+                    } else if (tab.getPosition() == 1) {
+                        binding.contentData.topHeadingGraph.setText("Payment");
+                    } else if (tab.getPosition() == 2) {
+                        binding.contentData.topHeadingGraph.setText("Payable");
+                    }
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
+        }
+
+
 
     }
 
@@ -3758,6 +4393,17 @@ Depends on the position number on the X axis, we need to display the label, Here
 
     ArrayList<GraphModel> salesGraphList = new ArrayList<>();
 
+    /*********************** Graphs APIs**************************/
+    public static List<BarEntry> Salesentries = new ArrayList<>();
+    public static List<BarEntry> Receiptentries = new ArrayList<>();
+    public static List<BarEntry> Receivableentries = new ArrayList<>();
+    public static List<String> ReceivableentriesXaxis = new ArrayList<>();
+    public static List<String> ReceivableentriesYaxis = new ArrayList<>();
+    public static List<String> SalesValueForMarker = new ArrayList<>();
+    public static List<String> ReceivableValueForMarker = new ArrayList<>();
+    public static List<String> ReceiptValueForMarker = new ArrayList<>();
+
+
     private void saleGraphApi() {
 
         HashMap obj = new HashMap<String, String>();
@@ -3765,22 +4411,143 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("ToDate", "2024-03-31");
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+        Call<SalesGraphResponse> call;
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService().purchaseGraph(obj);
+        }
+
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
             public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
                 if (response != null) {
                     if (response.body().status == 200) {
-                        salesGraphList.addAll(response.body().data);
-                        opengraph();
+                        if (response.body() != null && response.body().data.size() > 0)
+                            Salesentries.clear();
+                        SalesValueForMarker.clear();
+
+                        for (int i = 0; i < response.body().data.size(); i++) {
+                            Salesentries.add(new BarEntry(i, Float.parseFloat(response.body().data.get(i).getMonthlySales())));
+                            SalesValueForMarker.add(Globals.convertToLakhAndCroreFromString(response.body().data.get(i).getMonthlySales()));
+                        }
+                        // opengraph();
+
                     }
 
-
+                    ReceiptGraphApi();
                 }
             }
 
             @Override
             public void onFailure(Call<SalesGraphResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    /********************** Receipt Graph*************************/
+
+    private void ReceiptGraphApi() {
+
+        HashMap obj = new HashMap<String, String>();
+        obj.put("FromDate", "2023-04-01");
+        obj.put("ToDate", "2024-03-31");
+        obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+
+
+        Call<SalesGraphResponse> call;
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService().receiptGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService().receiptGraphPurchase(obj);
+        }
+        call.enqueue(new Callback<SalesGraphResponse>() {
+            @Override
+            public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
+                if (response != null) {
+                    if (response.body().status == 200) {
+                        if (response.body() != null && response.body().data.size() > 0)
+                            Receiptentries.clear();
+                        ReceiptValueForMarker.clear();
+
+                        for (int i = 0; i < response.body().data.size(); i++) {
+                            Receiptentries.add(new BarEntry(i, Float.parseFloat(response.body().data.get(i).getMonthlySales())));
+                            ReceiptValueForMarker.add(Globals.convertToLakhAndCroreFromString(response.body().data.get(i).getMonthlySales()));
+                        }
+                        // opengraph();
+
+
+                    }
+
+                    ReceivableGraphApi();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SalesGraphResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    /********************** Receivable Graph*************************/
+
+
+    private void ReceivableGraphApi() {
+
+       /* {
+            "FromDate":"2023-01-01",
+                "ToDate":"2023-12-31",
+                "SalesPersonCode":-1
+        }*/
+
+        alertDialog.show();
+
+        HashMap obj = new HashMap<String, String>();
+        obj.put("FromDate", Globals.firstDateOfFinancialYear());
+        obj.put("ToDate", Globals.lastDateOfFinancialYear());
+        obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+
+
+        Call<ResponseReceivableGraph> call;
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService().receivableDueMonthGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService().receivableDueMonthGraphPurchase(obj);
+        }
+        call.enqueue(new Callback<ResponseReceivableGraph>() {
+            @Override
+            public void onResponse(Call<ResponseReceivableGraph> call, Response<ResponseReceivableGraph> response) {
+                if (response != null) {
+                    if (response.body().status == 200) {
+                        alertDialog.hide();
+                        if (response.body() != null && response.body().data.size() > 0)
+                            Receivableentries.clear();
+                        ReceivableentriesXaxis.clear();
+                        ReceivableentriesYaxis.clear();
+                        ReceivableValueForMarker.clear();
+                        for (int i = 0; i < response.body().data.size(); i++) {
+                            ArrayList<String> daysGroup = new ArrayList<>();
+                           /* if (response.body().data.get(i).getOverDueDaysGroup().equalsIgnoreCase("")) {
+
+                            }*/
+                            ReceivableentriesXaxis.add(response.body().getData().get(i).getOverDueDaysGroup());
+                            ReceivableentriesYaxis.add("" + Globals.numberToK(String.valueOf(Double.valueOf(response.body().getData().get(i).getTotalDue()))));
+                            Receivableentries.add(new BarEntry(i, Float.parseFloat(response.body().getData().get(i).getTotalDue())));
+                            ReceivableValueForMarker.add("" + Globals.convertToLakhAndCroreFromString(response.body().getData().get(i).getTotalDue()));
+
+                        }
+                        // opengraph();
+
+                    }
+
+                    setupChartViewPgaer();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseReceivableGraph> call, Throwable t) {
 
             }
         });

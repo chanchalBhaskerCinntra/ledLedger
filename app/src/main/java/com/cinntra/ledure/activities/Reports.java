@@ -94,7 +94,12 @@ public class Reports extends AppCompatActivity {
 
         if (Prefs.getString("ForReports", "").equalsIgnoreCase("Receivable")) {
 
-            toolbar.setTitle("Receivable");
+            if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+                toolbar.setTitle("Payable");
+            }else {
+                toolbar.setTitle("Receivable");
+            }
+
             toolbar.getMenu().findItem(R.id.info_trans).setVisible(false);
             toolbar.getMenu().findItem(R.id.ledger).setVisible(false);
             toolbar.getMenu().findItem(R.id.share_received).setVisible(true);

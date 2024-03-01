@@ -6,13 +6,14 @@ plugins {
 
 }
 // LIVE BUILD with UI update
+//code updated by shubh 22 feb 24
 android {
     compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.cinntra.ledure"
-        minSdkVersion 30
+        minSdkVersion 27
         targetSdkVersion 34
         versionCode 19
         versionName "1.0.22"

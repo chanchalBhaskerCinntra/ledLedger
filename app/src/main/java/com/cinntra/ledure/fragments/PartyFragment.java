@@ -1,5 +1,8 @@
 package com.cinntra.ledure.fragments;
 
+
+
+
 import static com.cinntra.ledure.globals.Globals.PAGE_NO_STRING;
 
 import android.app.ProgressDialog;
@@ -14,6 +17,25 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,31 +48,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.AbsListView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.baoyz.widget.PullRefreshLayout;
+
 import com.cinntra.ledure.R;
-import com.cinntra.ledure.activities.CustomersWiseLedger;
-import com.cinntra.ledure.activities.MainActivity_B2C;
-import com.cinntra.ledure.activities.PendingOrders;
 import com.cinntra.ledure.adapters.LedgerCustomersAdapter;
-import com.cinntra.ledure.databinding.ActivityLedgerCustomerBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShareReportBinding;
 import com.cinntra.ledure.databinding.FragmentPartyBinding;
 import com.cinntra.ledure.globals.Globals;
@@ -74,7 +75,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -136,6 +136,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
     String url;
     private String searchTextValue = "";
     private String Zones = "";
+    private String cardType = Globals.cardTypeCCustomer;
 
 
     @Override
@@ -164,12 +165,13 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         Log.e("TAG", "onCreate: " + url);
         title.setVisibility(View.GONE);
         Zones = requireActivity().getIntent().getStringExtra("Zones");
-
+        Prefs.putBoolean(Globals.ISPURCHASE, false);
         setDefaults();
 
         eventSearchManager();
     }
 
+    String salePurchaseGroupType = "";
 
     private void eventSearchManager() {
         searchView.setBackgroundColor(Color.parseColor("#00000000"));
@@ -177,7 +179,14 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         searchView.setVisibility(View.VISIBLE);
         relativeInfoView.setVisibility(View.GONE);
         relativeCalView.setVisibility(View.GONE);
-        binding.quoteHeader.salesAndPurchaseLayout.setVisibility(View.INVISIBLE);
+        //todo sale purchase option is disable according to client
+        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
+            binding.quoteHeader.salesAndPurchaseLayout.setVisibility(View.VISIBLE);
+        } else {
+            binding.quoteHeader.salesAndPurchaseLayout.setVisibility(View.INVISIBLE);
+        }
+
+
         filterView.setVisibility(View.VISIBLE);
         if (Prefs.getString(Globals.Role, "").equalsIgnoreCase("admin")) {
             share_pdf.setVisibility(View.VISIBLE);
@@ -191,6 +200,52 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
             searchView.setFocusable(true);
 
         });
+
+
+        //todo set zone --
+        if (Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("admin") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Director") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Accounts")) {
+            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                    R.array.data_type, // Replace with your item array resource
+                    R.layout.spinner_white_textview);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.quoteHeader.typeDropdown.setAdapter(spinnerArrayAdapter);
+        } else {
+
+            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                    R.array.data_type, // Replace with your item array resource
+                    R.layout.spinner_white_textview);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.quoteHeader.typeDropdown.setAdapter(spinnerArrayAdapter);
+        }
+
+        binding.quoteHeader.typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                salePurchaseGroupType = binding.quoteHeader.typeDropdown.getSelectedItem().toString();
+                pageNo = 1;
+                searchTextValue = "";
+                binding.quoteHeader.searchView.setQuery("", false);
+                if (salePurchaseGroupType.equals("Sales")) {
+                    Prefs.putBoolean(Globals.ISPURCHASE, false);
+                    cardType = Globals.cardTypeCCustomer;
+                    itemOnOnePage("");
+
+                } else {
+                    Prefs.putBoolean(Globals.ISPURCHASE, true);
+                    //todo add login for sale purchase
+                    cardType = Globals.cardTypeCSupplier;
+                    itemOnOnePage("");
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         binding.quoteHeader.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
@@ -649,7 +704,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
                 switch (menuItem.getItemId()) {
 
                     case R.id.menuAToz:
-                        Collections.sort(AllitemsList, new Comparator<BusinessPartnerData>() {
+                      /*  Collections.sort(AllitemsList, new Comparator<BusinessPartnerData>() {
                             @Override
                             public int compare(BusinessPartnerData item, BusinessPartnerData t1) {
                                 String s1 = item.getCardName();
@@ -659,10 +714,16 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
                             }
 
                         });
+                        adapter.notifyDataSetChanged();*/
+
+                        pageNo = 1;
+                        AllitemsList.clear();
+                        orderByName = "a-z";
+                        itemOnOnePage("");
                         adapter.notifyDataSetChanged();
                         return true;
                     case R.id.menuZtoA:
-                        Collections.sort(AllitemsList, new Comparator<BusinessPartnerData>() {
+                 /*       Collections.sort(AllitemsList, new Comparator<BusinessPartnerData>() {
                             @Override
                             public int compare(BusinessPartnerData item, BusinessPartnerData t1) {
                                 String s1 = item.getCardName();
@@ -670,7 +731,11 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
                                 return s2.compareToIgnoreCase(s1);
                             }
 
-                        });
+                        });*/
+                        pageNo = 1;
+                        AllitemsList.clear();
+                        orderByName = "z-a";
+                        itemOnOnePage("");
                         adapter.notifyDataSetChanged();
                         return true;
 
@@ -769,6 +834,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
                 if (Globals.checkInternet(requireContext())) {
                     pageNo = 1;
                     AllitemsList.clear();
+                    orderByName = "";
                     // if(searchView.getVisibility()==View.GONE)
                     if (searchLay.getVisibility() == View.VISIBLE)
                         searchTextValue = searchView.getQuery().toString();
@@ -833,6 +899,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
 
     ArrayList<BusinessPartnerData> AllitemsList;
     LedgerCustomersAdapter adapter;
+    String orderByName = "";
 
 
     private void itemOnOnePage(String searchValue) {
@@ -844,7 +911,9 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
         hde.put("SearchText", searchValue);
+        hde.put(Globals.payLoadOrderByName, orderByName);
         hde.put("Zones", Zones);
+        hde.put(Globals.payLoadCardType, cardType);
 
 
         Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
@@ -853,7 +922,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
 
 
-                if (response.body().getStatus() == 200) {
+                if (response.body().getStatus()==200) {
                     if (response.body().getData().size() > 0) {
 
                         binding.fragmentCustomer.loaderCustomer.loader.setVisibility(View.GONE);
@@ -911,6 +980,8 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
         hde.put("SearchText", searchTextValue);
         hde.put("Zones", Zones);
+        hde.put(Globals.payLoadOrderByName, orderByName);
+        hde.put(Globals.payLoadCardType, cardType);
         Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override

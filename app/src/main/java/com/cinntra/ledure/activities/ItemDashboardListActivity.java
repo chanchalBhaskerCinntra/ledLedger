@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.ItemStockAdapter;
 import com.cinntra.ledure.databinding.ActivityItemDashboardListBinding;
@@ -26,10 +28,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.pixplicity.easyprefs.library.Prefs;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -46,9 +50,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
     Long endDatelng = (long) 0.0;
     String startDate = Globals.firstDateOfFinancialYear();
     String endDate = Globals.lastDateOfFinancialYear();
-    String toolBarname="";
-    String zoneFlag = "";
-
+    String toolBarname = "";
+    String zoneCode = "";
 
 
     @Override
@@ -68,11 +71,12 @@ public class ItemDashboardListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         StockGroupCode = getIntent().getStringExtra("ItemGroupCode");
         fromwhere = getIntent().getStringExtra("fromwhere");
+        zoneCode = getIntent().getStringExtra("zoneCode");
         toolBarname = getIntent().getStringExtra("ItemGroupName");
         hideToolbarMenu();
 
-        startDate=Prefs.getString(Globals.FROM_DATE,"");
-        endDate=Prefs.getString(Globals.TO_DATE,"");
+        startDate = Prefs.getString(Globals.FROM_DATE, "");
+        endDate = Prefs.getString(Globals.TO_DATE, "");
        /* if (startDate.isEmpty()) {
             from_to_date.setText("All");
         } else {
@@ -81,7 +85,6 @@ public class ItemDashboardListActivity extends AppCompatActivity {
         }*/
 
         setUpSearch();
-
 
 
         binding.toolbarItemDashBoard.headTitle.setText(toolBarname);
@@ -103,8 +106,7 @@ public class ItemDashboardListActivity extends AppCompatActivity {
 
     }
 
-    private void setUpSearch()
-          {
+    private void setUpSearch() {
         binding.toolbarItemDashBoard.search.setOnClickListener(view -> {
             binding.toolbarItemDashBoard.mainHeaderLay.setVisibility(View.GONE);
             binding.toolbarItemDashBoard.searchLay.setVisibility(View.VISIBLE);
@@ -390,8 +392,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("FromDate", startDate);
                     hde.put("ToDate", endDate);
                     hde.put("SubGroupCode", StockGroupCode);
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-                } else if (fromwhere.equalsIgnoreCase("Zone")){
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+                } else if (fromwhere.equalsIgnoreCase("Zone")) {
 
                     hde.put("PageNo", String.valueOf(pageNo));
                     hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
@@ -401,8 +403,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("Zone", StockGroupCode);
                     hde.put("OrderByAmt", "");
                     hde.put("OrderByName", "");
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-                }else if (fromwhere.equalsIgnoreCase("zoneStock")){
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+                } else if (fromwhere.equalsIgnoreCase("zoneStock")) {
 
                     hde.put("PageNo", String.valueOf(pageNo));
                     hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
@@ -410,9 +412,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("FromDate", startDate);
                     hde.put("ToDate", endDate);
                     hde.put("SubGroupCode", StockGroupCode);
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-                }
-                else if (fromwhere.equalsIgnoreCase("fromSaleCategory")){
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+                } else if (fromwhere.equalsIgnoreCase("fromSaleCategory")) {
 
                     hde.put("PageNo", String.valueOf(pageNo));
                     hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
@@ -420,9 +421,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("FromDate", startDate);
                     hde.put("ToDate", endDate);
                     hde.put("SubGroupCode", StockGroupCode);
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-                }
-                else {
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+                } else {
 
                     hde.put("PageNo", String.valueOf(pageNo));
                     hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
@@ -431,11 +431,17 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("ToDate", endDate);
                     hde.put("GroupCode", StockGroupCode);
                     hde.put("GroupCode", StockGroupCode);
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 }
 
 
-                Call<ResponseItemDashboard> call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                Call<ResponseItemDashboard> call;
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                }
                 try {
                     Response<ResponseItemDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -455,7 +461,7 @@ public class ItemDashboardListActivity extends AppCompatActivity {
 
                                     binding.loader.setVisibility(View.GONE);
                                     // setData(response.body().getData().get(0));
-                                    adapter = new ItemStockAdapter(ItemDashboardListActivity.this, AllitemsList);
+                                    adapter = new ItemStockAdapter(ItemDashboardListActivity.this, AllitemsList, zoneCode);
                                     adapter.AllData(AllitemsList);
                                     layoutManager = new LinearLayoutManager(ItemDashboardListActivity.this, RecyclerView.VERTICAL, false);
                                     binding.rvItemDash.setLayoutManager(layoutManager);
@@ -491,8 +497,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("FromDate", startDate);
                     hde.put("ToDate", endDate);
                     hde.put("SubGroupCode", StockGroupCode);
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-                } else if (fromwhere.equalsIgnoreCase("Zone")){
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+                } else if (fromwhere.equalsIgnoreCase("Zone")) {
 
                     hde.put("PageNo", String.valueOf(pageNo));
                     hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
@@ -502,9 +508,8 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("Zone", StockGroupCode);
                     hde.put("OrderByAmt", "");
                     hde.put("OrderByName", "");
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-                }
-                else {
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+                } else {
 
                     hde.put("PageNo", String.valueOf(pageNo));
                     hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
@@ -512,11 +517,19 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("FromDate", startDate);
                     hde.put("ToDate", endDate);
                     hde.put("GroupCode", StockGroupCode);
-                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode,""));
+                    hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 }
 
 
-                Call<ResponseItemDashboard> call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                Call<ResponseItemDashboard> call;
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                }
+
+
                 try {
                     Response<ResponseItemDashboard> response = call.execute();
                     if (response.isSuccessful()) {

@@ -1,28 +1,17 @@
 package com.cinntra.ledure.activities;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -34,12 +23,8 @@ import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.gson.Gson;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import java.util.Objects;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import in.aabhasjindal.otptextview.OTPListener;
-import in.aabhasjindal.otptextview.OtpTextView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,7 +43,6 @@ public class Splash extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Animation hold = AnimationUtils.loadAnimation(this, R.anim.hold);
 
@@ -130,7 +114,6 @@ public class Splash extends AppCompatActivity {
                 if (Prefs.getString(Globals.USERNAME, "").isEmpty() && Prefs.getString(Globals.USER_PASSWORD, "").isEmpty())
                     AutoLogIn = false;
                 callLogInApi(Prefs.getString(Globals.USERNAME, ""), Prefs.getString(Globals.USER_PASSWORD, ""));
-
 
             }
         }, delayMillis);
@@ -207,13 +190,10 @@ public class Splash extends AppCompatActivity {
             public void onFailure(Call<NewLogINResponse> call, Throwable t) {
                 AutoLogIn = false;
                 gotoHome();
-                Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
     }
 
-
-    private static final String TAG = "Splash";
     private boolean AutoLogIn = false;
 
     private void gotoHome() {
@@ -226,68 +206,11 @@ public class Splash extends AppCompatActivity {
 
 
         } else {
-            showMpinPopup();
-
-
+            Intent i = new Intent(Splash.this, MainActivity_B2C.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            finish();
         }
-
-    }
-
-
-    private void showMpinPopup() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Splash.this, R.style.CustomAlertDialog);
-        View dialogView = LayoutInflater.from(Splash.this).inflate(R.layout.enter_mpin_custom_popup_alert, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        layoutParams.gravity = Gravity.CENTER;
-        dialog.getWindow().setAttributes(layoutParams);
-
-        dialog.show();
-
-
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        OtpTextView otpView = dialogView.findViewById(R.id.otp_view);
-        TextView tvForgotMpin = dialogView.findViewById(R.id.tvForgotMpin);
-
-        tvForgotMpin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                startActivity(new Intent(Splash.this, ForgotMPINActivity.class));
-            }
-        });
-
-        otpView.setOtpListener(new OTPListener() {
-            @Override
-            public void onInteractionListener() {
-                // Fired when user types something in the Otpbox
-            }
-
-            @Override
-            public void onOTPComplete(String otp) {
-                if (Prefs.getString(Globals.MPIN_VALUE, "").equalsIgnoreCase(otp)) {
-                    dialog.dismiss();
-                    Intent i = new Intent(Splash.this, MainActivity_B2C.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                    finish();
-                    Toast.makeText(Splash.this, "Verified Successfully", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(Splash.this, "Please Enter Correct Pin", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
-
 
     }
 }

@@ -61,10 +61,12 @@ import com.cinntra.ledure.globals.SearchViewUtils;
 import com.cinntra.ledure.model.Customers_Report;
 import com.cinntra.ledure.model.DashboardCounterResponse;
 
+import com.cinntra.ledure.model.LedgerCustomerResponse;
 import com.cinntra.ledure.model.ReceivableCustomerData;
 import com.cinntra.ledure.model.ReceivableResponse;
 import com.cinntra.ledure.newapimodel.DataPaymentDueDashboardCustomerList;
 import com.cinntra.ledure.newapimodel.LeadResponse;
+import com.cinntra.ledure.newapimodel.ResponsePayMentDueCounter;
 import com.cinntra.ledure.newapimodel.ResponsePaymentDueDashboardCustomerList;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.cinntra.roomdb.ReceivableDatabase;
@@ -74,6 +76,7 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
@@ -408,7 +411,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
     private void setRecyclerViewAdapter() {
         salesvalue.setText("\u20B9 " + Prefs.getString(Globals.Total_Receivables, "0"));
         //    salesvalue.setText("\u20B9 " + Prefs.getString(Globals.Total_Receivables, "0"));
-        callDashboardCounter();
+        callPaymentDueCounter();
 
 
 
@@ -456,9 +459,17 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
         obj.put("Type", reportType);
         obj.put("FromDate", startDate);
         obj.put("ToDate", endDate);
+        obj.put("SearchText", "");
         obj.put(Globals.payLoadDueDaysGroup, overDueFilter);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+
+
+        Call<DashboardCounterResponse> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger_purchase(obj);
+        } else {
+            call =  NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+        }
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -507,6 +518,69 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
             }
         });
         //  callBplistApi(bp_spinner, cp_spinner);
+    }
+
+
+    private void callPaymentDueCounter() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        jsonObject.addProperty("DueDaysGroup", overDueFilter);
+        jsonObject.addProperty(Globals.payLoadFilter, "");
+        jsonObject.addProperty(Globals.payLoadCode, "");
+        jsonObject.addProperty("SearchText", "");
+
+
+
+        Call<ResponsePayMentDueCounter> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        } else {
+            call =  NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+        }
+        call.enqueue(new Callback<ResponsePayMentDueCounter>() {
+            @Override
+            public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
+                if (response.code() == 200) {
+                    //  Toast.makeText(requireContext(), "success", Toast.LENGTH_SHORT).show();
+                    // alertDialog.dismiss();
+                    loader.setVisibility(View.GONE);
+                    if (response.body().getStatus() == 200) {
+                        //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
+                        try {
+                            salesvalue.setText(requireActivity().getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
+                        } catch (Resources.NotFoundException e) {
+                            Log.e(TAG, "onResponse: "+e.getMessage() );
+                        }
+
+                    } else {
+                        //  Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } else {
+                    loader.setVisibility(View.GONE);
+
+
+//                    Gson gson = new GsonBuilder().create();
+//                    LeadResponse mError = new LeadResponse();
+//                    try {
+//                        String s = response.errorBody().string();
+//                        mError = gson.fromJson(s, LeadResponse.class);
+//                    } catch (IOException e) {
+//                        //handle failure to read error
+//                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponsePayMentDueCounter> call, Throwable t) {
+                loader.setVisibility(View.GONE);
+
+                Toast.makeText(requireContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -583,7 +657,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                 endDate = Globals.Date_yyyy_mm_dd(endDatelng);
                 from_to_date.setText(startDate + " - " + endDate);
                 loader.setVisibility(View.VISIBLE);
-                callDashboardCounter();
+             callPaymentDueCounter();
                 callledgerOneapi(reportType, startDate, endDate);
                 url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter;
             }
@@ -829,7 +903,15 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
 
                 //  hde.put(Globals.payLoadDueDaysGroup, "-1");
 
-                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+
+
+                Call<ResponsePaymentDueDashboardCustomerList> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call =NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerListPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                }
+
                 try {
                     Response<ResponsePaymentDueDashboardCustomerList> response = call.execute();
                     if (response.isSuccessful()) {
@@ -868,7 +950,6 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                                     // setData(response.body().getData().get(0));
 
                                     //setRecyclerViewAdapter();
-                                    adapter.notifyDataSetChanged();
                                     swipeRefreshItem.setRefreshing(false);
 
 
@@ -923,7 +1004,13 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                 hde.put(Globals.payLoadFilter, groupFIlter);
                 hde.put(Globals.payLoadCode, groupCode);
                 //  hde.put(Globals.payLoadDueDaysGroup, "-1");
-                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                Call<ResponsePaymentDueDashboardCustomerList> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call =NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerListPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                }
+
                 try {
                     Response<ResponsePaymentDueDashboardCustomerList> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1093,7 +1180,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     pageNo = 1;
                     overDueFilter = "-1";
                     Prefs.putString(Globals.FROM_DATE_receivable, "nondue");
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     bottomSheetDialog.dismiss();
                     from_to_date.setText("Non due");
@@ -1105,7 +1192,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     pageNo = 1;
                     overDueFilter = "0";
                     Prefs.putString(Globals.FROM_DATE_receivable, "0");
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     bottomSheetDialog.dismiss();
                     from_to_date.setText("0-30");
@@ -1117,7 +1204,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     pageNo = 1;
                     Prefs.putString(Globals.FROM_DATE_receivable, "30");
                     overDueFilter = "30";
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     bottomSheetDialog.dismiss();
                     from_to_date.setText("31-45");
@@ -1130,7 +1217,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     pageNo = 1;
                     Prefs.putString(Globals.FROM_DATE_receivable, "30");
                     overDueFilter = "30";
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     bottomSheetDialog.dismiss();
                     from_to_date.setText("31-45");
@@ -1142,7 +1229,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     pageNo = 1;
                     overDueFilter = "45";
                     Prefs.putString(Globals.FROM_DATE_receivable, "45");
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     from_to_date.setText("46-60");
                     bottomSheetDialog.dismiss();
@@ -1154,7 +1241,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     pageNo = 1;
                     overDueFilter = "60";
                     Prefs.putString(Globals.FROM_DATE_receivable, "60");
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     from_to_date.setText("61-90");
                     bottomSheetDialog.dismiss();
@@ -1165,7 +1252,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                     overDueFilter = "";
                     Prefs.putString(Globals.FROM_DATE_receivable, "All");
                     from_to_date.setText("All");
-                    callDashboardCounter();
+                    callPaymentDueCounter();
                     callledgerOneapi(reportType, startDate, endDate);
                     bottomSheetDialog.dismiss();
 

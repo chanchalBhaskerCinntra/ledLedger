@@ -89,6 +89,9 @@ public interface ApiServices {
     @POST("item/sold_items_dashboard")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseItemDashboard> getItemOnDashboard(@Body HashMap<String, String> obj);
+    @POST("item/ap_sold_items_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseItemDashboard> getItemOnDashboardPurchase(@Body HashMap<String, String> obj);
 
 
     @POST("item/sold_items_dashboard")
@@ -99,22 +102,42 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseItemFilterDashboard> getFilterGroupItemStock(@Body HashMap<String, String> obj);
 
+    @POST("item/ap_filter_item_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseItemFilterDashboard> getFilterGroupItemStockPurchase(@Body HashMap<String, String> obj);
+
     @POST("item/filter_bpgroup_item")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseItemFilterDashboard> getFilterGroupItemStockBpWise(@Body HashMap<String, String> obj);
 
+    @POST("item/ap_filter_bpgroup_item")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseItemFilterDashboard> getFilterGroupItemStockBpWisePurchase(@Body HashMap<String, String> obj);
+
     @POST("item/filter_item_dashboard")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseItemFilterDashboard> getFilterItemsZone(@Body HashMap<String, String> obj);
+
+    @POST("item/ap_filter_item_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseItemFilterDashboard> getFilterItemsZonePurchase(@Body HashMap<String, String> obj);
 
 
     @POST("item/sub_category_items_dashboard")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResSubCatItems> sub_category_items_dashboard(@Body HashMap<String, String> obj);
 
+    @POST("item/ap_sub_category_items_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResSubCatItems> sub_category_items_dashboard_purchase(@Body HashMap<String, String> obj);
+
     @POST("item/filter_bpsubgroup_item")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResSubCatItems> soldItemSubGroupApi(@Body HashMap<String, String> obj);
+
+    @POST("item/ap_filter_bpsubgroup_item")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResSubCatItems> soldItemSubGroupApiPurchase(@Body HashMap<String, String> obj);
 
     @GET
     @Headers({"Content-Type: application/json;charset=UTF-8"})
@@ -372,6 +395,10 @@ public interface ApiServices {
     @POST("item/item_invoices")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseItemInvoices> getItemInvoices(@Body HashMap<String, String> hd);
+
+    @POST("item/ap_item_invoices")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseItemInvoices> getItemInvoicesPurchase(@Body HashMap<String, String> hd);
 
 
     @POST("employee/top5bp")
@@ -632,6 +659,10 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<DashboardCounterResponse> getDashBoardCounterForLedger(@Body HashMap<String, String> salesEmployeeItem);
 
+    @POST("purchaseinvoices/purchase_ledger_dashboard_count")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<DashboardCounterResponse> getDashBoardCounterForLedger_purchase(@Body HashMap<String, String> salesEmployeeItem);
+
     @POST("businesspartner/due_payment_dashboard_count")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponsePayMentDueCounter> getPaymentDueCounter(@Body JsonObject salesEmployeeItem);
@@ -646,9 +677,18 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponsePaymentDueDashboardCustomerList> getPaymentDueDashboardCustomerList(@Body HashMap<String, String> salesEmployeeItem);
 
+    @POST("businesspartner/due_payable_payment_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponsePaymentDueDashboardCustomerList> getPaymentDueDashboardCustomerListPurchase(@Body HashMap<String, String> salesEmployeeItem);
+
+
     @POST("businesspartner/bp_due_payment")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseParticularCustomerPaymentDue> getPaymentDueDashboardParticularCustomer(@Body HashMap<String, String> salesEmployeeItem);
+
+    @POST("businesspartner/bp_payable_due_payment")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseParticularCustomerPaymentDue> getPaymentDueDashboardParticularCustomerPurchase(@Body HashMap<String, String> salesEmployeeItem);
 
 
     @POST("order/delivery")
@@ -806,6 +846,15 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ReceivableResponse> receivable_dashboard_post(@Body HashMap<String, String> pay);
 
+    @POST("businesspartner/payable_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ReceivableResponse> payable_dashboard_post(@Body HashMap<String, String> pay);
+
+
+    @POST("businesspartner/filter_payable_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseZoneGroup> getGroupReceivables_purchase(@Body HashMap<String, String> mapData);
+
 
     @POST("businesspartner/bp_ledger")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
@@ -820,6 +869,7 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseItemParticularCustomerInfo> getItemParticularBpLedger(@Body HashMap<String, String> logInDetail);
 
+
     @GET("expense/all")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ExpenseResponse> getAllExpense();
@@ -833,6 +883,10 @@ public interface ApiServices {
     @POST("businesspartner/bp_receivable")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<LedgerCustomerResponse> bp_receivable(@Body HashMap<String, String> logInDetail);
+
+    @POST("businesspartner/bp_payable")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<LedgerCustomerResponse> bp_payable(@Body HashMap<String, String> logInDetail);
 
     @POST("businesspartner/bp_receipt")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
@@ -924,10 +978,13 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<CustomerItemResponse> bpWiseSoldFilterItems(@Body HashMap<String, String> obj);
 
+    @POST("item/ap_filter_bpitem")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<CustomerItemResponse> bpWiseSoldFilterItemsPurchase(@Body HashMap<String, String> obj);
+
     @POST("businesspartner/bp_debit_credit")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<LedgerResponse> bp_debit_credit(@Body HashMap<String, String> obj);
-
 
     @POST("journalentries/bp_wise")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
@@ -1069,6 +1126,11 @@ public interface ApiServices {
     Call<ResponseZoneGroup> getGroupDues(@Body HashMap<String, String> mapData);
 
 
+    @POST("businesspartner/filter_due_payable_payment_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseZoneGroup> getGroupDuesPurchase(@Body HashMap<String, String> mapData);
+
+
     @POST("expense/delete")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ExpenseNewModelResponse> deleteexpense(@Body HashMap<String, List<String>> hd);
@@ -1081,6 +1143,10 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<SalesGraphResponse> salesGraph(@Body HashMap<String, String> hd);
 
+    @POST("businesspartner/monthly_purchase_chart")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<SalesGraphResponse> purchaseGraph(@Body HashMap<String, String> hd);
+
     @POST("businesspartner/monthly_receipts_chart")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<SalesGraphResponse> receiptGraph(@Body HashMap<String, String> hd);
@@ -1088,6 +1154,8 @@ public interface ApiServices {
     @POST("businesspartner/monthly_receivable_chart")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<SalesGraphResponse> receivableGraph(@Body HashMap<String, String> hd);
+
+
 
 
     @POST("businesspartner/monthly_receivable_group_chart")
@@ -1098,6 +1166,10 @@ public interface ApiServices {
     @POST("businesspartner/monthly_receivable_group_chart_filter")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseReceivableGraph> receivableZoneMonthGraph(@Body HashMap<String, String> hd);
+
+    @POST("businesspartner/monthly_payable_group_chart_filter")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseReceivableGraph> receivableZoneMonthGraphPurchase(@Body HashMap<String, String> hd);
 
 
     /****Purchase APi's ***/
@@ -1123,11 +1195,25 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<LedgerCustomerResponse> getparticularledgerdetailsPurchase(@Body HashMap<String, String> logInDetail);
 
+    @POST("item/ap_bp_item_invoices")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseItemParticularCustomerInfo> getItemParticularBpLedgerPurchase(@Body HashMap<String, String> logInDetail);
+
 
     //todo group purchase
     @POST("purchaseinvoices/filter_purchase_ledger_dashboard")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseLedgerGroup> getLedgerGroupPurchase(@Body HashMap<String, String> mapData);
+
+
+    @POST("businesspartner/monthly_purchase_receipts_chart")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<SalesGraphResponse> receiptGraphPurchase(@Body HashMap<String, String> hd);
+
+
+    @POST("businesspartner/monthly_payable_group_chart")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseReceivableGraph> receivableDueMonthGraphPurchase(@Body HashMap<String, String> hd);
 
 
 }

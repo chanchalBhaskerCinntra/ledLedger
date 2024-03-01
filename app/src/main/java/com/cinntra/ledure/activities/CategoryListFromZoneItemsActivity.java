@@ -25,6 +25,7 @@ import com.cinntra.ledure.databinding.ActivityCategoryListFromZoneItemsBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.model.DataItemDashBoard;
+import com.cinntra.ledure.model.ResponseItemDashboard;
 import com.cinntra.ledure.newapimodel.DataItemFilterDashBoard;
 import com.cinntra.ledure.newapimodel.ResponseItemFilterDashboard;
 import com.cinntra.ledure.webservices.NewApiClient;
@@ -474,7 +475,16 @@ public class CategoryListFromZoneItemsActivity extends AppCompatActivity {
                 hde.put(Globals.payLoadOrderByName, filterByName);
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+
+
+                Call<ResponseItemFilterDashboard> call;
+
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -548,7 +558,16 @@ public class CategoryListFromZoneItemsActivity extends AppCompatActivity {
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                Call<ResponseItemFilterDashboard> call;
+
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                }
+
+
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {

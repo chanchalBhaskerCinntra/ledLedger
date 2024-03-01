@@ -2157,7 +2157,16 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+
+
+
+                Call<ResponseItemFilterDashboard> call;
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                }else {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -2283,7 +2292,13 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
 
-                Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                Call<ResponseItemFilterDashboard> call;
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                }else {
+                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
                     if (response.isSuccessful()) {

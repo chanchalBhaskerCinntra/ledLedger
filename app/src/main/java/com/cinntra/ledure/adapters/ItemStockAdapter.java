@@ -26,12 +26,14 @@ import java.util.Locale;
 
 public class ItemStockAdapter extends RecyclerView.Adapter<ItemStockAdapter.ContactViewHolder> {
     Context context;
+    String zoneCode;
     List<DataItemDashBoard> branchList;
 
 
-    public ItemStockAdapter(Context context1, List<DataItemDashBoard> branchList) {
+    public ItemStockAdapter(Context context1, List<DataItemDashBoard> branchList, String zoneCode) {
         this.branchList = branchList;
         this.context = context1;
+        this.zoneCode = zoneCode;
         this.tempList=new ArrayList<DataItemDashBoard>();
 
 
@@ -90,6 +92,7 @@ public class ItemStockAdapter extends RecyclerView.Adapter<ItemStockAdapter.Cont
                     Intent i = new Intent(context, ItemPurchasedByListOfCustomersActivity.class);
 
                     i.putExtra("itemcode", "" +branchList.get(getAdapterPosition()).itemCode);
+                    i.putExtra("zoneCode", "" + zoneCode);
                     i.putExtra("itemname", "" +branchList.get(getAdapterPosition()).itemName);
 
                     context.startActivity(i);

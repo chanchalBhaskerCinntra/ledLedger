@@ -225,17 +225,17 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
 
         //todo visible order by drop down
         if (groupFIlter.equalsIgnoreCase("Zone")) {
-          //  type_group.setVisibility(View.VISIBLE);
+            //  type_group.setVisibility(View.VISIBLE);
             ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
                     R.array.order_by_list_by_zone, // Replace with your item array resource
                     R.layout.spinner_textview_dashboard);
             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-           type_group.setAdapter(spinnerArrayAdapter);
-         //   all_customer.setVisibility(View.VISIBLE);
+            type_group.setAdapter(spinnerArrayAdapter);
+            //   all_customer.setVisibility(View.VISIBLE);
 
         } else {
-           // type_group.setVisibility(View.GONE);
-          //  all_customer.setVisibility(View.INVISIBLE);
+            // type_group.setVisibility(View.GONE);
+            //  all_customer.setVisibility(View.INVISIBLE);
         }
 
 
@@ -545,7 +545,13 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
         hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
 
         try {
-            Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+            Call<ResponseItemFilterDashboard> call;
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+            } else {
+                call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+            }
+
             call.enqueue(new Callback<ResponseItemFilterDashboard>() {
                 @Override
                 public void onResponse(Call<ResponseItemFilterDashboard> call, Response<ResponseItemFilterDashboard> response) {
@@ -571,7 +577,7 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
                             loader.setVisibility(View.GONE);
                             // setData(response.body().getData().get(0));
                             try {
-                                stockGroupAdapter = new ItemOnStockGroupAdapter(requireContext(), AllItemsGroupStockList, "zoneSub",groupCode);
+                                stockGroupAdapter = new ItemOnStockGroupAdapter(requireContext(), AllItemsGroupStockList, "zoneSub", groupCode);
                             } catch (Exception e) {
                                 Log.e(TAG, "runGRoupFIlter: " + e.getMessage());
                             }
@@ -628,7 +634,12 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
         hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
 
         try {
-            Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+            Call<ResponseItemFilterDashboard> call;
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+            } else {
+                call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+            }
             call.enqueue(new Callback<ResponseItemFilterDashboard>() {
                 @Override
                 public void onResponse(Call<ResponseItemFilterDashboard> call, Response<ResponseItemFilterDashboard> response) {
@@ -689,7 +700,7 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
         hde.put("SearchText", searchTextValue);
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-       // hde.put("Zone", groupCode);
+        // hde.put("Zone", groupCode);
         hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         hde.put(Globals.payLoadOrderByName, orderBYName);
         hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
@@ -710,14 +721,18 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
                 @Override
                 public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
                     if (response.isSuccessful()) {
-                        if (response.body().getStatus() == 200){
+                        if (response.body().getStatus() == 200) {
                             //   salesvalue.setText("Rs." + response.body().getTotalSales());
                             layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
                             customerRecyclerView.setLayoutManager(layoutManager);
                             AllitemsList.clear();
                             AllitemsList.addAll(response.body().getData());
                             try {
-                                all_customer.setText(getResources().getString(R.string.all_customers));
+                                try {
+                                    all_customer.setText(getResources().getString(R.string.all_customers));
+                                } catch (Resources.NotFoundException e) {
+
+                                }
                             } catch (Resources.NotFoundException e) {
                                 Log.e(TAG, "run: " + e.getMessage());
                             }
@@ -741,12 +756,12 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
                 @Override
                 public void onFailure(Call<CustomerBusinessRes> call, Throwable t) {
                     loader.setVisibility(View.GONE);
-                    Log.e(TAG, "onFailure: "+t.getMessage() );
+                    Log.e(TAG, "onFailure: " + t.getMessage());
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             loader.setVisibility(View.GONE);
-            Log.e(TAG, "callNewLedgerOneapi: "+e.getMessage() );
+            Log.e(TAG, "callNewLedgerOneapi: " + e.getMessage());
         }
 
     }
@@ -766,7 +781,7 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
                 hde.put("Code", groupCode);
                 hde.put("SearchText", searchTextValue);
                 hde.put("PageNo", String.valueOf(pageNo));
-               // hde.put("Zone", groupCode);
+                // hde.put("Zone", groupCode);
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 hde.put(Globals.payLoadOrderByName, orderBYName);

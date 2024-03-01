@@ -86,6 +86,7 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
     String endDateReverse = "";
     String filterByAmount = "";
     String filterByName = "";
+    String zoneCode = "";
 
 
     @Override
@@ -124,6 +125,8 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
 
         id = getIntent().getStringExtra("itemcode");
         name = getIntent().getStringExtra("itemname");
+        zoneCode = getIntent().getStringExtra("zoneCode");
+
         binding.toolbarItemDashBoard.headTitle.setText(name);
 
 
@@ -628,10 +631,18 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put("SearchText", searchTextValue);
+                hde.put("Zone", zoneCode);
+                hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 hde.put(Globals.payLoadOrderByName, filterByName);
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
-                Call<ResponseItemInvoices> call = NewApiClient.getInstance().getApiService().getItemInvoices(hde);
+                Call<ResponseItemInvoices> call;
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+                    call = NewApiClient.getInstance().getApiService().getItemInvoicesPurchase(hde);
+                }else {
+                    call = NewApiClient.getInstance().getApiService().getItemInvoices(hde);
+                }
                 try {
                     Response<ResponseItemInvoices> response = call.execute();
                     if (response.isSuccessful()) {
@@ -957,11 +968,19 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put("SearchText", searchTextValue);
+                hde.put("Zone", zoneCode);
+                hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 hde.put(Globals.payLoadOrderByName, filterByName);
                 hde.put(Globals.payLoadOrderByAMt, filterByAmount);
 
 
-                Call<ResponseItemInvoices> call = NewApiClient.getInstance().getApiService().getItemInvoices(hde);
+                Call<ResponseItemInvoices> call;
+
+                if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+                    call = NewApiClient.getInstance().getApiService().getItemInvoicesPurchase(hde);
+                }else {
+                    call = NewApiClient.getInstance().getApiService().getItemInvoices(hde);
+                }
                 try {
                     Response<ResponseItemInvoices> response = call.execute();
                     if (response.isSuccessful()) {

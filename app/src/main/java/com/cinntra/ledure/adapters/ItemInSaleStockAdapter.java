@@ -98,7 +98,7 @@ public class ItemInSaleStockAdapter extends RecyclerView.Adapter<ItemInSaleStock
 
                     i.putExtra("itemcode", "" +branchList.get(getAdapterPosition()).itemCode);
                     i.putExtra("itemname", "" +branchList.get(getAdapterPosition()).itemName);
-
+                    i.putExtra("zoneCode", "");
                     context.startActivity(i);
 
 

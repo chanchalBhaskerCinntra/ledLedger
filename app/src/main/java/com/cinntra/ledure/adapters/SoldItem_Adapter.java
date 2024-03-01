@@ -54,6 +54,7 @@ public class SoldItem_Adapter extends RecyclerView.Adapter<SoldItem_Adapter.View
         holder.title.setText(AllItemList.get(position).getItemName());
         holder.last_sold_date.setText("Total Price : " + AllItemList.get(position).getTotalPrice());
         holder.quantity.setText("Total Quantity : " + AllItemList.get(position).getTotalQty());
+        holder.unit_price.setVisibility(View.INVISIBLE);
         holder.unit_price.setText("Unit Price : " + AllItemList.get(position).getUnitPirce());
 
 

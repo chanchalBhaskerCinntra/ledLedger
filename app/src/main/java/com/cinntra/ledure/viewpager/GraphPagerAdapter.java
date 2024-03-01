@@ -145,6 +145,9 @@ public class GraphPagerAdapter extends PagerAdapter {
         });*/
 
 
+
+
+
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
         roundedBarChartRenderer.setmRadius(15f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
@@ -375,7 +378,8 @@ public class GraphPagerAdapter extends PagerAdapter {
         dataSet.setHighLightAlpha(100);
         dataSets.add(dataSet);
 
-
+        dataSet.setHighLightColor(Color.WHITE);
+        dataSet.setHighLightAlpha(100);
         BarData data = new BarData(dataSets);
         data.setBarWidth(0.75f);
         data.setValueTextColor(context.getResources().getColor(R.color.white));

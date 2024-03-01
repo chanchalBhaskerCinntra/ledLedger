@@ -34,6 +34,7 @@ import com.cinntra.ledure.databinding.FragmentQuotesListBinding;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.interfaces.FragmentClickListener;
 import com.cinntra.ledure.model.CustomerItemResponse;
+import com.cinntra.ledure.model.ResSubCatItems;
 import com.cinntra.ledure.model.SoldItemResponse;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -193,7 +194,15 @@ public class Sold_ItemBasesActivity extends AppCompatActivity implements LedgerC
         hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
 
-        Call<CustomerItemResponse> call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItems(hde);
+        Call<CustomerItemResponse> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItemsPurchase(hde);
+        } else {
+            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItems(hde);
+        }
+
+
+
         call.enqueue(new Callback<CustomerItemResponse>() {
             @Override
             public void onResponse(Call<CustomerItemResponse> call, Response<CustomerItemResponse> response) {
@@ -240,7 +249,15 @@ public class Sold_ItemBasesActivity extends AppCompatActivity implements LedgerC
         hde.put("SubGroupCode", subGroupCode);
         hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<CustomerItemResponse> call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItems(hde);
+
+
+
+        Call<CustomerItemResponse> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItemsPurchase(hde);
+        } else {
+            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItems(hde);
+        }
         call.enqueue(new Callback<CustomerItemResponse>() {
             @Override
             public void onResponse(Call<CustomerItemResponse> call, Response<CustomerItemResponse> response) {

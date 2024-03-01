@@ -58,6 +58,7 @@ import com.cinntra.ledure.model.LedgerCustomerResponse;
 import com.cinntra.ledure.model.Receivable_JE_Credit;
 import com.cinntra.ledure.newapimodel.DataparticularCustomerpaymentDue;
 import com.cinntra.ledure.newapimodel.ResponseParticularCustomerPaymentDue;
+import com.cinntra.ledure.newapimodel.ResponsePayMentDueCounter;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -432,7 +433,13 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put(Globals.payLoadDueDaysGroup, overdueDaysFilter);
-                Call<ResponseParticularCustomerPaymentDue> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomer(hde);
+
+                Call<ResponseParticularCustomerPaymentDue> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomerPurchase(hde);
+                } else {
+                    call =  NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomer(hde);
+                }
                 try {
                     Response<ResponseParticularCustomerPaymentDue> response = call.execute();
                     if (response.isSuccessful()) {
@@ -519,7 +526,14 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put(Globals.payLoadDueDaysGroup, overdueDaysFilter);
-                Call<ResponseParticularCustomerPaymentDue> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomer(hde);
+
+                Call<ResponseParticularCustomerPaymentDue> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomerPurchase(hde);
+                } else {
+                    call =  NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomer(hde);
+                }
+
                 try {
                     Response<ResponseParticularCustomerPaymentDue> response = call.execute();
                     if (response.isSuccessful()) {

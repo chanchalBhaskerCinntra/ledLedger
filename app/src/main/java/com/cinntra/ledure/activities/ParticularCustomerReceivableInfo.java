@@ -387,7 +387,15 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put(Globals.payLoadDueDaysGroup, overdueDaysFilter);
-                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService().bp_receivable(hde);
+
+
+                Call<LedgerCustomerResponse> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call =NewApiClient.getInstance().getApiService().bp_payable(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().bp_receivable(hde);
+                }
+
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
                     if (response.isSuccessful()) {
@@ -467,7 +475,13 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 hde.put(Globals.payLoadDueDaysGroup, overdueDaysFilter);
-                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService().bp_receivable(hde);
+
+                Call<LedgerCustomerResponse> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call =NewApiClient.getInstance().getApiService().bp_payable(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService().bp_receivable(hde);
+                }
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
                     if (response.isSuccessful()) {

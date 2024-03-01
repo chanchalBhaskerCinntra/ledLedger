@@ -88,6 +88,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
                 else if (fromwhere.equalsIgnoreCase("fromSaleCategory")){
                     Intent i = new Intent(itemView.getContext(), ItemDashboardListActivity.class);
                     i.putExtra("fromwhere", fromwhere);
+
                     i.putExtra("ItemGroupCode", "" + childItemList.get(getAdapterPosition()).getGroupName());
                     i.putExtra("ItemGroupName", "" + childItemList.get(getAdapterPosition()).getGroupName());
                     itemView.getContext().startActivity(i);
@@ -95,6 +96,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
                 } else if (fromwhere.equalsIgnoreCase("zoneStock")){
                     Intent i = new Intent(itemView.getContext(), ItemDashboardListActivity.class);
                     i.putExtra("fromwhere", fromwhere);
+                    i.putExtra("zoneCode", zonCode);
                     i.putExtra("ItemGroupCode", "" + childItemList.get(getAdapterPosition()).getGroupName());
                     i.putExtra("ItemGroupName", "" + childItemList.get(getAdapterPosition()).getGroupName());
                     itemView.getContext().startActivity(i);
@@ -105,6 +107,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
                     i.putExtra("fromwhere", "from");
                     i.putExtra("ItemGroupCode", "" + childItemList.get(getAdapterPosition()).getGroupName());
                     i.putExtra("ItemGroupName", "" + childItemList.get(getAdapterPosition()).getGroupName());
+                    i.putExtra("zoneCode", zonCode);
                     itemView.getContext().startActivity(i);
                 }
 

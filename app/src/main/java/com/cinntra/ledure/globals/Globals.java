@@ -95,7 +95,9 @@ import androidx.fragment.app.FragmentActivity;
 
 public class Globals {
 
-
+    public static String cardTypeCCustomer ="cCustomer";
+    public static String cardTypeCSupplier ="cSupplier";
+    public static String payLoadCardType  ="CardType";
     public static String cardNameGlobal = "";
 
     public static String foo(double value) //Got here 6.743240136E7 or something..
@@ -163,18 +165,14 @@ public class Globals {
       public static String PDFURL         = "http://ledure.bridgexd.com/assets/html/";//Live*/
 
     /************Live Development*******************/
-   /* public static String NewBaseUrl = "http://103.107.67.160:8002/";
+    public static String NewBaseUrl = "http://103.107.67.160:8002/";
     public static String PDFURL = "http://ledure.bridgexd.com/assets/newhtml/";
-    public static String ImageURL = "http://103.107.67.160:8002";*/
+    public static String ImageURL = "http://103.107.67.160:8002";
 
     /************TestTestingONLY FOR PAYMENT_DUE*******************/
-    public static String NewBaseUrl = "http://103.107.67.160:8003/";
+   /* public static String NewBaseUrl = "http://103.107.67.160:8003/";
     public static String PDFURL = "http://103.107.67.160:8003/assets/html/";
-    public static String ImageURL = "http://103.107.67.160:8003";
-
-
-
-
+    public static String ImageURL = "http://103.107.67.160:8003";*/
 
     /*   *//***testing for vishal ****//*
     public static String NewBaseUrl = "http://192.168.29.112:8000/";

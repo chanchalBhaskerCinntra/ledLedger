@@ -384,7 +384,13 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
         obj.put("Code", groupCode);
 
 
-        Call<ResponseReceivableGraph> call = NewApiClient.getInstance().getApiService().receivableZoneMonthGraph(obj);
+
+        Call<ResponseReceivableGraph> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().receivableZoneMonthGraphPurchase(obj);
+        } else {
+            call =  NewApiClient.getInstance().getApiService().receivableZoneMonthGraph(obj);
+        }
         call.enqueue(new Callback<ResponseReceivableGraph>() {
             @Override
             public void onResponse(Call<ResponseReceivableGraph> call, Response<ResponseReceivableGraph> response) {
@@ -672,9 +678,17 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
         obj.put("Type", reportType);
         obj.put("FromDate", startDate);
         obj.put("ToDate", endDate);
+        obj.put("SearchText", "");
         obj.put(Globals.payLoadDueDaysGroup, overDueFilter);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+
+
+        Call<DashboardCounterResponse> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger_purchase(obj);
+        } else {
+            call =  NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+        }
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -892,7 +906,14 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
 
-                Call<ReceivableResponse> call = NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+
+
+                Call<ReceivableResponse> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().payable_dashboard_post(hde);
+                } else {
+                    call =  NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                }
                 try {
                     Response<ReceivableResponse> response = call.execute();
                     if (response.isSuccessful()) {
@@ -981,7 +1002,12 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
-                Call<ReceivableResponse> call = NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                Call<ReceivableResponse> call;
+                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService().payable_dashboard_post(hde);
+                } else {
+                    call =  NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                }
                 try {
                     Response<ReceivableResponse> response = call.execute();
                     if (response.isSuccessful()) {

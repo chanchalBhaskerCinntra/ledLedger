@@ -2,16 +2,8 @@ package com.cinntra.ledure.activities;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -23,9 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cinntra.ledure.R;
@@ -39,16 +28,6 @@ import com.cinntra.ledure.model.NewLogINResponse;
 import com.cinntra.ledure.model.QuotationResponse;
 import com.cinntra.ledure.webservices.APIsClient;
 import com.cinntra.ledure.webservices.NewApiClient;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.safetynet.SafetyNet;
-import com.google.android.gms.safetynet.SafetyNetApi;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.recaptcha.Recaptcha;
-import com.google.android.recaptcha.RecaptchaAction;
-import com.google.android.recaptcha.RecaptchaTasksClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,7 +35,6 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,9 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Login extends AppCompatActivity implements View.OnClickListener, DatabaseClick, GoogleApiClient.ConnectionCallbacks {
-
-    private static final String TAG = "Login";
+public class Login extends AppCompatActivity implements View.OnClickListener, DatabaseClick {
     private Button signin;
     @BindView(R.id.progressBar1)
     ProgressBar progressBar;
@@ -83,30 +59,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
 
     @BindView(R.id.rememberme)
     CheckBox rememberme;
-
-
-    @BindView(R.id.checkBoxNOtARobot)
-    CheckBox checkBoxNOtARobot;
     private AppCompatActivity activity;
     private String token = "";
-
-    //  GoogleApiClient googleApiClient;
-
-
-    //todo recaptcha
-    @Nullable
-    private RecaptchaTasksClient recaptchaTasksClient = null;
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
 
     @Override
     protected void onRestart() {
@@ -152,51 +106,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         sql_setting.setOnClickListener(this);
         register_here.setOnClickListener(this);
 
-/*
-        googleApiClient = new GoogleApiClient.Builder(Login.this).addApi(SafetyNet.API).addConnectionCallbacks(this).build();
-        googleApiClient.connect();
-        initializeRecaptchaClient();
-
-        findViewById(R.id.checkBoxNOtARobot).setOnClickListener(this::executeLoginAction);
-        findViewById(R.id.ivLogo).setOnClickListener(this::executeRedeemAction);*/
-
-        checkBoxNOtARobot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkBoxNOtARobot.isChecked()) {
-                /*    SafetyNet.SafetyNetApi.verifyWithRecaptcha(googleApiClient, Globals.CAPTCHA_SITE_KEY)
-                            .setResultCallback(new ResultCallback<SafetyNetApi.RecaptchaTokenResult>() {
-                                @Override
-                                public void onResult(@NonNull SafetyNetApi.RecaptchaTokenResult recaptchaTokenResult) {
-                                    Status status = recaptchaTokenResult.getStatus();
-                                    if ((status != null) && status.isSuccess()) {
-                                        Toast.makeText(Login.this, "Successfully Verified", Toast.LENGTH_SHORT).show();
-                                    }else {
-                                        Log.e(TAG, "onResult: "+status.getStatusMessage());
-                                    }
-                                }
-                            });*/
-                    //  verifyGoogleReCAPTCHA();
-
-
-                } else {
-                    Toast.makeText(Login.this, "unSuccessfully", Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
-
-     /*   checkBoxNOtARobot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    Toast.makeText(Login.this, "CHECKED", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(Login.this, "UN_CHECKED", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
-
         if (Prefs.getString(Globals.REMEMBER_ME, "").equalsIgnoreCase("rem")) {
             login_username.setText(Prefs.getString(Globals.USERNAME, ""));
             login_password.setText(Prefs.getString(Globals.USER_PASSWORD, ""));
@@ -217,241 +126,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         login_username.setText("");
         login_password.setText("");
     }
-
-
-    private void initializeRecaptchaClient() {
-        Recaptcha
-                .getTasksClient(getApplication(), Globals.CAPTCHA_SITE_KEY)
-                .addOnSuccessListener(
-                        this,
-                        new OnSuccessListener<RecaptchaTasksClient>() {
-                            @Override
-                            public void onSuccess(RecaptchaTasksClient client) {
-                                Login.this.recaptchaTasksClient = client;
-                                Log.e(TAG, "onSuccess: " + client.toString());
-
-                            }
-                        })
-                .addOnFailureListener(
-                        this,
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Handle communication errors ...
-                                // See "Handle communication errors" section
-                                Log.e(TAG, "onFailure: " + e.getMessage());
-                            }
-                        });
-    }
-
-    private void executeLoginAction(View v) {
-        assert recaptchaTasksClient != null;
-        recaptchaTasksClient
-                .executeTask(RecaptchaAction.LOGIN)
-                .addOnSuccessListener(
-                        this,
-                        new OnSuccessListener<String>() {
-                            @Override
-                            public void onSuccess(String token) {
-                                Log.e(TAG, "onSuccess: " + token);
-                                // Handle success ...
-                                // See "What's next" section for instructions
-                                // about handling tokens.
-                            }
-                        })
-                .addOnFailureListener(
-                        this,
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG, "onFailure: " + e.getMessage());
-                                // Handle communication errors ...
-                                // See "Handle communication errors" section
-                            }
-                        });
-    }
-
-    private void executeRedeemAction(View v) {
-        assert recaptchaTasksClient != null;
-        recaptchaTasksClient
-                .executeTask(RecaptchaAction.custom("redeem"))
-                .addOnSuccessListener(
-                        this,
-                        new OnSuccessListener<String>() {
-                            @Override
-                            public void onSuccess(String token) {
-                                // Handle success ...
-                                // See "What's next" section for instructions
-                                // about handling tokens.
-                            }
-                        })
-                .addOnFailureListener(
-                        this,
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Handle communication errors ...
-                                // See "Handle communication errors" section
-                            }
-                        });
-    }
-
-
-/*    private void initializeRecaptcha() {
-        SafetyNet.getClient(this).verifyWithRecaptcha(Globals.CAPTCHA_SITE_KEY)
-                .addOnSuccessListener(this, response -> {
-                    // Successfully received CAPTCHA token
-                    String userResponseToken = response.getTokenResult();
-                    Log.e(TAG, "initializeRecaptcha: " + userResponseToken);
-                    // Now validate this token with your backend server
-                    checkBoxNOtARobot.setChecked(true);
-                })
-                .addOnFailureListener(this, e -> {
-                    // Error handling
-                    Log.e(TAG, "initializeRecaptcha: " + e.getMessage());
-                    checkBoxNOtARobot.setChecked(false);
-                });
-    }*/
-
-
-    public void initializeRecaptcha() {
-        SafetyNet.getClient(this).verifyWithRecaptcha(Globals.CAPTCHA_SITE_KEY)
-                .addOnSuccessListener(this,
-                        new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
-                            @Override
-                            public void onSuccess(SafetyNetApi.RecaptchaTokenResponse response) {
-                                // Indicates communication with reCAPTCHA service was
-                                // successful.
-                                String userResponseToken = response.getTokenResult();
-                                if (!userResponseToken.isEmpty()) {
-                                    // Validate the user response token using the
-                                    // reCAPTCHA siteverify API.
-                                    Log.e(TAG, "onSuccess: " + userResponseToken);
-                                }
-                            }
-                        })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if (e instanceof ApiException) {
-                            // An error occurred when communicating with the
-                            // reCAPTCHA service. Refer to the status code to
-                            // handle the error appropriately.
-                            ApiException apiException = (ApiException) e;
-                            int statusCode = apiException.getStatusCode();
-                            Log.d(TAG, "Error: " + CommonStatusCodes
-                                    .getStatusCodeString(statusCode));
-                        } else {
-                            // A different, unknown type of error occurred.
-                            Log.d(TAG, "Error: " + e.getMessage());
-                        }
-                    }
-                });
-    }
-
-
-    private void verifyGoogleReCAPTCHA() {
-
-        // below line is use for getting our safety
-        // net client and verify with reCAPTCHA
-        SafetyNet.getClient(this).verifyWithRecaptcha(Globals.CAPTCHA_SITE_KEY)
-                // after getting our client we have
-                // to add on success listener.
-                .addOnSuccessListener(this, new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
-                    @Override
-                    public void onSuccess(SafetyNetApi.RecaptchaTokenResponse response) {
-                        // in below line we are checking the response token.
-                        if (!response.getTokenResult().isEmpty()) {
-                            // if the response token is not empty then we
-                            // are calling our verification method.
-                            //   handleVerification(response.getTokenResult());
-                            Log.e(TAG, "onSuccess: " + response.getTokenResult());
-                        }
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // this method is called when we get any error.
-                        if (e instanceof ApiException) {
-                            ApiException apiException = (ApiException) e;
-                            // below line is use to display an error message which we get.
-                            Log.d("TAG", "Error message: " +
-                                    CommonStatusCodes.getStatusCodeString(apiException.getStatusCode()));
-                        } else {
-                            // below line is use to display a toast message for any error.
-                            Toast.makeText(Login.this, "Error found is : " + e, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-  /*  protected void handleVerification(final String responseToken) {
-        // inside handle verification method we are
-        // verifying our user with response token.
-        // url to sen our site key and secret key
-        // to below url using POST method.
-        String url = "https://www.google.com/recaptcha/api/siteverify";
-
-        // in this we are making a string request and
-        // using a post method to pass the data.
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // inside on response method we are checking if the
-                        // response is successful or not.
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            if (jsonObject.getBoolean("success")) {
-                                // if the response is successful then we are
-                                // showing below toast message.
-                                Toast.makeText(MainActivity.this, "User verified with reCAPTCHA", Toast.LENGTH_SHORT).show();
-                            } else {
-                                // if the response if failure we are displaying
-                                // a below toast message.
-                                Toast.makeText(getApplicationContext(), String.valueOf(jsonObject.getString("error-codes")), Toast.LENGTH_LONG).show();
-                            }
-                        } catch (Exception ex) {
-                            // if we get any exception then we are
-                            // displaying an error message in logcat.
-                            Log.d("TAG", "JSON exception: " + ex.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // inside error response we are displaying
-                        // a log message in our logcat.
-                        Log.d("TAG", "Error message: " + error.getMessage());
-                    }
-                }) {
-            // below is the getParams method in which we will
-            // be passing our response token and secret key to the above url.
-            @Override
-            protected Map<String, String> getParams() {
-                // we are passing data using hashmap
-                // key and value pair.
-                Map<String, String> params = new HashMap<>();
-                params.put("secret", SECRET_KEY);
-                params.put("response", responseToken);
-                return params;
-            }
-        };
-        // below line of code is use to set retry
-        // policy if the api fails in one try.
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                // we are setting time for retry is 5 seconds.
-                50000,
-
-                // below line is to perform maximum retries.
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        // at last we are adding our request to queue.
-        queue.add(request);
-    }*/
-
 
     @Override
     public void onClick(View v) {
@@ -551,51 +225,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
                     }
 
 
-                    showMpinRegistrationProcessPopup(response);
-
-
-                } else {
-                    progressBar.setVisibility(View.GONE);
-
-                    Toast.makeText(Login.this, "Check Login Credentials.", Toast.LENGTH_SHORT).show();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<NewLogINResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(Login.this, "Check Login Credentials.", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
-
-
-    private void showMpinRegistrationProcessPopup(Response<NewLogINResponse> response) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this, R.style.CustomAlertDialog);
-        View dialogView = LayoutInflater.from(Login.this).inflate(R.layout.dialog_setup_mpin, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        layoutParams.gravity = Gravity.CENTER;
-        dialog.getWindow().setAttributes(layoutParams);
-
-        dialog.show();
-
-        EditText etMpin = dialogView.findViewById(R.id.mpinEditText);
-        EditText etReMpin = dialogView.findViewById(R.id.confirmMpinEditText);
-        Button btnContinue = dialogView.findViewById(R.id.continueBtn);
-
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateEditTexts(etMpin, etReMpin)) {
                     Prefs.putString(Globals.USERNAME, login_username.getText().toString().trim());
                     Prefs.putString(Globals.USER_PASSWORD, login_password.getText().toString().trim());
                     Gson gson = new Gson();
@@ -620,9 +249,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
                     Prefs.putString(Globals.ZONE, String.valueOf(response.body().getLogInDetail().getZone()));
                     Prefs.putString(Globals.ADDRESS_LOGIN, String.valueOf(response.body().getLogInDetail().getAddress()));
 
-                    //todo mpinPrefs
-                    Prefs.putString(Globals.MPIN_VALUE, etMpin.getText().toString().trim());
-
 
                     if (response.body().getTripExpenses().size() > 0) {
                         Prefs.putString(Globals.BP_TYPE_CHECK_IN, response.body().getTripExpenses().get(0).getBPType());
@@ -636,39 +262,36 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
 
                     }
 
+                    //Prefs.putString(Globals.MYEmployeeID, String.valueOf(response.body().getLogInDetail().getId()));
 
                     long session = Long.parseLong("30");
                     session = session * 60 * 1000;
 
                     Prefs.putLong(Globals.SESSION_TIMEOUT, session);
                     Prefs.putLong(Globals.SESSION_REMAIN_TIME, 0);
-
+                            /* LogInRequest in = new LogInRequest();
+                            in.setCompanyDB(response.body().getSap().getCompanyDB());  //HANA
+                            in.setPassword(response.body().getSap().getPassword());//"manager"//8097
+                            in.setUserName(response.body().getSap().getUserName());//"manager"
+                             userLogin(in);*/
                     gotoHome();
-                    Toast.makeText(Login.this, "MPIN Created SuccessFully Successfully", Toast.LENGTH_SHORT).show();
+
 
                 } else {
-                    Toast.makeText(Login.this, "Please Enter MPIN Correctly", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+
+                    Toast.makeText(Login.this, "Check Login Credentials.", Toast.LENGTH_SHORT).show();
+
                 }
             }
+
+            @Override
+            public void onFailure(Call<NewLogINResponse> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(Login.this, "Check Login Credentials.", Toast.LENGTH_SHORT).show();
+
+            }
         });
-
-
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-    }
-
-    private boolean validateEditTexts(EditText editText1, EditText editText2) {
-        String text1 = editText1.getText().toString().trim();
-        String text2 = editText2.getText().toString().trim();
-
-        if (TextUtils.isEmpty(text1) || TextUtils.isEmpty(text2)) {
-            // If any of the EditTexts is empty, return false
-
-            return false;
-        }
-
-        // If both EditTexts are not empty, compare their contents
-        return text1.equals(text2);
     }
 
 

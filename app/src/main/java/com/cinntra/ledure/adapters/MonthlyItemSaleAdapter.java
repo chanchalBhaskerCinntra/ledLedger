@@ -102,6 +102,7 @@ public class MonthlyItemSaleAdapter extends RecyclerView.Adapter<MonthlyItemSale
                     //   i.putExtra("FromWhere",fromWhere);
                     i.putExtra("itemcode", "" +itemcode);
                     i.putExtra("itemname", "" +itemName);
+                    i.putExtra("zoneCode", "" );
 //                    i.putExtra("itemname", "" +branchList.get(getAdapterPosition()).itemName);
                     //  i.putExtra("Heading",heading);
                     // i.putExtra("status",branchList.get(getAdapterPosition()).getPaymentStatus());

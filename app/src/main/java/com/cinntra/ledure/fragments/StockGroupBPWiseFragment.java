@@ -115,8 +115,6 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
     }
 
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -216,7 +214,7 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
     StockGroupBPWiseAdapter adapter;
 
     private void customerOnePageLedger(String customerCode, String fromDate, String toDate) {
-        pageNo=1;
+        pageNo = 1;
         loader.setVisibility(View.VISIBLE);
         HashMap<String, String> hde = new HashMap<>();
 
@@ -231,8 +229,14 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
         hde.put(Globals.payLoadOrderByName, "");
         hde.put(Globals.payLoadOrderByAMt, "");
 
+        Call<ResponseItemFilterDashboard> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWisePurchase(hde);
+        } else {
+            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWise(hde);
+        }
 
-        Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWise(hde);
+
         call.enqueue(new Callback<ResponseItemFilterDashboard>() {
             @Override
             public void onResponse(Call<ResponseItemFilterDashboard> call, Response<ResponseItemFilterDashboard> response) {
@@ -280,7 +284,12 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
         hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         hde.put(Globals.payLoadOrderByName, "");
         hde.put(Globals.payLoadOrderByAMt, "");
-        Call<ResponseItemFilterDashboard> call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWise(hde);
+        Call<ResponseItemFilterDashboard> call;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWisePurchase(hde);
+        } else {
+            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWise(hde);
+        }
         call.enqueue(new Callback<ResponseItemFilterDashboard>() {
             @Override
             public void onResponse(Call<ResponseItemFilterDashboard> call, Response<ResponseItemFilterDashboard> response) {
@@ -516,8 +525,8 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
 //        Prefs.putString(Globals.FROM_DATE,startDate);
 //        Prefs.putString(Globals.TO_DATE,endDate);
         //   Toast.makeText(requireContext(), "sold" + startDate + endDate, Toast.LENGTH_SHORT).show();
-      startDateListener=startDate;
-      endDateListener=endDate;
+        startDateListener = startDate;
+        endDateListener = endDate;
         customerOnePageLedger(cardCode, startDateListener, endDateListener);
     }
 

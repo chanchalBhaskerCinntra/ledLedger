@@ -81,7 +81,7 @@
                     android:gravity="center"
                     android:minWidth="@dimen/size_90"
                     android:padding="@dimen/size_5"
-                    android:spinnerMode="dropdown"
+
                     android:textColor="@color/white"
                     android:visibility="visible"/>
 
