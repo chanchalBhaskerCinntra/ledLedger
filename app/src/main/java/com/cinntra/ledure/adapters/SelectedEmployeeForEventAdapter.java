@@ -48,7 +48,7 @@ public class SelectedEmployeeForEventAdapter extends RecyclerView.Adapter<Select
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.tvNameOfEmployee.setText(employeeName.get(position));
         holder.ivCrossIcon.setOnClickListener(view -> {
-            Log.e("ivcross", "onBindViewHolder: "+position );
+//            Log.e("ivcross", "onBindViewHolder: "+position );
             employeeName.remove(holder.getAdapterPosition());
 
             notifyDataSetChanged();

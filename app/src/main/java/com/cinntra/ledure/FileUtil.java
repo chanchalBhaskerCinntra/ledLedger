@@ -163,13 +163,13 @@ public class FileUtil {
     }
 
     private static String getLocalPath(Context context, Uri uri) {
-        if (DEBUG) Log.d(TAG, "File - Authority: " + uri.getAuthority() +
+       /* if (DEBUG) Log.d(TAG, "File - Authority: " + uri.getAuthority() +
                 ", Fragment: " + uri.getFragment() +
                 ", Port: " + uri.getPort() +
                 ", Query: " + uri.getQuery() +
                 ", Scheme: " + uri.getScheme() +
                 ", Host: " + uri.getHost() +
-                ", Segments: " + uri.getPathSegments().toString());
+                ", Segments: " + uri.getPathSegments().toString());*/
 
         boolean isKitKat = true;
 
@@ -347,10 +347,10 @@ public class FileUtil {
 
     private static void logDir(File dir) {
         if (!DEBUG) return;
-        Log.d(TAG, "Dir=" + dir);
+//        Log.d(TAG, "Dir=" + dir);
         File[] files = dir.listFiles();
         for (File file : files) {
-            Log.d(TAG, "File=" + file.getPath());
+//            Log.d(TAG, "File=" + file.getPath());
         }
     }
 

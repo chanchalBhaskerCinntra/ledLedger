@@ -74,7 +74,42 @@ public class NewLoginData{
 
 	@SerializedName("Zone")
 	private String Zone;
+	private String otp;
+	private String card_code;
+	private String card_name;
+	private String token;
 
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public String getCard_code() {
+		return card_code;
+	}
+
+	public void setCard_code(String card_code) {
+		this.card_code = card_code;
+	}
+
+	public String getCard_name() {
+		return card_name;
+	}
+
+	public void setCard_name(String card_name) {
+		this.card_name = card_name;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 
 	public String getAddress() {
 		return Address;

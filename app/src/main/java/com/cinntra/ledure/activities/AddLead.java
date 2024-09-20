@@ -180,7 +180,7 @@ public class AddLead extends MainBaseActivity {
     private void callleadTypeApi()
             {
 
-        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService().getLeadType();
+        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService(this).getLeadType();
         call.enqueue(new Callback<LeadTypeResponse>() {
             @Override
             public void onResponse(Call<LeadTypeResponse> call, Response<LeadTypeResponse> response) {
@@ -222,7 +222,7 @@ public class AddLead extends MainBaseActivity {
             {
 
 
-        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService().getsourceType();
+        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService(this).getsourceType();
         call.enqueue(new Callback<LeadTypeResponse>() {
             @Override
             public void onResponse(Call<LeadTypeResponse> call, Response<LeadTypeResponse> response) {
@@ -537,7 +537,7 @@ public class AddLead extends MainBaseActivity {
             {
         ArrayList<CreateLead> createLeads = new ArrayList<>();
         createLeads.add(lv);
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().createLead(createLeads);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(this).createLead(createLeads);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {

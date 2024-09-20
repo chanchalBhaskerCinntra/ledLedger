@@ -129,7 +129,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
         stval.setStageno(currentStageNo);
         stval.setComment(Globals.COMMENT);
         stval.setFile("");
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().updatestage(stval);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(context).updatestage(stval);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {
@@ -189,7 +189,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHo
     private void callcompletestageApi(CompleteStageResponse completeStageResponse) {
 
 
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().completestage(completeStageResponse);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(context).completestage(completeStageResponse);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {

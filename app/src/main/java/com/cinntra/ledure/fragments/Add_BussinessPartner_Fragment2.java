@@ -574,7 +574,7 @@ public class Add_BussinessPartner_Fragment2 extends Fragment implements View.OnC
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(getActivity()).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {
@@ -722,7 +722,7 @@ public class Add_BussinessPartner_Fragment2 extends Fragment implements View.OnC
     private void createBP(AddBusinessPartnerData in)
        {
         loader.setVisibility(View.VISIBLE);
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().addnewCustomer(in);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).addnewCustomer(in);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

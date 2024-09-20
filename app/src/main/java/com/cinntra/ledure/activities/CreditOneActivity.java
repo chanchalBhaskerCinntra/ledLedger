@@ -3,6 +3,7 @@ package com.cinntra.ledure.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.CustomersItemsAdapter;
 import com.cinntra.ledure.fragments.WebViewBottomSheetFragment;
@@ -64,28 +66,27 @@ public class CreditOneActivity extends AppCompatActivity {
 
     @BindView(R.id.btnShareInVoice)
     Button btnShareInVoice;
-    String id="";
-    String heading="";
-   // String paymentStatus="";
-    String url="";
+    String id = "";
+    String heading = "";
+    // String paymentStatus="";
+    String url = "";
     WebView dialogWeb;
-    String title="";
+    String title = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credit_one);
         ButterKnife.bind(this);
-        id      = getIntent().getStringExtra("ID");
+        id = getIntent().getStringExtra("ID");
         heading = getIntent().getStringExtra("Heading");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-       // String id     = getIntent().getStringExtra("ID");
+        // String id     = getIntent().getStringExtra("ID");
         //paymentStatus = getIntent().getStringExtra("status");
-        Log.e("ID===>", "onCreate: "+id);
-
+        Log.e("ID===>", "onCreate: " + id);
 
 
 //
@@ -120,7 +121,6 @@ public class CreditOneActivity extends AppCompatActivity {
         clearAllFilter.setVisible(false);
 
 
-
         /**shubh***/
         infoItem.setVisible(false);
         //   ledger.setVisible(true);
@@ -149,45 +149,46 @@ public class CreditOneActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             // not going to happen - value came from JDK's own StandardCharsets
         }
-        if(heading.equalsIgnoreCase("ttAPCreditNote"))
-        {
+
+
+        if (heading.equalsIgnoreCase("ttAPCreditNote")) {
             btnShareInVoice.setText("Share Debit Note");
             credit_memo_txt.setText("Debit Memo Date");
-            url = Globals.Ap_creditNoteUrl + "id="+id;
-            title=getString(R.string.share_debit_note);
+            url = Globals.Ap_creditNoteUrl + "id=" + id;
+            title = getString(R.string.share_debit_note);
+        } else if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            btnShareInVoice.setText("Share Debit Note");
+            credit_memo_txt.setText("Debit Memo Date");
+            url = Globals.Ap_creditNoteUrl + "id=" + id;
+            title = getString(R.string.share_debit_note);
+        } else if (invoiceNewData.getDocType().equalsIgnoreCase("dDocument_Items")) {
+            url = Globals.creditNoteUrl + "id=" + id;
+            title = getString(R.string.share_credit_note);
+        } else if (invoiceNewData.getDocType().equalsIgnoreCase("dDocument_Service")) {
+            url = Globals.creditNoteUrl_Service + "id=" + id;
+            title = getString(R.string.share_credit_note);
         }
-         else if(invoiceNewData.getDocType().equalsIgnoreCase("dDocument_Items"))
-         {
-             url = Globals.creditNoteUrl + "id="+id;
-             title=getString(R.string.share_credit_note);
-         }
-         else if(invoiceNewData.getDocType().equalsIgnoreCase("dDocument_Service"))
-         {
-             url = Globals.creditNoteUrl_Service + "id="+id;
-             title=getString(R.string.share_credit_note);
-         }
-
 
 
         total_amount.setText("₹ " + Globals.numberToK(invoiceNewData.getDocTotal()));
-        String reverseInvoiceDate= Globals.convertDateFormat(invoiceNewData.getDocDate());
-        String reverseDocDueDate= Globals.convertDateFormat(invoiceNewData.getDocDueDate());
+        String reverseInvoiceDate = Globals.convertDateFormat(invoiceNewData.getDocDate());
+        String reverseDocDueDate = Globals.convertDateFormat(invoiceNewData.getDocDueDate());
         invoice_date.setText(reverseInvoiceDate);
         due_date.setText(reverseDocDueDate);
         toolbar.setTitle("Voucher no: " + invoiceNewData.getDocNum());
         float net = Float.valueOf(invoiceNewData.getDocTotal()) - Float.valueOf(invoiceNewData.getVatSum());
         net_amount.setText("₹ " + Globals.numberToK(String.valueOf(net)));
         // cgst.setText("₹ "+invoiceNewData.getDocTotal());
-        sgst.setText("₹ " +Globals.numberToK( invoiceNewData.getVatSum()));
-        gross_total.setText("₹ " +Globals.numberToK( invoiceNewData.getDocTotal()));
+        sgst.setText("₹ " + Globals.numberToK(invoiceNewData.getVatSum()));
+        gross_total.setText("₹ " + Globals.numberToK(invoiceNewData.getDocTotal()));
         CustomersItemsAdapter adapter = new CustomersItemsAdapter(this, invoiceNewData.getDocumentLines());
         item_recyclerview.setAdapter(adapter);
 
 
-
-
     }
+
     Call<CreditNoteInvoiceResponse> call;
+
     private void callOneInvoice(String invoiceID) {
         new Thread(new Runnable() {
             @Override
@@ -196,15 +197,16 @@ public class CreditOneActivity extends AppCompatActivity {
                 HashMap<String, String> hde = new HashMap<>();
                 hde.put("id", invoiceID);
 
-                if(Prefs.getString(Globals.Sale_Purchse_Diff, "").equalsIgnoreCase("ttAPCreditNote"))
-                {
-                call = NewApiClient.getInstance().getApiService().purchase_credit_One(hde);
-                }
-                else
-                {
-                    call = NewApiClient.getInstance().getApiService().invoice_credit_One(hde);
-                }
+                //todo new changes
 
+                if (Prefs.getString(Globals.Sale_Purchse_Diff, "").equalsIgnoreCase("ttAPCreditNote")) {
+                    call = NewApiClient.getInstance().getApiService(CreditOneActivity.this).purchase_credit_One(hde);
+                } else if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService(CreditOneActivity.this).purchase_credit_One(hde);
+
+                } else {
+                    call = NewApiClient.getInstance().getApiService(CreditOneActivity.this).invoice_credit_One(hde);
+                }
 
 
                 try {
@@ -231,27 +233,25 @@ public class CreditOneActivity extends AppCompatActivity {
             }
         }).start();
     }
-    private void shareLedgerData()
-    {
+
+    private void shareLedgerData() {
 
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
-                WebViewBottomSheetFragment.newInstance(dialogWeb,url,title);
+                WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getSupportFragmentManager(),
                 "");
     }
 
-    public  boolean isAppInstalled(String packageName) {
+    public boolean isAppInstalled(String packageName) {
         try {
             getPackageManager().getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
             return true;
-        }
-        catch (PackageManager.NameNotFoundException ignored) {
-            Log.e("NameNotFoundException=>","ignored");
+        } catch (PackageManager.NameNotFoundException ignored) {
+            Log.e("NameNotFoundException=>", "ignored");
             return false;
         }
     }
-
 
 
 }

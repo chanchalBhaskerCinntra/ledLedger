@@ -216,7 +216,7 @@ public class LeadsActivity extends MainBaseActivity implements View.OnClickListe
 
 
 //        leadValue.setLeadType("2");
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().getAllLead(leadValue);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(this).getAllLead(leadValue);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {

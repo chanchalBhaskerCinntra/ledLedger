@@ -329,7 +329,7 @@ public class AddCampaign extends MainBaseActivity implements View.OnClickListene
 
     private void callleadTypeApi() {
 
-        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService().getLeadType();
+        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService(this).getLeadType();
         call.enqueue(new Callback<LeadTypeResponse>() {
             @Override
             public void onResponse(Call<LeadTypeResponse> call, Response<LeadTypeResponse> response) {
@@ -371,7 +371,7 @@ public class AddCampaign extends MainBaseActivity implements View.OnClickListene
     private void callSourceApi() {
 
 
-        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService().getsourceType();
+        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService(this).getsourceType();
         call.enqueue(new Callback<LeadTypeResponse>() {
             @Override
             public void onResponse(Call<LeadTypeResponse> call, Response<LeadTypeResponse> response) {
@@ -460,7 +460,7 @@ public class AddCampaign extends MainBaseActivity implements View.OnClickListene
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(this).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {
@@ -582,7 +582,7 @@ public class AddCampaign extends MainBaseActivity implements View.OnClickListene
     }
 
     private void createnewCampaign(AddCampaignModel campaignModel) {
-        Call<CampaignResponse> call = NewApiClient.getInstance().getApiService().createCampaign(campaignModel);
+        Call<CampaignResponse> call = NewApiClient.getInstance().getApiService(this).createCampaign(campaignModel);
         call.enqueue(new Callback<CampaignResponse>() {
             @Override
             public void onResponse(Call<CampaignResponse> call, Response<CampaignResponse> response) {

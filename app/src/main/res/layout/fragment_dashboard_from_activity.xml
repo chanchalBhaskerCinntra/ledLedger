@@ -252,13 +252,14 @@
                             app:layout_constraintStart_toEndOf="@+id/pro_img"
                             app:layout_constraintTop_toTopOf="@+id/pro_img" />
 
+                        <!--android:background="@drawable/bg_corner_stroke"-->
 
                         <Spinner
                             android:id="@+id/type_dropdown"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_corner_stroke"
-                            android:entries="@array/data_type"
+                            android:backgroundTint="@color/white"
+
                             android:fontFamily="@font/inter_regular"
                             android:gravity="center"
                             android:minWidth="@dimen/size_90"
@@ -364,7 +365,7 @@
                                     android:layout_gravity="center"
                                     android:drawableRight="@drawable/admin_ic_baseline_keyboard_arrow_down_24"
                                     android:drawableTint="@color/white"
-                                    android:entries="@array/date_selector"
+
                                     android:paddingLeft="@dimen/size_8"
                                     android:textColor="@color/white" />
 

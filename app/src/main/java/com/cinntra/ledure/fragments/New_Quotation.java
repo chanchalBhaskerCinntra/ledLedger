@@ -153,7 +153,7 @@ public class New_Quotation extends Fragment implements View.OnClickListener {
      @Override
      public void onFailure(Call<QuotationResponse> call, Throwable t) {
        Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
-       Log.e("ErrorMsz==>",t.getMessage().toString());
+//       Log.e("ErrorMsz==>",t.getMessage().toString());
             }
         });
 

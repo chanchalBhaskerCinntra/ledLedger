@@ -73,7 +73,7 @@ public class InvoiceNewData implements Serializable {
     @SerializedName("TotalDiscount")
     String TotalDiscount;
     @SerializedName("TotalEqualizationTax")
-   // @SerializedName("TaxTotal")
+    // @SerializedName("TaxTotal")
     String TotalEqualizationTax;
     @SerializedName("RoundingDiffAmount")
     String RoundingDiffAmount;
@@ -194,7 +194,6 @@ public class InvoiceNewData implements Serializable {
     }
 
 
-
     public String getU_FAV() {
         return U_FAV;
     }
@@ -226,7 +225,8 @@ public class InvoiceNewData implements Serializable {
     public void setShipToDescription(String shipToDescription) {
         ShipToDescription = shipToDescription;
     }
-   public String getBPLName() {
+
+    public String getBPLName() {
         return BPLName;
     }
 
@@ -250,7 +250,7 @@ public class InvoiceNewData implements Serializable {
         SeriesString = seriesString;
     }
 
-   public String getRoundingDiffAmount() {
+    public String getRoundingDiffAmount() {
         return RoundingDiffAmount;
     }
 
@@ -265,6 +265,7 @@ public class InvoiceNewData implements Serializable {
     public void setTotalEqualizationTax(String totalEqualizationTax) {
         TotalEqualizationTax = totalEqualizationTax;
     }
+
     public String getTotalDiscount() {
         return TotalDiscount;
     }
@@ -387,7 +388,6 @@ public class InvoiceNewData implements Serializable {
     }
 
 
-
     public String getJournalMemo() {
         return JournalMemo;
     }
@@ -468,15 +468,13 @@ public class InvoiceNewData implements Serializable {
         ControlAccount = controlAccount;
     }
 
-    public ArrayList<com.cinntra.ledure.model.DocumentLines> getDocumentLines()
-      {
-    return DocumentLines;
-      }
+    public ArrayList<com.cinntra.ledure.model.DocumentLines> getDocumentLines() {
+        return DocumentLines;
+    }
 
-    public void setDocumentLines(ArrayList<DocumentLines> documentLines)
-      {
-   DocumentLines = documentLines;
-      }
+    public void setDocumentLines(ArrayList<DocumentLines> documentLines) {
+        DocumentLines = documentLines;
+    }
 
     public List<ContactEmployees> getContactPersonCode() {
         return ContactPersonCode;

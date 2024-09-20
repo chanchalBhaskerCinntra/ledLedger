@@ -171,7 +171,15 @@ public class CreditNotes_Fragment extends Fragment {
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
 
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().credit_note_dashboard(hde);
+        Call<CustomerBusinessRes> call;
+
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+            call = NewApiClient.getInstance().getApiService(getActivity()).credit_note_dashboard_purchase(hde);
+        }else {
+            call = NewApiClient.getInstance().getApiService(getActivity()).credit_note_dashboard(hde);
+        }
+
+//        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).credit_note_dashboard(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -211,7 +219,14 @@ public class CreditNotes_Fragment extends Fragment {
         hde.put("ToDate", toDate);
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().credit_note_dashboard(hde);
+        Call<CustomerBusinessRes> call;
+
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+            call = NewApiClient.getInstance().getApiService(getActivity()).credit_note_dashboard_purchase(hde);
+        }else {
+            call = NewApiClient.getInstance().getApiService(getActivity()).credit_note_dashboard(hde);
+        }
+//        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).credit_note_dashboard(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

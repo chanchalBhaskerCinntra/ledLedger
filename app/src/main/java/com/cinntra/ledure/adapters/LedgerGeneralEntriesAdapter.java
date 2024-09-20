@@ -8,37 +8,54 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.CreditOneActivity;
 import com.cinntra.ledure.activities.InvoiceTransactionFullInfo;
 import com.cinntra.ledure.activities.ReceiptTransactionFullInfo;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.model.JournalEntryLineBodyData;
+import com.cinntra.ledure.newapimodel.ResponseForDocId;
+import com.cinntra.ledure.webservices.NewApiClient;
+import com.google.gson.JsonObject;
 import com.pixplicity.easyprefs.library.Prefs;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGeneralEntriesAdapter.ContactViewHolder> {
     Context context;
     List<JournalEntryLineBodyData> branchList;
+    AlertDialog alertDialog;
     List<JournalEntryLineBodyData> tempList = null;
 
-    public LedgerGeneralEntriesAdapter(Context context1, List<JournalEntryLineBodyData> branchList) {
+    //todo changes for getting doc id
+
+    public LedgerGeneralEntriesAdapter(Context context1, List<JournalEntryLineBodyData> branchList, AlertDialog alertDialog) {
         this.branchList = branchList;
         this.context = context1;
         this.tempList = new ArrayList<JournalEntryLineBodyData>();
         this.tempList.addAll(branchList);
+        this.alertDialog = alertDialog;
 
     }
 
     @NonNull
     @Override
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-      View view = LayoutInflater.from(context).inflate(R.layout.ledger_adapter, parent, false);
-    return new ContactViewHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.ledger_adapter, parent, false);
+        return new ContactViewHolder(view);
 
     }
 
@@ -46,14 +63,14 @@ public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGene
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
 
         holder.invoice_id.setText("" + branchList.get(position).getReference1());
-        String reverseDate= Globals.convertDateFormat(branchList.get(position).getDueDate());
+        String reverseDate = Globals.convertDateFormat(branchList.get(position).getDueDate());
         holder.invoice_date.setText(" " + reverseDate);
         holder.ref_no.setText("" + branchList.get(position).AccountName);
-        Double amountDouble=branchList.get(position).getBalance();
-        String amountString=Globals.foo(amountDouble);
+        Double amountDouble = branchList.get(position).getBalance();
+        String amountString = Globals.foo(amountDouble);
         holder.total_amount.setText(Globals.numberToK(amountString));
 
-      //  holder.total_amount.setText("( " + Globals.foo(Double.valueOf(Globals.getRoundOffUpTOTwo("" + branchList.get(position).getBalance()) + " )")));
+        //  holder.total_amount.setText("( " + Globals.foo(Double.valueOf(Globals.getRoundOffUpTOTwo("" + branchList.get(position).getBalance()) + " )")));
         Double credit = Double.valueOf(Globals.foo(Double.valueOf(Double.parseDouble(branchList.get(position).credit))));
         Double debit = Double.valueOf(Globals.foo(Double.valueOf(Double.parseDouble(branchList.get(position).debit))));
 
@@ -61,7 +78,7 @@ public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGene
 //            holder.received_amount.setTextColor(Color.parseColor("#FF0000"));
 
         if (credit > 0.0) {
-            holder.received_amount.setText( Globals.numberToK(Globals.getRoundOffUpTOTwo("" +branchList.get(position).credit)));
+            holder.received_amount.setText(Globals.numberToK(Globals.getRoundOffUpTOTwo("" + branchList.get(position).credit)));
             holder.received_amount.setTextColor(Color.parseColor("#FF0000"));
         } else {
             holder.received_amount.setText(Globals.numberToK(Globals.getRoundOffUpTOTwo("" + branchList.get(position).debit)));
@@ -93,79 +110,9 @@ public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGene
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttARInvoice") && !branchList.get(getAdapterPosition()).getDocId().trim().equalsIgnoreCase("0")) {
-                        Prefs.putString(Globals.Sale_Purchse_Diff,"ttARInvoice");
 
-                        Intent i = new Intent(context, InvoiceTransactionFullInfo.class);
-                        i.putExtra("FromWhere", "Ledger");
-                        i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
-                        i.putExtra("Heading", "");
-                        i.putExtra("status", branchList.get(getAdapterPosition()));
-                        context.startActivity(i);
-                    } else if (branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttAPInvoice") && !branchList.get(getAdapterPosition()).getDocId().trim().equalsIgnoreCase("0")) {
-                        Prefs.putString(Globals.Sale_Purchse_Diff,"ttAPInvoice");
-                        Intent i = new Intent(context, InvoiceTransactionFullInfo.class);
-                        i.putExtra("FromWhere", "Ledger");
-                        i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
-                        i.putExtra("Heading", "ttAPInvoice");
-                        i.putExtra("status", branchList.get(getAdapterPosition()));
-                        context.startActivity(i);
-                    } else if (branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttReceipt") && !branchList.get(getAdapterPosition()).getDocId().trim().equalsIgnoreCase("0")) {
-
-                        Intent i = new Intent(context, ReceiptTransactionFullInfo.class);
-                        i.putExtra("FromWhere", "");
-                        i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
-                        // i.putExtra("docEntry", "" + branchList.get(getAdapterPosition()).getOrderId());
-
-                        i.putExtra("ReceiptId", "" + branchList.get(getAdapterPosition()).getDocId());
-
-
-                        i.putExtra("Heading", "");
-                        i.putExtra("status", "");
-                        context.startActivity(i);
-                    }
-                    else if (branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttARCredItnote") && !branchList.get(getAdapterPosition()).getDocId().trim().equalsIgnoreCase("0"))  {
-
-                        Prefs.putString(Globals.Sale_Purchse_Diff,"ttARCreditNote");
-                        Intent i = new Intent(context, CreditOneActivity.class);
-                        i.putExtra("FromWhere", "Ledger");
-                        i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
-                        i.putExtra("Heading", "ttARCreditNote");
-                        i.putExtra("status", branchList.get(getAdapterPosition()));
-                        context.startActivity(i);
-                    }
-                    else if(branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttAPCreditNote") && !branchList.get(getAdapterPosition()).getDocId().trim().equalsIgnoreCase("0"))
-                    {
-                        Prefs.putString(Globals.Sale_Purchse_Diff,"ttAPCreditNote");
-                        Intent i = new Intent(context, CreditOneActivity.class);
-                        i.putExtra("FromWhere", "Ledger");
-                        i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
-                        i.putExtra("Heading", "ttAPCreditNote");
-                        i.putExtra("status", branchList.get(getAdapterPosition()));
-                        context.startActivity(i);
-                    }
-                    else if (branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttJournalEntry") && !branchList.get(getAdapterPosition()).getId().trim().equalsIgnoreCase("0"))
-                    {
-                        if (clickListener != null) {
-                            clickListener.onItemClick(branchList.get(getAdapterPosition()).getId());
-                        }
-                    }
-
-                    else if (branchList.get(getAdapterPosition()).getOriginalJournal().equalsIgnoreCase("ttVendorPayment") && !branchList.get(getAdapterPosition()).getDocId().trim().equalsIgnoreCase("0")) {
-
-                        Intent i = new Intent(context, ReceiptTransactionFullInfo.class);
-                        i.putExtra("FromWhere", "");
-                        i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
-                        // i.putExtra("docEntry", "" + branchList.get(getAdapterPosition()).getOrderId());
-
-                        i.putExtra("ReceiptId", "" + branchList.get(getAdapterPosition()).getDocId());
-
-
-                        i.putExtra("Heading", "ttVendorPayment");
-                        i.putExtra("status", "");
-                        context.startActivity(i);
-                    }
-
+                    //todo chnage for getdocID
+                    callAPiForGetDocID(branchList.get(getAdapterPosition()).getOriginalJournal(), branchList.get(getAdapterPosition()).Original, getAdapterPosition());
 
                 }
             });
@@ -175,6 +122,104 @@ public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGene
 
     }
 
+
+    //todo new changes for getting DocId
+    private void callAPiForGetDocID(String originalJournal, String original, int position) {
+        alertDialog.show();
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("OriginalJournal", originalJournal);
+        jsonObject.addProperty("Original", original);
+
+        Call<ResponseForDocId> call = NewApiClient.getInstance().getApiService(context).getDocIDForGeneralEntry(jsonObject);
+
+        call.enqueue(new Callback<ResponseForDocId>() {
+            @Override
+            public void onResponse(Call<ResponseForDocId> call, Response<ResponseForDocId> response) {
+                alertDialog.dismiss();
+                if (response.isSuccessful()) {
+                    if (response.body().getStatus().equals("200")) {
+                        if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttARInvoice")) {
+                            Prefs.putString(Globals.Sale_Purchse_Diff, "ttARInvoice");
+
+                            Intent i = new Intent(context, InvoiceTransactionFullInfo.class);
+                            i.putExtra("FromWhere", "Ledger");
+                            //  i.putExtra("ID", "" + branchList.get(getAdapterPosition()).getDocId());
+                            i.putExtra("ID", "" + response.body().getDocId());
+                            i.putExtra("Heading", "");
+                            i.putExtra("status", branchList.get(position));
+                            context.startActivity(i);
+                        } else if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttAPInvoice")) {
+                            Prefs.putString(Globals.Sale_Purchse_Diff, "ttAPInvoice");
+                            Intent i = new Intent(context, InvoiceTransactionFullInfo.class);
+                            i.putExtra("FromWhere", "Ledger");
+                            i.putExtra("ID", "" + response.body().getDocId());
+                            i.putExtra("Heading", "ttAPInvoice");
+                            i.putExtra("status", branchList.get(position));
+                            context.startActivity(i);
+                        } else if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttReceipt")) {
+
+                            Intent i = new Intent(context, ReceiptTransactionFullInfo.class);
+                            i.putExtra("FromWhere", "");
+                            i.putExtra("ID", "" + response.body().getDocId());
+                            // i.putExtra("docEntry", "" + branchList.get(position).getOrderId());
+
+                            i.putExtra("ReceiptId", "" + response.body().getDocId());
+
+                            i.putExtra("Heading", "");
+                            i.putExtra("status", "");
+                            context.startActivity(i);
+                        } else if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttARCredItnote")) {
+
+                            Prefs.putString(Globals.Sale_Purchse_Diff, "ttARCreditNote");
+                            Intent i = new Intent(context, CreditOneActivity.class);
+                            i.putExtra("FromWhere", "Ledger");
+                            i.putExtra("ID", "" + response.body().getDocId());
+                            i.putExtra("Heading", "ttARCreditNote");
+                            i.putExtra("status", branchList.get(position));
+                            context.startActivity(i);
+                        } else if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttAPCreditNote")) {
+                            Prefs.putString(Globals.Sale_Purchse_Diff, "ttAPCreditNote");
+                            Intent i = new Intent(context, CreditOneActivity.class);
+                            i.putExtra("FromWhere", "Ledger");
+                            i.putExtra("ID", "" + response.body().getDocId());
+                            i.putExtra("Heading", "ttAPCreditNote");
+                            i.putExtra("status", branchList.get(position));
+                            context.startActivity(i);
+                        } else if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttJournalEntry")) {
+                            if (clickListener != null) {
+                                clickListener.onItemClick(branchList.get(position).getId());
+                            }
+                        } else if (branchList.get(position).getOriginalJournal().equalsIgnoreCase("ttVendorPayment")) {
+
+                            Intent i = new Intent(context, ReceiptTransactionFullInfo.class);
+                            i.putExtra("FromWhere", "");
+                            i.putExtra("ID", "" + response.body().getDocId());
+                            // i.putExtra("docEntry", "" + branchList.get(position).getOrderId());
+
+                            i.putExtra("ReceiptId", "" + response.body().getDocId());
+
+
+                            i.putExtra("Heading", "ttVendorPayment");
+                            i.putExtra("status", "");
+                            context.startActivity(i);
+                        }
+                    } else {
+                        Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseForDocId> call, Throwable t) {
+                alertDialog.dismiss();
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+    }
 
 
     private OnItemClickListener clickListener;
@@ -188,7 +233,8 @@ public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGene
     }
 
 
-    String title="";
+    String title = "";
+
     private void shareLedgerData() {
         // title =
 
@@ -238,4 +284,6 @@ public class LedgerGeneralEntriesAdapter extends RecyclerView.Adapter<LedgerGene
 //        }
 //        notifyDataSetChanged();
 //    }
+
+
 }

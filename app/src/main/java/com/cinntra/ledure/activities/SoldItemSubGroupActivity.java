@@ -276,6 +276,22 @@ public class SoldItemSubGroupActivity extends AppCompatActivity {
 
             bottomSheetDialog.dismiss();
         });
+
+
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                binding.loader.setVisibility(View.VISIBLE);
+                pageNo = 1;
+                callApi("");
+
+                bottomSheetDialog.dismiss();
+            }
+        });
         bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
         {
             startDate = "";
@@ -415,9 +431,9 @@ public class SoldItemSubGroupActivity extends AppCompatActivity {
 
                 Call<ResSubCatItems> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApiPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(SoldItemSubGroupActivity.this).soldItemSubGroupApiPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApi(hde);
+                    call = NewApiClient.getInstance().getApiService(SoldItemSubGroupActivity.this).soldItemSubGroupApi(hde);
                 }
                 try {
                     Response<ResSubCatItems> response = call.execute();
@@ -483,9 +499,9 @@ public class SoldItemSubGroupActivity extends AppCompatActivity {
 
                 Call<ResSubCatItems> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApiPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(SoldItemSubGroupActivity.this).soldItemSubGroupApiPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().soldItemSubGroupApi(hde);
+                    call = NewApiClient.getInstance().getApiService(SoldItemSubGroupActivity.this).soldItemSubGroupApi(hde);
                 }
                 try {
                     Response<ResSubCatItems> response = call.execute();

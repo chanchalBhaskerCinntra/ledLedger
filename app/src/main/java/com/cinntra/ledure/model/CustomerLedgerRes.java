@@ -49,6 +49,16 @@ public class CustomerLedgerRes implements Serializable
     @Expose
     private String TotalReceivable;
 
+
+    @SerializedName("TotalPayable")
+    @Expose
+    private String TotalPayable;
+
+
+    @SerializedName("TotalJECreditNotepay")
+    @Expose
+    private String TotalJECreditNotepay;
+
     @SerializedName("CreditLimit")
     @Expose
     private String CreditLimit;
@@ -114,11 +124,25 @@ public class CustomerLedgerRes implements Serializable
     private List<UnderList> OverList = null;
 
 
+    @SerializedName("OverListpay")
+    @Expose
+    private List<UnderList> OverListpay = null;
+
+
     /**
      * No args constructor for use in serialization
      *
      */
     public CustomerLedgerRes() {
+    }
+
+
+    public String getTotalPayable() {
+        return TotalPayable;
+    }
+
+    public void setTotalPayable(String totalPayable) {
+        TotalPayable = totalPayable;
     }
 
     public String getTotalCreditNote() {
@@ -135,6 +159,15 @@ public class CustomerLedgerRes implements Serializable
 
     public void setMonthGroupPurchaseList(List<com.cinntra.ledure.model.MonthGroupPurchaseList> monthGroupPurchaseList) {
         MonthGroupPurchaseList = monthGroupPurchaseList;
+    }
+
+
+    public String getTotalJECreditNotepay() {
+        return TotalJECreditNotepay;
+    }
+
+    public void setTotalJECreditNotepay(String totalJECreditNotepay) {
+        TotalJECreditNotepay = totalJECreditNotepay;
     }
 
     public String getCreditLimitLeft() {
@@ -279,6 +312,15 @@ public class CustomerLedgerRes implements Serializable
 
     public void setOverList(List<com.cinntra.ledure.model.UnderList> overList) {
         OverList = overList;
+    }
+
+
+    public List<com.cinntra.ledure.model.UnderList> getOverListpay() {
+        return OverListpay;
+    }
+
+    public void setOverListpay(List<com.cinntra.ledure.model.UnderList> overListpay) {
+        OverListpay = overListpay;
     }
 
     public String getCreditLimit() {

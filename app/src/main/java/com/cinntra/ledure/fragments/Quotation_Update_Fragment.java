@@ -419,7 +419,7 @@ public class Quotation_Update_Fragment extends Fragment implements View.OnClickL
     {
         HashMap<String, String> hde = new HashMap<>();
         hde.put("BusinessPlaceID", zone);
-        Call<WareHouseResponse> call = NewApiClient.getInstance().getApiService().warehouseList(hde);
+        Call<WareHouseResponse> call = NewApiClient.getInstance().getApiService(getActivity()).warehouseList(hde);
         call.enqueue(new Callback<WareHouseResponse>() {
             @Override
             public void onResponse(Call<WareHouseResponse> call, Response<WareHouseResponse> response) {
@@ -750,7 +750,7 @@ public class Quotation_Update_Fragment extends Fragment implements View.OnClickL
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(getActivity()).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {
@@ -1261,7 +1261,7 @@ public class Quotation_Update_Fragment extends Fragment implements View.OnClickL
     private void updateQuotation(String QT_ID, UpdateQuotationModel in)
       {
           loader.setVisibility(View.VISIBLE);
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().updateQuotation(in);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updateQuotation(in);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {

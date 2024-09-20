@@ -201,7 +201,7 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
     }
 
     private static final String TAG = "PaymentCollection_Fragm";
-    String groupType = "Customer";
+    String groupType = "";
 
 
     @Override
@@ -228,6 +228,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
             showDateBottomSheetDialog(requireContext());
         });
 
+        if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+            groupType = "Vendor";
+        }else {
+           groupType = "Customer";
+        }
+
 
         radioReceivableGroup.setVisibility(View.VISIBLE);
         radioReceivableGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -245,8 +251,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        } else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
+
+                            callledgerOneapi(reportType, startDate, endDate);
+                        }
+                        else {
+                            all_customer.setText("Vendor");
+
                             callledgerOneapi(reportType, startDate, endDate);
                         }
                         break;
@@ -260,8 +272,13 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        } else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
+                            customerRecyclerView.setAdapter(adapter);
+                            callledgerOneapi(reportType, startDate, endDate);
+                        }
+                        else {
+                            all_customer.setText("Vendor");
                             customerRecyclerView.setAdapter(adapter);
                             callledgerOneapi(reportType, startDate, endDate);
                         }
@@ -277,8 +294,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        }  else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
+                            callledgerOneapi(reportType, startDate, endDate);
+                        }
+                        else {
+                            all_customer.setText("Vendor");
                             callledgerOneapi(reportType, startDate, endDate);
                         }
                         break;
@@ -294,8 +315,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        } else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
+                            callledgerOneapi(reportType, startDate, endDate);
+                        }
+                        else {
+                            all_customer.setText("Vendor");
                             callledgerOneapi(reportType, startDate, endDate);
                         }
                         break;
@@ -309,8 +334,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        } else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
+                            callledgerOneapi(reportType, startDate, endDate);
+                        }
+                        else {
+                            all_customer.setText("Vendor");
                             callledgerOneapi(reportType, startDate, endDate);
                         }
                         break;
@@ -326,8 +355,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        } else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
+                            callledgerOneapi(reportType, startDate, endDate);
+                        }
+                        else {
+                            all_customer.setText("Vendor");
                             callledgerOneapi(reportType, startDate, endDate);
                         }
                         break;
@@ -341,11 +374,15 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                         if (groupType.equals("Zone")) {
                             all_customer.setText("Zone");
                             callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                        } else {
+                        } else if (groupType.equals("Customer")){
                             all_customer.setText("Customer");
                             customerRecyclerView.setAdapter(adapter);
                             callledgerOneapi(reportType, startDate, endDate);
-
+                        }
+                        else {
+                            all_customer.setText("Vendor");
+                            customerRecyclerView.setAdapter(adapter);
+                            callledgerOneapi(reportType, startDate, endDate);
                         }
 
                         break;
@@ -404,7 +441,10 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     from_to_date.setText("All");
                     if (groupType.equalsIgnoreCase("Customer")) {
                         callledgerOneapi(reportType, startDate, endDate);
-                    } else {
+                    }
+                    else if (groupType.equalsIgnoreCase("Vendor")){
+                        callledgerOneapi(reportType, startDate, endDate);
+                    }else {
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
                     }
 
@@ -426,11 +466,21 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
         groupby_dropdown.setVisibility(View.VISIBLE);
 
         if (Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("admin") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Director") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Accounts")) {
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_receivable_dropdown, // Replace with your item array resource
-                    R.layout.spinner_textview_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            groupby_dropdown.setAdapter(spinnerArrayAdapter);
+
+
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_receivable_dropdown_purchase, // Replace with your item array resource
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            }else {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_receivable_dropdown, // Replace with your item array resource
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            }
         } else {
 
             ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
@@ -457,8 +507,13 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     all_customer.setText("Zone");
 
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                } else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
 
                     callledgerOneapi(reportType, startDate, endDate);
                 }
@@ -607,8 +662,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                }else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
 
@@ -623,8 +684,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                }else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
                 // adapter.sortingA2Z("ZtoA");
@@ -638,20 +705,42 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
     private void shareLedgerData() {
         String title = getString(R.string.share_customer_list);
 
-        if (groupType.equalsIgnoreCase("Customer")) {
+        if (groupType.equalsIgnoreCase("Customer") || groupType.equalsIgnoreCase("Vendor")) {
             title = getString(R.string.share_customer_list);
-            url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter;
+            //  url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter;
+
+
+            //todo pdf
+            if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+                url = Globals.overAllReceivablePurchase + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            } else {
+               url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+             //   url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            }
+            Log.e(TAG, "shareLedgerData: "+url);
 
         } else {
             title = getString(R.string.share_group_list);
             // SalesPersonCode=-1&FromDate=&ToDate=&DueDaysGroup=
-            url = Globals.overAllLedger + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&FromDate=" + startDate + "&ToDate=" + endDate + "&DueDaysGroup=" + overDueFilter;
+
+            //todo pdf
+            if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+                url = Globals.overAllLedgerPurchase + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&FromDate=" + startDate + "&ToDate=" + endDate + "&DueDaysGroup=" + overDueFilter;
+
+            } else {
+                url = Globals.overAllLedger + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&FromDate=" + startDate + "&ToDate=" + endDate + "&DueDaysGroup=" + overDueFilter;
+
+            }
+            Log.e(TAG, "shareLedgerData: "+url);
 
         }
-
-        WebViewBottomSheetFragment addPhotoBottomDialogFragment = WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
-        addPhotoBottomDialogFragment.show(getChildFragmentManager(), "");
-
+        WebViewBottomSheetFragment addPhotoBottomDialogFragment =
+                WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
+        addPhotoBottomDialogFragment.show(getChildFragmentManager(),
+                "");
     }
 
 
@@ -707,9 +796,9 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
 
         Call<DashboardCounterResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger_purchase(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger_purchase(obj);
         } else {
-            call =  NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+            call =  NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         }
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
@@ -808,9 +897,9 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
 
                 Call<ResponseZoneGroup> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getGroupReceivables_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getGroupReceivables_purchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getGroupReceivables(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).getGroupReceivables(hde);
                 }
                 try {
                     Response<ResponseZoneGroup> response = call.execute();
@@ -907,9 +996,9 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
 
                 Call<ResponseZoneGroup> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getGroupReceivables_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getGroupReceivables_purchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getGroupReceivables(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).getGroupReceivables(hde);
                 }
                 try {
                     Response<ResponseZoneGroup> response = call.execute();
@@ -1070,6 +1159,8 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 loader.setVisibility(View.VISIBLE);
                 if (ALlItemList.size() != 0 && groupType.equalsIgnoreCase("Customer")) {
                     pageNo = ALlItemList.size() / Globals.QUERY_PAGE_SIZE;
+                } else if (ALlItemList.size() != 0 && groupType.equalsIgnoreCase("Vendor")) {
+                    pageNo = ALlItemList.size() / Globals.QUERY_PAGE_SIZE;
                 }
                 else if ((allZoneSaleList.size() != 0 && groupType.equalsIgnoreCase("Zone"))) {
                     pageNo = allZoneSaleList.size() / Globals.QUERY_PAGE_SIZE;
@@ -1135,13 +1226,13 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
 
-            //    Call<ReceivableResponse> call = NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+            //    Call<ReceivableResponse> call = NewApiClient.getInstance().getApiService(getActivity()).receivable_dashboard_post(hde);
 
                 Call<ReceivableResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().payable_dashboard_post(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).payable_dashboard_post(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).receivable_dashboard_post(hde);
                 }
                 try {
                     Response<ReceivableResponse> response = call.execute();
@@ -1236,9 +1327,9 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
 
                 Call<ReceivableResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().payable_dashboard_post(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).payable_dashboard_post(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).receivable_dashboard_post(hde);
                 }
 
                 try {
@@ -1310,8 +1401,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                } else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
                 menuItem.setChecked(!menuItem.isChecked());
@@ -1329,8 +1426,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                } else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
                 menuItem.setChecked(!menuItem.isChecked());
@@ -1344,8 +1447,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                }else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
                 menuItem.setChecked(!menuItem.isChecked());
@@ -1359,8 +1468,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                } else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
                 menuItem.setChecked(!menuItem.isChecked());
@@ -1376,8 +1491,14 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                 if (groupType.equals("Zone")) {
                     all_customer.setText("Zone");
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                } else {
+                } else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
+
                     callledgerOneapi(reportType, startDate, endDate);
                 }
                 menuItem.setChecked(!menuItem.isChecked());
@@ -1437,11 +1558,15 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     if (groupType.equals("Zone")) {
                         all_customer.setText("Zone");
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                    } else {
+                    } else if (groupType.equals("Customer")){
                         all_customer.setText("Customer");
                         customerRecyclerView.setAdapter(adapter);
                         callledgerOneapi(reportType, startDate, endDate);
-
+                    }
+                    else {
+                        all_customer.setText("Vendor");
+                        customerRecyclerView.setAdapter(adapter);
+                        callledgerOneapi(reportType, startDate, endDate);
                     }
                     bottomSheetDialog.dismiss();
                     from_to_date.setText("Non due");
@@ -1457,8 +1582,13 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     if (groupType.equals("Zone")) {
                         all_customer.setText("Zone");
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                    } else {
+                    }else if (groupType.equals("Customer")){
                         all_customer.setText("Customer");
+                        customerRecyclerView.setAdapter(adapter);
+                        callledgerOneapi(reportType, startDate, endDate);
+                    }
+                    else {
+                        all_customer.setText("Vendor");
                         customerRecyclerView.setAdapter(adapter);
                         callledgerOneapi(reportType, startDate, endDate);
                     }
@@ -1476,8 +1606,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     if (groupType.equals("Zone")) {
                         all_customer.setText("Zone");
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                    } else {
+                    } else if (groupType.equals("Customer")){
                         all_customer.setText("Customer");
+                        callledgerOneapi(reportType, startDate, endDate);
+                    }
+                    else {
+                        all_customer.setText("Vendor");
                         callledgerOneapi(reportType, startDate, endDate);
                     }
                     bottomSheetDialog.dismiss();
@@ -1494,8 +1628,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     if (groupType.equals("Zone")) {
                         all_customer.setText("Zone");
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                    } else {
+                    } else if (groupType.equals("Customer")){
                         all_customer.setText("Customer");
+                        callledgerOneapi(reportType, startDate, endDate);
+                    }
+                    else {
+                        all_customer.setText("Vendor");
                         callledgerOneapi(reportType, startDate, endDate);
                     }
                     from_to_date.setText("61-90");
@@ -1511,8 +1649,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     if (groupType.equals("Zone")) {
                         all_customer.setText("Zone");
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                    } else {
+                    } else if (groupType.equals("Customer")){
                         all_customer.setText("Customer");
+                        callledgerOneapi(reportType, startDate, endDate);
+                    }
+                    else {
+                        all_customer.setText("Vendor");
                         callledgerOneapi(reportType, startDate, endDate);
                     }
                     from_to_date.setText(">90");
@@ -1528,8 +1670,12 @@ public class PaymentCollection_Fragment extends Fragment implements Toolbar.OnMe
                     if (groupType.equals("Zone")) {
                         all_customer.setText("Zone");
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                    } else {
+                    }else if (groupType.equals("Customer")){
                         all_customer.setText("Customer");
+                        callledgerOneapi(reportType, startDate, endDate);
+                    }
+                    else {
+                        all_customer.setText("Vendor");
                         callledgerOneapi(reportType, startDate, endDate);
                     }
                     bottomSheetDialog.dismiss();

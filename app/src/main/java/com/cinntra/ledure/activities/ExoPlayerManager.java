@@ -65,21 +65,21 @@ public class ExoPlayerManager {
         mPlayer.addListener(new Player.EventListener() {
             @Override
             public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
-                Log.i(TAG, "onTimelineChanged: ");
+//                Log.i(TAG, "onTimelineChanged: ");
             }
             @Override
             public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-                Log.i(TAG, "onTracksChanged: ");
+//                Log.i(TAG, "onTracksChanged: ");
             }
             @Override
             public void onLoadingChanged(boolean isLoading) {
-                Log.i(TAG, "onLoadingChanged: ");
+//                Log.i(TAG, "onLoadingChanged: ");
             }
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                Log.i(TAG, "onPlayerStateChanged: ");
+//                Log.i(TAG, "onPlayerStateChanged: ");
                 if (playbackState == 4 && mPlayList != null && playlistIndex + 1 < mPlayList.size()) {
-                    Log.e(TAG, "Song Changed...");
+//                    Log.e(TAG, "Song Changed...");
                     playlistIndex++;
                     listner.onItemClickOnItem(playlistIndex);
                     playStream(mPlayList.get(playlistIndex));
@@ -92,27 +92,27 @@ public class ExoPlayerManager {
             }
             @Override
             public void onRepeatModeChanged(int repeatMode) {
-                Log.i(TAG, "onRepeatModeChanged: ");
+//                Log.i(TAG, "onRepeatModeChanged: ");
             }
             @Override
             public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-                Log.i(TAG, "onShuffleModeEnabledChanged: ");
+//                Log.i(TAG, "onShuffleModeEnabledChanged: ");
             }
             @Override
             public void onPlayerError(ExoPlaybackException error) {
-                Log.i(TAG, "onPlayerError: ");
+//                Log.i(TAG, "onPlayerError: ");
             }
             @Override
             public void onPositionDiscontinuity(int reason) {
-                Log.i(TAG, "onPositionDiscontinuity: ");
+//                Log.i(TAG, "onPositionDiscontinuity: ");
             }
             @Override
             public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-                Log.i(TAG, "onPlaybackParametersChanged: ");
+//                Log.i(TAG, "onPlaybackParametersChanged: ");
             }
             @Override
             public void onSeekProcessed() {
-                Log.i(TAG, "onSeekProcessed: ");
+//                Log.i(TAG, "onSeekProcessed: ");
             }
         });
     }

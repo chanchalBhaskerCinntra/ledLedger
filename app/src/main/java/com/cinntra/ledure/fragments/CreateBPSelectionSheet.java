@@ -212,7 +212,7 @@ public class CreateBPSelectionSheet extends BottomSheetDialogFragment implements
         geo.put("U_LONG",String.valueOf(longitude));
 
 
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().updateLeadGeoLocation(geo);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updateLeadGeoLocation(geo);
 
         call.enqueue(new Callback<LeadResponse>() {
             @Override

@@ -236,7 +236,7 @@ public class Update_BussinessPartner_Fragment extends Fragment implements View.O
     private void callbponeapi(String cardCode) {
         BusinessPartnerData contactPersonData = new BusinessPartnerData();
         contactPersonData.setCardCode(cardCode);
-        Call<CustomerBusinessRes> call= NewApiClient.getInstance().getApiService().particularcustomerdetails(contactPersonData);
+        Call<CustomerBusinessRes> call= NewApiClient.getInstance().getApiService(getActivity()).particularcustomerdetails(contactPersonData);
         call.enqueue(new Callback<CustomerBusinessRes>()
         {
             @Override
@@ -288,7 +288,7 @@ public class Update_BussinessPartner_Fragment extends Fragment implements View.O
         ContactPersonData contactPersonData = new ContactPersonData();
         contactPersonData.setCardCode(id);
 
-        Call<ContactPerson> call = NewApiClient.getInstance().getApiService().contactemplist(contactPersonData);
+        Call<ContactPerson> call = NewApiClient.getInstance().getApiService(getActivity()).contactemplist(contactPersonData);
         call.enqueue(new Callback<ContactPerson>() {
             @Override
             public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {
@@ -342,7 +342,7 @@ public class Update_BussinessPartner_Fragment extends Fragment implements View.O
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(getActivity()).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {
@@ -1074,7 +1074,7 @@ public class Update_BussinessPartner_Fragment extends Fragment implements View.O
         in.setGroupType("");
         in.setCustomerType("");
         in.setPriceCategory("");
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().updatecustomer(in);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).updatecustomer(in);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -1151,7 +1151,7 @@ public class Update_BussinessPartner_Fragment extends Fragment implements View.O
                 HashMap<String,String> hde = new HashMap<>();
                 hde.put("CardCode",cardCode);
 
-                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService().updatebpcreditlimitbybp(hde);
+                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updatebpcreditlimitbybp(hde);
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
                     if (response.isSuccessful()) {

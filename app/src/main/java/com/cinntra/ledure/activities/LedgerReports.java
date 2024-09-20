@@ -30,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.FileProvider;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +40,7 @@ import com.cinntra.ledure.adapters.LedgerCustomerEntriesAdapter;
 import com.cinntra.ledure.adapters.LedgerGeneralEntriesAdapter;
 import com.cinntra.ledure.adapters.LedgersAdapter;
 
+import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShareReportBinding;
 import com.cinntra.ledure.fragments.WebViewBottomSheetFragment;
 import com.cinntra.ledure.globals.Globals;
@@ -52,6 +54,7 @@ import com.cinntra.ledure.model.ResponseJournalEntryBpWise;
 import com.cinntra.ledure.newapimodel.LeadValue;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.gson.JsonObject;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.webviewtopdf.PdfView;
@@ -59,6 +62,7 @@ import com.webviewtopdf.PdfView;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -140,10 +144,12 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
     String startDate = Globals.firstDateOfFinancialYear();
     String endDate = Globals.lastDateOfFinancialYear();
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ledger_reports);
+
         ButterKnife.bind(this);
         loader.setVisibility(View.VISIBLE);
         SetUPDialog();
@@ -254,7 +260,6 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
     }
 
 
-
     boolean isLoading = false;
     boolean islastPage = false;
     boolean isScrollingpage = false;
@@ -309,8 +314,9 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
         hde.put("CardCode", customerCode);
         hde.put("FromDate", fromDate);
         hde.put("ToDate", toDate);
+
         loader.setVisibility(View.GONE);
-        Call<ResponseJournalEntryBpWise> call = NewApiClient.getInstance().getApiService().bp_general_entries(hde);
+        Call<ResponseJournalEntryBpWise> call = NewApiClient.getInstance().getApiService(this).bp_general_entries(hde);
         call.enqueue(new Callback<ResponseJournalEntryBpWise>() {
             @Override
             public void onResponse(Call<ResponseJournalEntryBpWise> call, Response<ResponseJournalEntryBpWise> response) {
@@ -333,7 +339,10 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
                             getSupportActionBar().setTitle("Ledger:" + response.body().getData().get(0).getCardName());
                             // Collections.reverse(response.body().data.get(0).getJournalEntryLines());
                         }
-                        LedgerGeneralEntriesAdapter adapter = new LedgerGeneralEntriesAdapter(LedgerReports.this, response.body().data.get(0).getJournalEntryLines());
+//                        LedgerGeneralEntriesAdapter adapter = new LedgerGeneralEntriesAdapter(LedgerReports.this, response.body().data.get(0).getJournalEntryLines());//todo comment by me--
+
+                        LedgerGeneralEntriesAdapter adapter = new LedgerGeneralEntriesAdapter(LedgerReports.this, response.body().data.get(0).getJournalEntryLines(),alertDialog);
+
                         recyclerView.setLayoutManager(new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false));
                         recyclerView.setAdapter(adapter);
 
@@ -385,7 +394,7 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
         jsonObject.addProperty("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
 
 
-        Call<ResponseCustomerLedger> call = NewApiClient.getInstance().getApiService().ledger_dashboard2(jsonObject);
+        Call<ResponseCustomerLedger> call = NewApiClient.getInstance().getApiService(this).ledger_dashboard2(jsonObject);
         call.enqueue(new Callback<ResponseCustomerLedger>() {
             @Override
             public void onResponse(Call<ResponseCustomerLedger> call, Response<ResponseCustomerLedger> response) {
@@ -403,7 +412,9 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
                         AllItemList.addAll(response.body().getData());
 
                         customeAdapter = new LedgerCustomerEntriesAdapter(LedgerReports.this, AllItemList);
+
                         customeAdapter.AllData(AllItemList);
+
                         recyclerView.setLayoutManager(layoutManager);
                         recyclerView.setAdapter(customeAdapter);
 
@@ -440,7 +451,7 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
         jsonObject.addProperty("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
 
 
-        Call<ResponseCustomerLedger> call = NewApiClient.getInstance().getApiService().ledger_dashboard2(jsonObject);
+        Call<ResponseCustomerLedger> call = NewApiClient.getInstance().getApiService(this).ledger_dashboard2(jsonObject);
         call.enqueue(new Callback<ResponseCustomerLedger>() {
             @Override
             public void onResponse(Call<ResponseCustomerLedger> call, Response<ResponseCustomerLedger> response) {
@@ -483,7 +494,10 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
             case R.id.search:
 
                 break;
-            case R.id.calendar:
+            case R.id.calender:
+                // Globals.selectDat(this);
+//                dateRangeSelector();
+                showDateBottomSheetDialog(LedgerReports.this);
                 break;
             case R.id.share:
                 /***shubh****/
@@ -506,7 +520,7 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
 
         MenuItem item = menu.findItem(R.id.search);
         MenuItem calender = menu.findItem(R.id.calender);
-        calender.setVisible(false);
+        calender.setVisible(true);
         if (where.equalsIgnoreCase("customer")) {
             item.setVisible(true);
         } else {
@@ -578,6 +592,220 @@ public class LedgerReports extends MainBaseActivity implements View.OnClickListe
     public void onClick(View v) {
 
     }
+
+
+    private String startDateReverseFormat = "";
+    private String endDateReverseFormat = "";
+
+
+    private void showDateBottomSheetDialog(Context context) {
+        BottomSheetDialogSelectDateBinding binding;
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
+        binding = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
+        bottomSheetDialog.setContentView(binding.getRoot());
+        binding.ivCloseBottomSheet.setOnClickListener(view ->
+        {
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvCustomDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            // Toast.makeText(context, "today", Toast.LENGTH_SHORT).show();
+            bottomSheetDialog.dismiss();
+            dateRangeSelector();
+
+        });
+
+
+        binding.tvTodayDateBottomSheetSelectDate.setOnClickListener(view -> {
+            alertDialog.show();
+            startDatelng = Calendar.getInstance().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.Date_yyyy_mm_dd(startDatelng);
+            endDate = Globals.Date_yyyy_mm_dd(endDatelng);
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvTodayDateBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+
+        binding.tvYesterdayDateBottomSheetSelectDate.setOnClickListener(view -> {
+            alertDialog.show();
+            startDatelng = Globals.yesterDayCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.Date_yyyy_mm_dd(startDatelng);
+            endDate = Globals.Date_yyyy_mm_dd(startDatelng);
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvYesterdayDateBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvThisWeekDateBottomSheetSelectDate.setOnClickListener(view -> {
+            alertDialog.show();
+            startDatelng = Globals.thisWeekCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.thisWeekfirstDayOfMonth();
+            endDate = Globals.thisWeekLastDayOfMonth();
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvThisWeekDateBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+
+
+        binding.tvThisMonthBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            alertDialog.show();
+            startDatelng = Globals.thisMonthCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.firstDateOfMonth();
+            endDate = Globals.lastDateOfMonth();
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvThisMonthBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvLastMonthDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            alertDialog.show();
+            startDatelng = Globals.lastMonthCal().getTimeInMillis();
+            endDatelng = Globals.thisMonthCal().getTimeInMillis();
+            startDate = Globals.lastMonthFirstDate();
+            endDate = Globals.lastMonthlastDate();
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvLastMonthDateBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvThisQuarterDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            alertDialog.show();
+            startDatelng = Globals.thisQuarterCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.lastMonthFirstDate();
+            endDate = Globals.lastMonthlastDate();
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvThisQuarterDateBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvThisYearDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            alertDialog.show();
+            startDatelng = Globals.thisyearCal().getTimeInMillis();
+            endDatelng = Calendar.getInstance().getTimeInMillis();
+            startDate = Globals.firstDateOfFinancialYear();
+            endDate = Globals.lastDateOfFinancialYear();
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvThisYearDateBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvLastYearBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            alertDialog.show();
+            startDatelng = Globals.lastyearCal().getTimeInMillis();
+            endDatelng = Globals.thisyearCal().getTimeInMillis();
+            startDate = Globals.lastYearFirstDate();
+            endDate = Globals.lastYearLastDate();
+//            from_to_date.setText(startDate + " - " + endDate);
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+        binding.tvAllBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            alertDialog.show();
+
+            startDate = "";
+            endDate = "";
+
+            ledgerGeneralEntryReport(cardCode, startDate, endDate);
+//            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+//            from_to_date.setText(binding.tvAllBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+
+
+        bottomSheetDialog.show();
+
+    }
+
+
+    Long startDatelng = (long) 0.0;
+    Long endDatelng = (long) 0.0;
+    MaterialDatePicker<Pair<Long, Long>> materialDatePicker;
+
+    private void dateRangeSelector() {
+
+
+        if (startDatelng == 0.0) {
+            materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().setSelection(Pair.create(MaterialDatePicker.thisMonthInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds())).build();
+        } else {
+            materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().setSelection(Pair.create(startDatelng, endDatelng)).build();
+
+        }
+
+        materialDatePicker.show(getSupportFragmentManager(), "Tag_Picker");
+
+   /*     materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>() {
+            @Override
+            public void onPositiveButtonClick(Pair<Long, Long> selection) {
+                loader.setVisibility(View.VISIBLE);
+                startDatelng = selection.first;
+                endDatelng = selection.second;
+                startDate = Globals.Date_yyyy_mm_dd(startDatelng);
+                endDate = Globals.Date_yyyy_mm_dd(endDatelng);
+
+                if (fromWhere.trim().equalsIgnoreCase("SaleLedger")) {
+                    startDateReverseFormat = Globals.convertDateFormat(startDate);
+                    endDateReverseFormat = Globals.convertDateFormat(endDate);
+                    from_to_date.setText(startDateReverseFormat + " - " + endDateReverseFormat);
+                    callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+                    url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+                }
+
+
+            }
+        });*/
+
+
+    }
+
 
     WebView printWeb;
 

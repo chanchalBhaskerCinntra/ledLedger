@@ -103,7 +103,7 @@ public class ReceivableLedgerAdapter extends RecyclerView.Adapter <ReceivableLed
                     String arr[]=branchList.get(getAdapterPosition()).getMonth().split(" ");
 
 
-                    Log.e("filterValue=>",filterValue);
+//                    Log.e("filterValue=>",filterValue);
                     Intent i =new Intent(context, ParticularCustomerReceivableInfo.class);
                     i.putExtra("FromWhere","Receivable");
                     i.putExtra("cardCode",cardCode);

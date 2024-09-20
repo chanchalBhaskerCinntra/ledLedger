@@ -571,7 +571,7 @@ public class Opportunity_Update_Fragment extends Fragment implements View.OnClic
 
     private void updateOpportunity(AddOpportunityModel in)
        {
-    Call<NewOppResponse> call = NewApiClient.getInstance().getApiService().newUpdateOpportunity(in);
+    Call<NewOppResponse> call = NewApiClient.getInstance().getApiService(getActivity()).newUpdateOpportunity(in);
     call.enqueue(new Callback<NewOppResponse>() {
     @Override
     public void onResponse(Call<NewOppResponse> call, Response<NewOppResponse> response) {

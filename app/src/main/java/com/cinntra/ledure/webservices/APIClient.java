@@ -30,7 +30,7 @@ public class APIClient {
 
 
 
-            Log.e("Res=> ",retrofit.toString());
+//            Log.e("Res=> ",retrofit.toString());
         }
         return retrofit;
     }

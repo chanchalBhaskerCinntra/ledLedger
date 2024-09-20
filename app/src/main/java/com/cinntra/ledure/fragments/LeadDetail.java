@@ -151,7 +151,7 @@ public class LeadDetail extends Fragment implements View.OnClickListener {
 
     private void callleadTypeApi(String type) {
 
-        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService().getLeadType();
+        Call<LeadTypeResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getLeadType();
         call.enqueue(new Callback<LeadTypeResponse>() {
             @Override
             public void onResponse(Call<LeadTypeResponse> call, Response<LeadTypeResponse> response) {
@@ -329,7 +329,7 @@ public class LeadDetail extends Fragment implements View.OnClickListener {
 
 
     private void callUpdateApi(CreateLead lv) {
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().updateLead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updateLead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {
@@ -371,7 +371,7 @@ public class LeadDetail extends Fragment implements View.OnClickListener {
     private void callApi(int id) {
         LeadValue lv = new LeadValue();
         lv.setId(id);
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().particularlead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(getActivity()).particularlead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {

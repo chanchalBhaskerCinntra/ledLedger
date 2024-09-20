@@ -173,7 +173,7 @@ public class InvoicesListReceiptBasis extends MainBaseActivity implements View.O
            {
         HashMap<String,Integer> hde = new HashMap<>();
         hde.put("ReceiptId",receiptId);
-        Call<ReceiptResponse> call = NewApiClient.getInstance().getApiService().oneReceipt(hde);
+        Call<ReceiptResponse> call = NewApiClient.getInstance().getApiService(this).oneReceipt(hde);
         call.enqueue(new Callback<ReceiptResponse>() {
             @Override
             public void onResponse(Call<ReceiptResponse> call, Response<ReceiptResponse> response) {

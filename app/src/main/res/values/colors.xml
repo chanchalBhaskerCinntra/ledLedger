@@ -26,6 +26,10 @@
     <color name="colour_text_color">#4A79E4</color>
     <color name="colour_text">#333333</color>
 
+    <color name="gray1">#404040</color>
+    <color name="gray2">#F1F1F1</color>
+
+    <color name="black_text_color">#626262</color>
 
     <color name="title_back_dark">#F0F3FA</color>
     <color name="tile_dark_color">#7B7C81</color>

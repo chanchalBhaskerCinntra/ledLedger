@@ -13,10 +13,7 @@
         android:layout_margin="@dimen/size_8"
         android:src="@drawable/ic_green_ui_top_login"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/ivLogo"
@@ -138,33 +135,52 @@
                             android:textSize="@dimen/text_size_16"
                             android:textStyle="bold" />
 
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/textField"
-                            style="@style/inputLayoutPhone"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/size_8"
-                            android:hint="@string/user_name"
+                            android:orientation="horizontal">
 
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:startIconContentDescription="@string/user_name"
+                            <com.hbb20.CountryCodePicker
+                                android:id="@+id/countryPickerAlternate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_gravity="center"
+                                app:ccpDialog_cornerRadius="10dp"
+                                app:ccp_autoDetectCountry="true"
+                                app:ccp_showArrow="true"
+                                app:ccp_showNameCode="false"
+                                app:ccp_showPhoneCode="false" />
 
-                            app:startIconTint="@color/colorPrimary">
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/login_username"
-                                style="@style/editTextBasic"
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/textField"
+                                style="@style/inputLayoutPhone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Enter your Mobile No."
-                                android:inputType="textPhonetic"
-                                android:singleLine="true"
+                                android:layout_marginTop="@dimen/size_10"
+                                android:hint="@string/user_name"
 
-                                />
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:startIconContentDescription="@string/user_name"
 
-                        </com.google.android.material.textfield.TextInputLayout>
+                                app:startIconTint="@color/colorPrimary">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/edtMobileNo"
+                                    style="@style/editTextBasic"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Enter your Mobile No."
+                                    android:inputType="textPhonetic"
+                                    android:singleLine="true"
+
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
 
 
                         <TextView
@@ -175,7 +191,8 @@
                             android:text="@string/password"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_size_16"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:visibility="gone" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/passwordField"
@@ -184,6 +201,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/size_20"
                             android:hint="@string/pass"
+                            android:visibility="gone"
 
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -227,7 +245,8 @@
                             android:buttonTint="@color/colorPrimary"
                             android:buttonTintMode="src_atop"
                             android:text="Remember me"
-                            android:textColor="@color/black" />
+                            android:textColor="@color/black"
+                            android:visibility="gone" />
 
 
                         <CheckBox
@@ -306,8 +325,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.github.ybq.android.spinkit.SpinKitView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/progressBar1"
                 style="@style/SpinKitView.Large.Circle"
                 android:layout_width="wrap_content"

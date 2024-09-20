@@ -153,7 +153,7 @@ public class EventDetailFragment extends Fragment implements  View.OnClickListen
     private void callApi(Integer eventValue) {
         EventValue event = new EventValue();
         event.setId(eventValue);
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().particularevent(event);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).particularevent(event);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
@@ -553,7 +553,7 @@ public class EventDetailFragment extends Fragment implements  View.OnClickListen
 
     private void callupdateApi(EventValue eventValue) {
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().updateevent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updateevent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

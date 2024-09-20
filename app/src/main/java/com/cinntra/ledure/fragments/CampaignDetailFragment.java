@@ -153,7 +153,7 @@ public class CampaignDetailFragment extends Fragment implements View.OnClickList
         CampaignModel cm = new CampaignModel();
         cm.setId(id);
 
-        Call<CampaignResponse> call = NewApiClient.getInstance().getApiService().getCampsetDetails(cm);
+        Call<CampaignResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getCampsetDetails(cm);
         call.enqueue(new Callback<CampaignResponse>() {
             @Override
             public void onResponse(Call<CampaignResponse> call, Response<CampaignResponse> response) {

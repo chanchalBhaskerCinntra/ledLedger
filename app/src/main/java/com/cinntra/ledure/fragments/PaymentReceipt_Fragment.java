@@ -215,7 +215,18 @@ public class PaymentReceipt_Fragment extends Fragment implements Toolbar.OnMenuI
     /*************** Bhupi *********************/ // Calling one BottomSheet for Ledger Sharing
     private void shareLedgerData() {
         String title = getString(R.string.share_customer_list);
-        url = Globals.receiptAllPdfUl + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.receiptAllPdfUlPurchase + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE+ "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        } else {
+            url = Globals.receiptAllPdfUl + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE+ "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+        }
+
+        Log.e("PDF====>", "shareLedgerData: "+url);
+
+//        url = Globals.receiptAllPdfUl + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
@@ -375,6 +386,29 @@ public class PaymentReceipt_Fragment extends Fragment implements Toolbar.OnMenuI
             from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
+
+        binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                from_to_date.setText(startDate + " - " + endDate);
+                Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+                loader.setVisibility(View.VISIBLE);
+
+                callDashboardCounter();
+                callledgerOneapi(reportType, startDate, endDate);
+                url = Globals.receiptAllPdfUl + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+                Log.e("receiptAllPdfUl", "onCreateView: " + url);
+                from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+
+
         binding.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";
@@ -695,7 +729,7 @@ public class PaymentReceipt_Fragment extends Fragment implements Toolbar.OnMenuI
             obj.put("PageNo", "");
             obj.put("MaxSize", "");
             obj.put("DueDaysGroup", "");
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForPurchaseLedger(obj);
         } else {
             obj.put("Filter", "");
             obj.put("Code", "");
@@ -703,9 +737,9 @@ public class PaymentReceipt_Fragment extends Fragment implements Toolbar.OnMenuI
             obj.put("FromDate", startDate);
             obj.put("ToDate", endDate);
             obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         }
-//        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+//        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -774,12 +808,12 @@ public class PaymentReceipt_Fragment extends Fragment implements Toolbar.OnMenuI
 
                 Call<ReceiptCustomerBusinessRes> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().receipt_dashboard_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).receipt_dashboard_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().receipt_dashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).receipt_dashboard(hde);
                 }
 
-//                Call<ReceiptCustomerBusinessRes> call = NewApiClient.getInstance().getApiService().receipt_dashboard(hde);
+//                Call<ReceiptCustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).receipt_dashboard(hde);
                 try {
                     Response<ReceiptCustomerBusinessRes> response = call.execute();
                     if (response.isSuccessful()) {
@@ -841,12 +875,12 @@ public class PaymentReceipt_Fragment extends Fragment implements Toolbar.OnMenuI
 
                 Call<ReceiptCustomerBusinessRes> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().receipt_dashboard_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).receipt_dashboard_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().receipt_dashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).receipt_dashboard(hde);
                 }
 
-//                Call<ReceiptCustomerBusinessRes> call = NewApiClient.getInstance().getApiService().receipt_dashboard(hde);
+//                Call<ReceiptCustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).receipt_dashboard(hde);
 
 
                 try {

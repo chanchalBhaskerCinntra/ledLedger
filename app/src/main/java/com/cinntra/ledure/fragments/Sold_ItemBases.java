@@ -215,7 +215,7 @@ public class Sold_ItemBases extends Fragment implements LedgerCutomerDetails.MyF
         hde.put("ToDate", toDate);
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-        Call<CustomerItemResponse> call = NewApiClient.getInstance().getApiService().bp_wise_sold_items(hde);
+        Call<CustomerItemResponse> call = NewApiClient.getInstance().getApiService(getActivity()).bp_wise_sold_items(hde);
         call.enqueue(new Callback<CustomerItemResponse>() {
             @Override
             public void onResponse(Call<CustomerItemResponse> call, Response<CustomerItemResponse> response) {
@@ -257,7 +257,7 @@ public class Sold_ItemBases extends Fragment implements LedgerCutomerDetails.MyF
         hde.put("ToDate", toDate);
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-        Call<CustomerItemResponse> call = NewApiClient.getInstance().getApiService().bp_wise_sold_items(hde);
+        Call<CustomerItemResponse> call = NewApiClient.getInstance().getApiService(getActivity()).bp_wise_sold_items(hde);
         call.enqueue(new Callback<CustomerItemResponse>() {
             @Override
             public void onResponse(Call<CustomerItemResponse> call, Response<CustomerItemResponse> response) {

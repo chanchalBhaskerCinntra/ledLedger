@@ -44,7 +44,7 @@ public class Post_WebService  {
             //set headers and method
             Writer writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
             //  writer.append("request_json");
-            Log.e("Writable Data=>", JsonDATA.toString());
+//            Log.e("Writable Data=>", JsonDATA.toString());
             writer.write(JsonDATA);
             // json data
             writer.close();
@@ -66,7 +66,7 @@ public class Post_WebService  {
             }
             JsonResponse = buffer.toString();
             //response data
-            Log.i("TAG Test", JsonResponse);
+//            Log.i("TAG Test", JsonResponse);
             try {
 //send to post execute
                 return JsonResponse;
@@ -87,7 +87,7 @@ public class Post_WebService  {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e("TAG", "Error closing stream", e);
+//                    Log.e("TAG", "Error closing stream", e);
                 }
             }
            }

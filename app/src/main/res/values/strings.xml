@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Bridge : Ledure</string>
+    <string name="app_name">Ledure Biz</string>
     <string name="home">Dashboard</string>
     <string name="graph">Graph</string>
     <string name="notifications">Notifications</string>
@@ -98,6 +98,7 @@
     <string name="accounting">Accounting </string>
     <string name="doc_no"> Doc. No. </string>
     <string name="customer">Customer </string>
+    <string name="vendors">Vendor </string>
     <string name="view_all_iem">Click to view all Items. </string>
     <string name="view_all">View All </string>
     <string name="valid_untill">Valid Until </string>
@@ -476,6 +477,17 @@
 
     </array>
 
+    <array name="ledger_dropdownPurchase">
+        <!--        <item>Ledger</item>-->
+        <item>Vendor</item>
+        <item>Group</item>
+        <item>Zone</item>
+        <!-- <item>Item Stock</item>-->
+        <!--        <item>Stock Group</item>-->
+        <item>Category</item>
+
+    </array>
+
 
     <array name="ledger_for_sale">
         <!--        <item>Ledger</item>-->
@@ -484,6 +496,14 @@
         <item>Group</item><!--Item Stock-->
         <item>Category</item>
         <!--        <item>Stock Group</item>-->
+
+    </array>
+
+    <array name="ledger_for_sale_purchase">
+        <item>Vendor</item>
+        <item>Zone</item>
+        <item>Group</item><!--Item Stock-->
+        <item>Category</item>
 
     </array>
 
@@ -497,14 +517,28 @@
 
     </array>
 
+    <array name="ledger_receivable_dropdown_purchase">
+        <!--        <item>Ledger</item>-->
+        <item>Vendor</item>
+
+        <item>Zone</item>
+
+
+    </array>
+
     <array name="type_gross_net">
         <item>Gross</item>
         <item>Net</item>
-
     </array>
 
     <array name="order_by_list_by_zone">
         <item>Customer</item>
+        <item>Category</item>
+
+    </array>
+
+    <array name="order_by_list_by_zone_purchase">
+        <item>Vendor</item>
         <item>Category</item>
 
     </array>
@@ -861,6 +895,7 @@
     <string name="emp_typ">Emp Type</string>
     <string name="dateofjoining">Date of Joining</string>
     <string name="all_customers">All Customers</string>
+    <string name="all_vendors">All Vendors</string>
     <string name="partially_paid">Partially Paid</string>
     <string name="payment_info">Payment Info</string>
     <string name="subtotal">Subtotal</string>
@@ -900,6 +935,7 @@
     <string name="this_quarter">This Quarter</string>
     <string name="this_year">This Year</string>
     <string name="last_year">Last Year</string>
+    <string name="last_year_till_date">Last  Year Till Date</string>
     <string name="all">All</string>
     <string name="sale_amount">Sales Amount (\u20B9)</string>
     <string name="receipt_amount">Received  (\u20B9)</string>
@@ -987,7 +1023,7 @@
 
 
     <string name="sales">Sales</string>
-    <string name="dashboard_date_text">01 APR 23 to 31 MAR 24</string>
+    <string name="dashboard_date_text">01 APR 24 to 31 MAR 25</string>
     <string name="receipt">Receipt</string>
     <string name="receivables">Receivables</string>
     <string name="due_newcard">Due in 7 days</string>
@@ -998,8 +1034,9 @@
     <string name="password">Password</string>
     <string name="report">Report</string>
     <string name="location_sharing">Location Sharing</string>
+    <!-- <string name="version_app">Version: 1.0.25 20240703 (Live) </string>-->
+    <string name="version_app">Version: 1.0.0  (TEST) </string>
+    <string name="debit_note">Debit Note</string>
 
-    <string name="version_app">Version: 1.0.22(Live) </string>
-    <!--<string name="version_app">Version: 1.0.21(Test) </string>-->
 
 </resources>

@@ -267,7 +267,7 @@ public class AddEventDialogue extends DialogFragment implements View.OnClickList
 
     private void callApi(EventValue eventValue) {
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().createnewevent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).createnewevent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
@@ -492,7 +492,7 @@ public class AddEventDialogue extends DialogFragment implements View.OnClickList
 
     private void getAllEmployee() {
 
-        Call<SaleEmployeeResponse> call = NewApiClient.getInstance().getApiService().getAllEmployee();
+        Call<SaleEmployeeResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllEmployee();
         call.enqueue(new Callback<SaleEmployeeResponse>() {
             @Override
             public void onResponse(Call<SaleEmployeeResponse> call, Response<SaleEmployeeResponse> response) {

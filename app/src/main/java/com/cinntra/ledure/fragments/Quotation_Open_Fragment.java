@@ -150,7 +150,7 @@ public class Quotation_Open_Fragment extends Fragment implements View.OnClickLis
     private void callApi(ProgressBar loader)
                 {
         QuotationList_ViewModel model = ViewModelProviders.of(this).get(QuotationList_ViewModel.class);
-       model.getQutotation(loader).observe(getActivity(), new Observer<List<QuotationItem>>() {
+       model.getQutotation(loader, getActivity()).observe(getActivity(), new Observer<List<QuotationItem>>() {
             @Override
             public void onChanged(@Nullable List<QuotationItem> itemsList) {
 

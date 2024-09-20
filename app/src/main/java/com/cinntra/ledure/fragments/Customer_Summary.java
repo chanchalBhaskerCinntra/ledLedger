@@ -18,10 +18,13 @@ import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.LedgerCutomerDetails;
 import com.cinntra.ledure.activities.ParticularBpCreditNoteActivity;
+import com.cinntra.ledure.activities.ParticularCustomerReceiptInfo;
 import com.cinntra.ledure.activities.PendingOrderSubListActivity;
+import com.cinntra.ledure.adapters.PayableLedgerAdapter;
 import com.cinntra.ledure.adapters.PurchaseLedgerAdapter;
 import com.cinntra.ledure.adapters.ReceiptLedgerAdapter;
 import com.cinntra.ledure.adapters.ReceivableLedgerAdapter;
@@ -35,7 +38,6 @@ import com.cinntra.ledure.model.MonthGroupSalesList;
 import com.cinntra.ledure.model.UnderList;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.text.ParseException;
@@ -76,17 +78,33 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
     @BindView(R.id.receivable_amount)
     TextView receivable_amount;
 
+
+    @BindView(R.id.payable_amount)
+    TextView payable_amount;
+
     @BindView(R.id.sale_divider)
     View sale_divider;
+
+
     @BindView(R.id.purchase_divider)
     View purchase_divider;
+
+
     @BindView(R.id.receipt_divider)
     View receipt_divider;
 
     @BindView(R.id.receivable_recyclerview)
     RecyclerView receivable_recyclerview;
+
+
+    @BindView(R.id.payable_recyclerview)
+    RecyclerView payable_recyclerview;
     @BindView(R.id.receivable_arrow)
     ImageView receivable_arrow;
+
+
+    @BindView(R.id.payable_arrow)
+    ImageView payable_arrow;
     @BindView(R.id.receivableLay)
     LinearLayout receivableLay;
     @BindView(R.id.receipt_recyclerview)
@@ -136,6 +154,10 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
     TextView purchase_receivable_amount;
     @BindView(R.id.purchaseLay)
     LinearLayout purchaseLay;
+
+
+    @BindView(R.id.payableLay)
+    LinearLayout payableLay;
     @BindView(R.id.purchaseSection)
     LinearLayout purchaseSection;
 
@@ -152,6 +174,29 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
 
     @BindView(R.id.linearOverView)
     LinearLayout linearOverView;
+
+    @BindView(R.id.sale_txt)
+    TextView sale_txt;
+
+    @BindView(R.id.receipt_txt)
+    TextView receipt_txt;
+
+    @BindView(R.id.receivable_txt)
+    TextView receivable_txt;
+
+    @BindView(R.id.headingCreditNote)
+    TextView headingCreditNote;
+
+    @BindView(R.id.headingPendingSaleOrder)
+    TextView headingPendingSaleOrder;
+
+    //todo new changes after update code
+    @BindView(R.id.purchase_receivable_txt)
+    TextView purchase_receivable_txt;
+
+
+    @BindView(R.id.purchase_receiptLay)
+    LinearLayout purchase_receiptLay;
 
 
     RelativeLayout relativeCalView;
@@ -222,8 +267,38 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         receiptLay.setOnClickListener(this);
         receivableLay.setOnClickListener(this);
         purchaseLay.setOnClickListener(this);
-        linearOverView.setVisibility(View.VISIBLE);
-        ibOverviewArrow.setImageResource(R.drawable.ic_arrow_down);
+        payableLay.setOnClickListener(this);
+        purchase_receiptLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=  new Intent(requireActivity(), ParticularCustomerReceiptInfo.class);
+                i.putExtra("FromWhere","ReceiptLedger");
+                i.putExtra("cardCode",cardCode);
+                i.putExtra("cardName",cardName);
+                i.putExtra("startDate","");
+                i.putExtra("endDate","");
+
+                requireActivity().startActivity(i);
+            }
+        });
+
+
+ /*       if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            sale_txt.setText("Purchase");
+            receipt_txt.setText("Payment");
+            headingPendingSaleOrder.setText("Pending Order");
+            receivable_txt.setText("Payable");
+            headingCreditNote.setText("Debit Note");
+            //todo new change for debit note
+            purchase_receivable_txt.setText("Debit Return");
+        } else {
+            sale_txt.setText("Sales");
+            receipt_txt.setText("Receipt");
+            headingPendingSaleOrder.setText("Pending Sale Order");
+            receivable_txt.setText("Receivables");
+            headingCreditNote.setText("Credit Note");
+            purchase_receivable_txt.setText("Debit Return");
+        }*/
 
         ibOverviewArrow.setOnClickListener(view -> {
             if (linearOverView.getVisibility() == View.VISIBLE) {
@@ -289,6 +364,8 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
                     , receipt_divider, count);
         } else if (view.getId() == R.id.receivableLay) {
             setViewChangeReceivable(receivable_recyclerview, receivable_arrow, creditView, null, 0);
+        } else if (view.getId() == R.id.payableLay) {
+            setViewChangeReceivable(payable_recyclerview, payable_arrow, creditView, null, 0);
         }
     }
 
@@ -343,7 +420,7 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         hde.put("FromDate", fromDate);
         hde.put("ToDate", toDate);
 
-        Call<CustomerLedgerResponse> call = NewApiClient.getInstance().getApiService().BPLedgerDetails(hde);
+        Call<CustomerLedgerResponse> call = NewApiClient.getInstance().getApiService(getActivity()).BPLedgerDetails(hde);
         call.enqueue(new Callback<CustomerLedgerResponse>() {
             @Override
             public void onResponse(Call<CustomerLedgerResponse> call, Response<CustomerLedgerResponse> response) {
@@ -368,18 +445,49 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
     PurchaseLedgerAdapter purchaseLedgerAdapter;
     ReceiptLedgerAdapter receiptAdapter;
     ReceivableLedgerAdapter receivableAdapter;
+    PayableLedgerAdapter payableLedgerAdapter;
     private String cardName = "";
 
     private void setData(CustomerLedgerRes res) {
 
-        last_sale_date.setText(Globals.convertDateFormat(res.getLastSalesDate()));
-        last_receipt_date.setText(Globals.convertDateFormat(res.getLastRecipetDate()));
+        if (res.getLastSalesDate().equalsIgnoreCase("None") || res.getLastSalesDate().isEmpty()) {
+            last_sale_date.setText("None");
+        }else {
+            last_sale_date.setText(Globals.convertDateFormat(res.getLastSalesDate()));
+        }
+        if (res.getLastRecipetDate().equalsIgnoreCase("None") || res.getLastRecipetDate().isEmpty()) {
+            last_receipt_date.setText("None");
+        }else {
+            last_receipt_date.setText(Globals.convertDateFormat(res.getLastRecipetDate()));
+        }
+
+
         no_of_invoices.setText(res.getInvoiceCount());
         avg_sale.setText("₹ " + Globals.numberToK(String.valueOf(res.getAvgInvoiceAmount())));
         sale_amount.setText("₹ " + Globals.numberToK(String.valueOf(res.getTotalSales())));
         receipt_amount.setText("₹ " + Globals.numberToK(String.valueOf(res.getTotalReceipt())));
+
+//todo receivable amount
         double ress = Double.valueOf(res.getTotalReceivable()) + Double.valueOf(res.getTotalJECreditNote());
         receivable_amount.setText("₹ " + Globals.numberToK(String.valueOf(ress)));
+
+        //todo payable amount
+        double payable=Double.valueOf(res.getTotalPayable()) + Double.valueOf(res.getTotalJECreditNotepay());
+        payable_amount.setText("₹ " + Globals.numberToK(String.valueOf(payable)));
+
+
+
+      /*  //todo for purchase
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+
+        }else {
+            double ress = Double.valueOf(res.getTotalReceivable()) + Double.valueOf(res.getTotalJECreditNote());
+            receivable_amount.setText("₹ " + Globals.numberToK(String.valueOf(ress)));
+        }*/
+
+
+
+
         tvAvgPaymentDays.setText("" + res.getAvgPayDays());
         tvPendingSaleOrder.setText("₹ " + Globals.numberToK(String.valueOf(res.getPendingAmount())));
         tvCreditNoteSummary.setText("₹ " + Globals.numberToK(String.valueOf(res.getTotalCreditNote())));
@@ -435,6 +543,16 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         MonthGroupSalesList obj_over30 = new MonthGroupSalesList();
         MonthGroupSalesList obj_over60 = new MonthGroupSalesList();
 
+
+        List<MonthGroupSalesList> over_under_pay = new ArrayList<>();
+        MonthGroupSalesList obj_over_pay = new MonthGroupSalesList();
+        MonthGroupSalesList obj_over0_pay = new MonthGroupSalesList();
+        MonthGroupSalesList obj_over30_pay = new MonthGroupSalesList();
+        MonthGroupSalesList obj_over60_pay = new MonthGroupSalesList();
+
+
+
+
         if (res.getOverList() == null || res.getOverList().size() == 0) {
             obj_over.setMonth(">0 Days");
             //obj_over.setDocTotal("0.0");
@@ -459,6 +577,36 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
 
         }
 
+        //todo payable calculation
+
+        if (res.getOverListpay() == null || res.getOverListpay().size() == 0) {
+            obj_over_pay.setMonth(">0 Days");
+            //obj_over.setDocTotal("0.0");
+            obj_over_pay.setDocTotal(setOverDue0(res.getOverListpay()));
+            over_under_pay.add(obj_over_pay);
+        } else {
+
+
+            obj_over60_pay.setMonth(">60 Days");
+            obj_over60_pay.setDocTotal(setOverDue60(res.getOverListpay()));
+            over_under_pay.add(obj_over60_pay);
+
+            obj_over30_pay.setMonth(">30 Days");
+            obj_over30_pay.setDocTotal(setOverDue30(res.getOverListpay()));
+            over_under_pay.add(obj_over30_pay);
+
+            obj_over_pay.setMonth(">0 Days");
+            //obj_over.setDocTotal("0.0");
+            obj_over_pay.setDocTotal(setOverDue0(res.getOverListpay()));
+            over_under_pay.add(obj_over_pay);
+
+
+        }
+
+
+
+
+
         MonthGroupSalesList obj_under = new MonthGroupSalesList();
         if (res.getUnderList() == null || res.getUnderList().size() == 0) {
             obj_under.setMonth("Not Due");
@@ -468,9 +616,14 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
             obj_under.setDocTotal(setOverDue(res.getUnderList()));
         }
         over_under.add(obj_under);
+       // over_under_pay.add()
 
         receivableAdapter = new ReceivableLedgerAdapter(getActivity(), over_under, res.getCardCode(), res.getCardName());
         receivable_recyclerview.setAdapter(receivableAdapter);
+
+
+        payableLedgerAdapter = new PayableLedgerAdapter(getActivity(), over_under_pay, res.getCardCode(), res.getCardName());
+        payable_recyclerview.setAdapter(payableLedgerAdapter);
 
 
         /************************* Purchase Management ************************************/

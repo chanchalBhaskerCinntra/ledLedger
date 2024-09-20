@@ -121,7 +121,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
     @Override
     public void onClick(View v)
       {
-   Log.e("Test=>","Onclick");
+//   Log.e("Test=>","Onclick");
    setDate(new DateTime());
 
 
@@ -145,7 +145,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
     public void scrollToPosition(int position) {
         super.scrollToPosition(position);
         OnScrollPosition = position;
-        Log.e("OnScroll==>",""+position);
+//        Log.e("OnScroll==>",""+position);
         layoutManager.scrollToPosition(position);
         selectItem(true,position);
         adapter.notifyItemChanged(position);
@@ -162,7 +162,7 @@ public class HorizontalPickerRecyclerView extends RecyclerView implements OnItem
         int difference = Days.daysBetween(date,today).getDays() * (date.getYear() < today.getMillis() ? -1 : 1);
         //smoothScrollToPosition(offset+difference);
         scrollToPosition(offset+difference);
-        Log.e("OffsetPo=>",""+offset+difference);
+//        Log.e("OffsetPo=>",""+offset+difference);
           }
 
     private static class CenterSmoothScroller extends LinearSmoothScroller {

@@ -164,7 +164,7 @@ public class BusinessPartnerEvent extends Fragment implements DatePickerListener
         String dd = formatter1.format(day);
 
         Globals.CurrentSelectedDate = dateSelected.getYear()+"-"+month+"-"+dd;
-        Log.e("Date=>C",Globals.CurrentSelectedDate);
+//        Log.e("Date=>C",Globals.CurrentSelectedDate);
         viewpager.getAdapter().notifyDataSetChanged();
     }
 

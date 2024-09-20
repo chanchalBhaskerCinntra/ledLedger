@@ -298,7 +298,7 @@ public class ItemDetailsDashboard extends AppCompatActivity {
                 hde.put("ToDate", endDate);
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-                Call<ResponseItemOverView> call = NewApiClient.getInstance().getApiService().getItemOverView(hde);
+                Call<ResponseItemOverView> call = NewApiClient.getInstance().getApiService(ItemDetailsDashboard.this).getItemOverView(hde);
                 try {
                     Response<ResponseItemOverView> response = call.execute();
                     if (response.isSuccessful()) {
@@ -343,7 +343,7 @@ public class ItemDetailsDashboard extends AppCompatActivity {
                 hde.put("FromDate", startDate);
                 hde.put("ToDate", endDate);
 
-           Call<ResponseItemOverView> call = NewApiClient.getInstance().getApiService().getItemOverView(hde);
+           Call<ResponseItemOverView> call = NewApiClient.getInstance().getApiService(ItemDetailsDashboard.this).getItemOverView(hde);
                 try {
                     Response<ResponseItemOverView> response = call.execute();
                     if (response.isSuccessful()) {

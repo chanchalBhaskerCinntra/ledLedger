@@ -129,7 +129,7 @@ public class DeliveryActivity extends MainBaseActivity implements View.OnClickLi
 
     private void callApi(HashMap<String,String> salesEmployeeItem ) {
 
-        Call<ResponseDeliveryOrder> call = NewApiClient.getInstance().getApiService().orderlist(salesEmployeeItem);
+        Call<ResponseDeliveryOrder> call = NewApiClient.getInstance().getApiService(this).orderlist(salesEmployeeItem);
         call.enqueue(new Callback<ResponseDeliveryOrder>() {
             @Override
             public void onResponse(Call<ResponseDeliveryOrder> call, Response<ResponseDeliveryOrder> response) {

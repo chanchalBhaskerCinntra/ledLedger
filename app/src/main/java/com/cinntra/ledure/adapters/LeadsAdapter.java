@@ -126,7 +126,7 @@ public class LeadsAdapter extends RecyclerView.Adapter<LeadsAdapter.ViewHolder> 
 
     private void callcreateApi(ChatModel chatModel) {
 
-        Call<ChatResponse> call = NewApiClient.getInstance().getApiService().createChat(chatModel);
+        Call<ChatResponse> call = NewApiClient.getInstance().getApiService(context).createChat(chatModel);
         call.enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
@@ -146,7 +146,7 @@ public class LeadsAdapter extends RecyclerView.Adapter<LeadsAdapter.ViewHolder> 
 
     private void callfollowupApi(FollowUpData followUpData) {
 
-        Call<FollowUpResponse> call = NewApiClient.getInstance().getApiService().createfollowUP(followUpData);
+        Call<FollowUpResponse> call = NewApiClient.getInstance().getApiService(context).createfollowUP(followUpData);
         call.enqueue(new Callback<FollowUpResponse>() {
             @Override
             public void onResponse(Call<FollowUpResponse> call, Response<FollowUpResponse> response) {

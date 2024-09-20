@@ -4,7 +4,8 @@
     android:id="@+id/main_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:rotationX="0">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -111,11 +112,11 @@
                         android:id="@+id/ivPictureClick"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:layout_toRightOf="@+id/name_icon"
-                        android:layout_marginEnd="10dp"
                         android:layout_alignParentBottom="true"
-                        app:tint="@color/colorPrimary"
-                        android:src="@drawable/ic_camera"/>
+                        android:layout_marginEnd="10dp"
+                        android:layout_toRightOf="@+id/name_icon"
+                        android:src="@drawable/ic_camera"
+                        app:tint="@color/colorPrimary" />
 
                 </RelativeLayout>
 
@@ -443,8 +444,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="fill"
                         android:gravity="center_vertical"
-                        android:visibility="gone"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -493,17 +494,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/size_2"
                         android:layout_marginTop="@dimen/size_10"
-                        android:visibility="gone"
-                        android:background="@color/dividerColor" />
+                        android:background="@color/dividerColor"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/linearZone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="fill"
-                        android:visibility="gone"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -552,8 +553,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/size_2"
                         android:layout_marginTop="@dimen/size_10"
-                        android:visibility="gone"
-                        android:background="@color/dividerColor" />
+                        android:background="@color/dividerColor"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -747,7 +748,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/size_40"
                         android:layout_gravity="center_vertical"
-
                         android:drawableLeft="@drawable/ic_baseline_logout_24"
                         android:drawablePadding="@dimen/size_10"
                         android:drawableTint="@color/red"

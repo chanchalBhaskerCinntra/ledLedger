@@ -50,16 +50,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.baoyz.widget.PullRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.cinntra.ledure.R;
+import com.cinntra.ledure.activities.Login;
 import com.cinntra.ledure.adapters.LedgerCustomersAdapter;
 import com.cinntra.ledure.databinding.BottomSheetDialogShareReportBinding;
 import com.cinntra.ledure.databinding.FragmentPartyBinding;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.SearchViewUtils;
+import com.cinntra.ledure.globals.SessionManagement;
+import com.cinntra.ledure.model.AttachmentModel;
 import com.cinntra.ledure.model.BusinessPartnerData;
 import com.cinntra.ledure.model.CustomerBusinessRes;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.JsonObject;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.OnMenuItemClickListener;
@@ -167,6 +172,8 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         Zones = requireActivity().getIntent().getStringExtra("Zones");
         Prefs.putBoolean(Globals.ISPURCHASE, false);
         setDefaults();
+        sessionManagement=new SessionManagement(getActivity());
+        callAttachmentAllApi();
 
         eventSearchManager();
     }
@@ -180,7 +187,12 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         relativeInfoView.setVisibility(View.GONE);
         relativeCalView.setVisibility(View.GONE);
         //todo sale purchase option is disable according to client
-        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
+
+        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("21") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("32") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("31") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("-1")) {
             binding.quoteHeader.salesAndPurchaseLayout.setVisibility(View.VISIBLE);
         } else {
             binding.quoteHeader.salesAndPurchaseLayout.setVisibility(View.INVISIBLE);
@@ -354,6 +366,13 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         bindingBottom = BottomSheetDialogShareReportBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(bindingBottom.getRoot());
 
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.allCustomerPdfUrlPurchase + Prefs.getString(Globals.SalesEmployeeCode, "") +"&CardType="+cardType;
+        } else {
+            url = Globals.allCustomerPdfUrl + Prefs.getString(Globals.SalesEmployeeCode, "") +"&CardType="+cardType;
+
+        }
 
         setUpWebViewDialog(bindingBottom.webViewBottomSheetDialog, url, false, bindingBottom.loader, bindingBottom.linearWhatsappShare, bindingBottom.linearGmailShare, bindingBottom.linearOtherShare);
 
@@ -916,7 +935,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         hde.put(Globals.payLoadCardType, cardType);
 
 
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -970,6 +989,69 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    SessionManagement sessionManagement;
+    private static final String TAG = "PartyFragment";
+
+    private void callAttachmentAllApi(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+     /*   jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
+        jsonObject.addProperty("LinkType", "ProfilePic");*/
+//        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(getActivity()).getAllAttachment(jsonObject);
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(getActivity()).getNewAllAttachmentApi(jsonObject);
+        call.enqueue(new Callback<AttachmentModel>() {
+            @Override
+            public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
+                if (response != null) {
+
+                    if (response.code() == 200) {
+                        Log.e(TAG, "onResponse: "+response.body().getMessage() );
+
+                        if (response.body().getStatus() == 200){
+
+                            if (response.body().getData().size() > 0) {
+                                String filePath = Globals.ImageURL + response.body().getData().get(0).getProfileImage();
+
+                                if (filePath != null) {
+                             /*   Glide.with(getActivity())
+                                        .load(filePath)
+                                        .into(binding.proImg);*/
+                                } else {
+                                    // binding.proImg.setImageResource(R.drawable.ic_profileicon);
+                                }
+
+                            }
+
+                        }
+                        else if (response.body().getStatus() == 401) {
+                            Toast.makeText(getActivity(), "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                            Prefs.clear();
+                            Intent intent = new Intent(getActivity(), Login.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                            sessionManagement.ClearSession();
+                        }
+
+
+                    } else if (response.code() == 201) {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AttachmentModel> call, Throwable t) {
+                Log.e(TAG, "onFailure: "+t.getMessage() );
+            }
+        });
+    }
+
 
     private void itemOnPageBasis(int pageSize) {
 
@@ -982,7 +1064,7 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
         hde.put("Zones", Zones);
         hde.put(Globals.payLoadOrderByName, orderByName);
         hde.put(Globals.payLoadCardType, cardType);
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

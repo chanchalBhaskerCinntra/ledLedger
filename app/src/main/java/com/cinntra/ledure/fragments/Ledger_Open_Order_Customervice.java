@@ -60,7 +60,7 @@ public class Ledger_Open_Order_Customervice extends Fragment {
     public Ledger_Open_Order_Customervice(String cardCode) {
         // Required empty public constructor
         this.cardCode = cardCode;
-        Log.e("CardCodeT=>",cardCode);
+//        Log.e("CardCodeT=>",cardCode);
     }
 
 

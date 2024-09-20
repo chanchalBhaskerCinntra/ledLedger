@@ -25,7 +25,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.CustomersItemsAdapter;
 import com.cinntra.ledure.adapters.IncomingpaymentInvoicesAdapter;
@@ -35,14 +34,12 @@ import com.cinntra.ledure.fragments.WebViewBottomSheetFragment;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MainBaseActivity;
 import com.cinntra.ledure.model.DocumentLines;
-import com.cinntra.ledure.model.LedgerCustomerResponse;
 import com.cinntra.ledure.model.ReceiptHead;
 import com.cinntra.ledure.model.ReceiptResponse;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.webviewtopdf.PdfView;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -52,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -105,7 +101,7 @@ public class ReceiptTransactionFullInfo extends MainBaseActivity {
         {
             //showBottomSheetDialog();
 
-            shareLedgerData();
+            shareLedgerData(id);
         });
     }
 
@@ -183,16 +179,16 @@ public class ReceiptTransactionFullInfo extends MainBaseActivity {
                 hde.put("ReceiptId", invoiceID);
                 Call<ReceiptResponse> call;
                 if (heading.equalsIgnoreCase("ttVendorPayment")) {
-                    call = NewApiClient.getInstance().getApiService().purchaseOneReceipt(hde);
+                    call = NewApiClient.getInstance().getApiService(ReceiptTransactionFullInfo.this).purchaseOneReceipt(hde);
                 } else {
 
                     if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                        call = NewApiClient.getInstance().getApiService().purchaseOneReceipt(hde);
+                        call = NewApiClient.getInstance().getApiService(ReceiptTransactionFullInfo.this).purchaseOneReceipt(hde);
                     } else {
-                        call = NewApiClient.getInstance().getApiService().oneReceipt(hde);
+                        call = NewApiClient.getInstance().getApiService(ReceiptTransactionFullInfo.this).oneReceipt(hde);
                     }
 
-                    //  call = NewApiClient.getInstance().getApiService().oneReceipt(hde);
+                    //  call = NewApiClient.getInstance().getApiService(this).oneReceipt(hde);
                 }
 
                 try {
@@ -269,8 +265,15 @@ public class ReceiptTransactionFullInfo extends MainBaseActivity {
 
 
     /*************** Bhupi *********************/ // Calling one BottomSheet for Ledger Sharing
-    private void shareLedgerData() {
+    private void shareLedgerData(String id) {
         String title = getString(R.string.share_reciept);
+
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.receiptVoucherPurchasePdf + "ReceiptId=" + id;
+        } else {
+            url = Globals.receiptVoucherPdf + "ReceiptId=" + id;
+        }
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);

@@ -75,7 +75,7 @@ public class Notifications extends MainBaseActivity implements View.OnClickListe
         loader.setVisibility(View.VISIBLE);
         SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
         salesEmployeeItem.setEmp(Prefs.getString(Globals.EmployeeID,""));
-        Call<NotificationResponse> call = NewApiClient.getInstance().getApiService().allnotification(salesEmployeeItem);
+        Call<NotificationResponse> call = NewApiClient.getInstance().getApiService(this).allnotification(salesEmployeeItem);
         call.enqueue(new Callback<NotificationResponse>() {
             @Override
             public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {

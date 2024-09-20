@@ -73,9 +73,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/openingView"
         app:refreshColors="@array/scheme_colors"
-        app:refreshType="smartisan"
+        app:refreshType="smartisan">
 
-        >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/customer_lead_List"
             android:layout_width="match_parent"
@@ -208,12 +207,12 @@
 
     </com.baoyz.widget.PullRefreshLayout>
     <include
+        android:id="@+id/loaderLayout"
         layout="@layout/loader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

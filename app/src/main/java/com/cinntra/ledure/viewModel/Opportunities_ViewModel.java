@@ -266,7 +266,7 @@ public class Opportunities_ViewModel extends ViewModel {
 
         OpportunityValue opportunityValue = new OpportunityValue();
         opportunityValue.setSalesPerson(Prefs.getString(Globals.SalesEmployeeCode,""));
-        Call<NewOppResponse> call  = NewApiClient.getInstance().getApiService().allopportinitylist(opportunityValue);
+        Call<NewOppResponse> call  = NewApiClient.getInstance().getApiService(loader.getContext()).allopportinitylist(opportunityValue);
 
         call.enqueue(new Callback<NewOppResponse>() {
             @Override

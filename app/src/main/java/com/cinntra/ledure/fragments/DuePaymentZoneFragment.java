@@ -395,7 +395,17 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
     private void shareLedgerData() {
         String title = getString(R.string.share_customer_list);
 
-        url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter;
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.overAllReceivablePurchase + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        } else {
+            url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        }
+        Log.e(TAG, "shareLedgerData: "+url);
+
+//        url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter;
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
@@ -466,9 +476,9 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
 
         Call<DashboardCounterResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger_purchase(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger_purchase(obj);
         } else {
-            call =  NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+            call =  NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         }
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
@@ -533,9 +543,9 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
 
         Call<ResponsePayMentDueCounter> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getPurchasePaymentDueCounter(jsonObject);
         } else {
-            call =  NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+            call =  NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueCounter(jsonObject);
         }
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
@@ -750,7 +760,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
 
-                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 try {
                     Response<ResponsePaymentDueDashboardCustomerList> response = call.execute();
                     if (response.isSuccessful()) {
@@ -839,7 +849,7 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
-                Call<ReceivableResponse> call = NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                Call<ReceivableResponse> call = NewApiClient.getInstance().getApiService(getActivity()).receivable_dashboard_post(hde);
                 try {
                     Response<ReceivableResponse> response = call.execute();
                     if (response.isSuccessful()) {
@@ -907,9 +917,9 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
 
                 Call<ResponsePaymentDueDashboardCustomerList> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call =NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerListPurchase(hde);
+                    call =NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerListPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 }
 
                 try {
@@ -1006,9 +1016,9 @@ public class DuePaymentZoneFragment extends Fragment implements Toolbar.OnMenuIt
                 //  hde.put(Globals.payLoadDueDaysGroup, "-1");
                 Call<ResponsePaymentDueDashboardCustomerList> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call =NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerListPurchase(hde);
+                    call =NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerListPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 }
 
                 try {

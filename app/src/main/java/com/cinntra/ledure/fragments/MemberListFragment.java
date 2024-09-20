@@ -137,7 +137,7 @@ public class MemberListFragment extends Fragment implements View.OnClickListener
         CampaignListResponse cm = new CampaignListResponse();
         cm.setCampaignSetId(id);
 
-        Call<CampaignListModel> call = NewApiClient.getInstance().getApiService().getmemberlist(cm);
+        Call<CampaignListModel> call = NewApiClient.getInstance().getApiService(getActivity()).getmemberlist(cm);
         call.enqueue(new Callback<CampaignListModel>() {
             @Override
             public void onResponse(Call<CampaignListModel> call, Response<CampaignListModel> response) {

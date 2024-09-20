@@ -65,7 +65,7 @@ public class WebViewToPdf extends AppCompatActivity {
               //url = Globals.PDFURL+"quotation.html?id="+PdfID;
            url = Globals.PDFURL+"Order.html?id="+PdfID;
           }
-          Log.e("URL==>",url);
+//          Log.e("URL==>",url);
 
 //
 //        // Initializing the WebView
@@ -269,7 +269,7 @@ public class WebViewToPdf extends AppCompatActivity {
                     WebViewToPdf.this,
                     getPackageName() + ".FileProvider", file);
         } catch (Exception e) {
-            Log.e("whatsapp", "showBottomSheetDialog: " );
+//            Log.e("whatsapp", "showBottomSheetDialog: " );
             e.printStackTrace();
         }
 
@@ -423,7 +423,7 @@ public class WebViewToPdf extends AppCompatActivity {
             file.createNewFile();
             return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE);
         } catch (Exception e) {
-            Log.e("TAG", "Failed to open ParcelFileDescriptor", e);
+//            Log.e("TAG", "Failed to open ParcelFileDescriptor", e);
         }
         return null;
     }

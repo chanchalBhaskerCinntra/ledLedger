@@ -196,9 +196,9 @@ public class Sold_ItemBasesActivity extends AppCompatActivity implements LedgerC
 
         Call<CustomerItemResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItemsPurchase(hde);
+            call = NewApiClient.getInstance().getApiService(this).bpWiseSoldFilterItemsPurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItems(hde);
+            call = NewApiClient.getInstance().getApiService(this).bpWiseSoldFilterItems(hde);
         }
 
 
@@ -254,9 +254,9 @@ public class Sold_ItemBasesActivity extends AppCompatActivity implements LedgerC
 
         Call<CustomerItemResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItemsPurchase(hde);
+            call = NewApiClient.getInstance().getApiService(this).bpWiseSoldFilterItemsPurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().bpWiseSoldFilterItems(hde);
+            call = NewApiClient.getInstance().getApiService(this).bpWiseSoldFilterItems(hde);
         }
         call.enqueue(new Callback<CustomerItemResponse>() {
             @Override

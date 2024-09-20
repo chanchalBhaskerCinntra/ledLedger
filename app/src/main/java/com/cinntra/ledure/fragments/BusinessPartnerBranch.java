@@ -112,7 +112,7 @@ public class BusinessPartnerBranch extends Fragment {
         Branch branch = new Branch();
         branch.setBPCode(id);
 
-        Call<BranchResponse> call = NewApiClient.getInstance().getApiService().getBranch(branch);
+        Call<BranchResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getBranch(branch);
         call.enqueue(new Callback<BranchResponse>() {
             @Override
             public void onResponse(Call<BranchResponse> call, Response<BranchResponse> response) {
@@ -283,7 +283,7 @@ public class BusinessPartnerBranch extends Fragment {
         stateName = "";
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(getActivity()).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {
@@ -346,7 +346,7 @@ public class BusinessPartnerBranch extends Fragment {
 
     private void calladdbranchAPi(Branch branch) {
 
-        Call<BranchResponse> call = NewApiClient.getInstance().getApiService().addBranch(branch);
+        Call<BranchResponse> call = NewApiClient.getInstance().getApiService(getActivity()).addBranch(branch);
         call.enqueue(new Callback<BranchResponse>() {
             @Override
             public void onResponse(Call<BranchResponse> call, Response<BranchResponse> response) {

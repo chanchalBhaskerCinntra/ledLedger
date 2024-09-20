@@ -639,9 +639,9 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
                 Call<ResponseItemInvoices> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
-                    call = NewApiClient.getInstance().getApiService().getItemInvoicesPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemPurchasedByListOfCustomersActivity.this).getItemInvoicesPurchase(hde);
                 }else {
-                    call = NewApiClient.getInstance().getApiService().getItemInvoices(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemPurchasedByListOfCustomersActivity.this).getItemInvoices(hde);
                 }
                 try {
                     Response<ResponseItemInvoices> response = call.execute();
@@ -881,6 +881,24 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
             binding.tvDateFrom.setText(bindingBottom.tvLastYearBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
+
+        bindingBottom.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                //  from_to_date.setText(startDate + " - " + endDate);
+                Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+                binding.loader.setVisibility(View.VISIBLE);
+                pageNo = 1;
+                callApi(startDate, endDate);
+                url = Globals.itemSaleReportsPdf + id + "&FromDate=" + startDate + "&ToDate=" + endDate;
+                binding.tvDateFrom.setText(bindingBottom.tvLastYearBottomSheetSelectDate.getText().toString());
+                bottomSheetDialog.dismiss();
+            }
+        });
         bindingBottom.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";
@@ -977,9 +995,9 @@ public class ItemPurchasedByListOfCustomersActivity extends AppCompatActivity {
                 Call<ResponseItemInvoices> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
-                    call = NewApiClient.getInstance().getApiService().getItemInvoicesPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemPurchasedByListOfCustomersActivity.this).getItemInvoicesPurchase(hde);
                 }else {
-                    call = NewApiClient.getInstance().getApiService().getItemInvoices(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemPurchasedByListOfCustomersActivity.this).getItemInvoices(hde);
                 }
                 try {
                     Response<ResponseItemInvoices> response = call.execute();

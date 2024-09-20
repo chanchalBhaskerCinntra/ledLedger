@@ -90,7 +90,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         NotificationData notificationData = new NotificationData();
         notificationData.setId(id);
-        Call<NotificationResponse> call = NewApiClient.getInstance().getApiService().readnotification(notificationData);
+        Call<NotificationResponse> call = NewApiClient.getInstance().getApiService(context).readnotification(notificationData);
         call.enqueue(new Callback<NotificationResponse>() {
           @Override
           public void onResponse(Call<NotificationResponse> call, Response<NotificationResponse> response) {

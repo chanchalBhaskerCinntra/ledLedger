@@ -730,12 +730,12 @@ public class PendingOrders extends MainBaseActivity implements View.OnClickListe
 
         Call<PendingOrderResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getPendingOrderPurchase(hde);
+            call = NewApiClient.getInstance().getApiService(this).getPendingOrderPurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().getPendingOrder(hde);
+            call = NewApiClient.getInstance().getApiService(this).getPendingOrder(hde);
         }
 
-//        Call<PendingOrderResponse> call = NewApiClient.getInstance().getApiService().getPendingOrder(hde);
+//        Call<PendingOrderResponse> call = NewApiClient.getInstance().getApiService(this).getPendingOrder(hde);
         call.enqueue(new Callback<PendingOrderResponse>() {
             @Override
             public void onResponse(Call<PendingOrderResponse> call, Response<PendingOrderResponse> response) {
@@ -802,12 +802,12 @@ public class PendingOrders extends MainBaseActivity implements View.OnClickListe
 
         Call<PendingOrderResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getPendingOrderPurchase(hde);
+            call = NewApiClient.getInstance().getApiService(this).getPendingOrderPurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().getPendingOrder(hde);
+            call = NewApiClient.getInstance().getApiService(this).getPendingOrder(hde);
         }
 
-//        Call<PendingOrderResponse> call = NewApiClient.getInstance().getApiService().getPendingOrder(hde);
+//        Call<PendingOrderResponse> call = NewApiClient.getInstance().getApiService(this).getPendingOrder(hde);
         call.enqueue(new Callback<PendingOrderResponse>() {
             @Override
             public void onResponse(Call<PendingOrderResponse> call, Response<PendingOrderResponse> response) {
@@ -858,7 +858,7 @@ public class PendingOrders extends MainBaseActivity implements View.OnClickListe
     private void cashDiscountApiTest() {
         HashMap<String, String> hde = new HashMap<>();
         hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<String> call = NewApiClient.getInstance().getApiService().cashDiscountListTest();
+        Call<String> call = NewApiClient.getInstance().getApiService(this).cashDiscountListTest();
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

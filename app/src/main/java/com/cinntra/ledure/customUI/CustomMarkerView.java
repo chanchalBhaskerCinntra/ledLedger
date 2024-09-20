@@ -2,11 +2,10 @@ package com.cinntra.ledure.customUI;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.cinntra.ledure.R;
-import com.cinntra.ledure.activities.MainActivity_B2C;
-import com.cinntra.ledure.globals.Globals;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
@@ -18,50 +17,55 @@ public class CustomMarkerView extends MarkerView {
 
     private TextView tvContent;
     private List<String> dayList;
+    private List<String> secondDayList; // Second list for the second dataset
 
-    public CustomMarkerView(Context context, int layoutResource, List<String> dayList) {
+    public CustomMarkerView(Context context, int layoutResource, List<String> dayList, List<String> secondDayList) {
         super(context, layoutResource);
         this.dayList = dayList;
+        this.secondDayList = secondDayList;
         tvContent = findViewById(R.id.tvContent);
     }
 
     // This method will be called every time the MarkerView is redrawn
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        // You can customize the content based on the Entry object
-        if (e instanceof BarEntry) {
-            BarEntry barEntry = (BarEntry) e;
-            int index = (int) barEntry.getX();
+        BarEntry barEntry = (BarEntry) e;
+        int dataSetIndex = highlight.getDataSetIndex();
+        int index = (int) barEntry.getX();
 
-            // Check if the index is within bounds
+        // Debugging logs
+        Log.d("CustomMarkerView", "DataSetIndex: " + dataSetIndex);
+        Log.d("CustomMarkerView", "Entry X: " + barEntry.getX());
+        Log.d("CustomMarkerView", "Entry Y: " + barEntry.getY());
+
+        // Display content based on dataset
+        if (dataSetIndex == 0) {
             if (index >= 0 && index < dayList.size()) {
-                tvContent.setText("" + dayList.get(index));
+                tvContent.setText(dayList.get(index));
             } else {
                 tvContent.setText("" + barEntry.getY());
             }
-
-/*
-            ReceivableentriesYaxis.add(""+ Globals.numberToK(String.valueOf(Double.valueOf(response.body().getData().get(i).getTotalDue()))));
-*/
-         /*   for (int i = 0; i < MainActivity_B2C.SalesValueForMarker.size(); i++) {
-                tvContent.setText("Value: " + MainActivity_B2C.SalesValueForMarker.get(i));
+        } else if (dataSetIndex == 1) {
+            if (index >= 0 && index < secondDayList.size()) {
+                tvContent.setText(secondDayList.get(index));
+            } else {
+                tvContent.setText("" + barEntry.getY());
             }
-*/
-
+        } else {
+            tvContent.setText("" + barEntry.getY());
         }
 
-        // Call the super method for default implementation
         super.refreshContent(e, highlight);
     }
 
-    // This method will be called when the MarkerView is drawn on the chart
+
+
     @Override
     public void draw(Canvas canvas, float posX, float posY) {
-        // Ensure the MarkerView is drawn within the chart's bounds
-       // float offset = -getWidth() / 2f;
+        // Center the MarkerView horizontally, adjust position vertically
         float offset = -getWidth() / 2f;
-
-        // Call the super method for default implementation
-        super.draw(canvas, posX + offset, posY-60f);
+        super.draw(canvas, posX + offset, posY - 60f);
     }
+
+
 }

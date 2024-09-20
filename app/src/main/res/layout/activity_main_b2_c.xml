@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-
     tools:context=".activities.MainActivity_B2C">
 
     <FrameLayout
@@ -64,8 +63,7 @@
                                 android:layout_marginStart="@dimen/size_10"
                                 android:text="welcome"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/text_size_14"
-
+                                android:textSize="@dimen/text_size_12"
                                 android:ellipsize="marquee"
                                 android:marqueeRepeatLimit="marquee_forever"
                                 android:scrollHorizontally="true"
@@ -76,18 +74,18 @@
                                 app:layout_constraintStart_toEndOf="@+id/pro_img"
                                 app:layout_constraintTop_toTopOf="@+id/pro_img" />
 
+                            <!--android:background="@drawable/bg_corner_stroke"-->
 
                             <Spinner
+                                style="@style/Widget.AppCompat.DropDownItem.Spinner"
                                 android:id="@+id/type_dropdown"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="10dp"
-                                android:background="@drawable/bg_corner_stroke"
-                                android:entries="@array/data_type"
+
                                 android:fontFamily="@font/inter_regular"
+                                android:backgroundTint="@color/white"
                                 android:gravity="center"
                                 android:minWidth="@dimen/size_90"
-                                android:padding="@dimen/size_5"
                                 android:spinnerMode="dropdown"
                                 android:textColor="@color/white"
                                 android:visibility="visible"
@@ -102,10 +100,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/size_10"
                                 android:background="@drawable/bg_corner_stroke"
-                                android:paddingStart="10dp"
-                                android:paddingTop="6dp"
-                                android:paddingEnd="10dp"
-                                android:paddingBottom="6dp"
+                                android:paddingStart="4dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="4dp"
+                                android:paddingBottom="4dp"
                                 android:text="Zone"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/text_size_14"
@@ -187,7 +185,7 @@
                                         android:layout_gravity="center"
                                         android:drawableRight="@drawable/admin_ic_baseline_keyboard_arrow_down_24"
                                         android:drawableTint="@color/white"
-                                        android:entries="@array/date_selector"
+
                                         android:paddingLeft="@dimen/size_8"
                                         android:textColor="@color/white" />
 

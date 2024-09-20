@@ -89,8 +89,8 @@ public class ShareCurrentLocation extends Service implements LocationListener {
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     if (location!=null){
 
-                        Log.e("latitude",location.getLatitude()+"");
-                        Log.e("longitude",location.getLongitude()+"");
+//                        Log.e("latitude",location.getLatitude()+"");
+//                        Log.e("longitude",location.getLongitude()+"");
 
 
                         latitude = location.getLatitude();
@@ -110,8 +110,8 @@ public class ShareCurrentLocation extends Service implements LocationListener {
                 if (locationManager!=null){
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if (location!=null){
-                        Log.e("latitude",location.getLatitude()+"");
-                        Log.e("longitude",location.getLongitude()+"");
+//                        Log.e("latitude",location.getLatitude()+"");
+//                        Log.e("longitude",location.getLongitude()+"");
 
                         latitude = location.getLatitude();
                         Globals.currentlattitude = location.getLatitude();
@@ -124,7 +124,7 @@ public class ShareCurrentLocation extends Service implements LocationListener {
                         try {
                             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
                         }catch (Exception e){
-                            Log.e("address",e.getLocalizedMessage());
+//                            Log.e("address",e.getLocalizedMessage());
                         }
                         String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                         String city = addresses.get(0).getLocality();
@@ -132,7 +132,7 @@ public class ShareCurrentLocation extends Service implements LocationListener {
                         String country = addresses.get(0).getCountryName();
                         String postalCode = addresses.get(0).getPostalCode();
                         String knownName = addresses.get(0).getFeatureName();
-                        Log.e("address",address);
+//                        Log.e("address",address);
                     }
                 }
             }

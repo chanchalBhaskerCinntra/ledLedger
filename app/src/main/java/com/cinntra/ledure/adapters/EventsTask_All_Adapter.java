@@ -199,7 +199,7 @@ public class EventsTask_All_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
         EventValue eventValue = new EventValue();
         eventValue.setId(id);
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().completeEvent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(context).completeEvent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
@@ -236,7 +236,7 @@ public class EventsTask_All_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
         EventValue eventValue = new EventValue();
         eventValue.setId(id);
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().deleteEvent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(context).deleteEvent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

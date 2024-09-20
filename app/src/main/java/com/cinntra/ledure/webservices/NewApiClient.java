@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.cinntra.ledure.globals.Globals;
+import com.cinntra.ledure.globals.MyApp;
+import com.cinntra.ledure.globals.SessionManagement;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.File;
@@ -41,91 +43,96 @@ public class NewApiClient {
     private Dispatcher mDispatcher;
 
 
-    public NewApiClient()
-      {}
+    public NewApiClient() {
+    }
 
-    public static NewApiClient getInstance()
-     {
-    return ourInstance;
-     }
+    public static NewApiClient getInstance() {
+        return ourInstance;
+    }
 
-    public Retrofit.Builder getBuilder()
-      {
-    if (mRetrofitBuilder == null)
-               {
-          OkHttpClient httpClient = new OkHttpClient.Builder()
-                           .addInterceptor(provideOfflineCacheInterceptor())
-                           .addNetworkInterceptor(provideCacheInterceptor())
-                           .cache(provideCache()).build();
+    public Retrofit.Builder getBuilder() {
+        if (mRetrofitBuilder == null) {
+            OkHttpClient httpClient = new OkHttpClient.Builder()
+               /*     .addInterceptor(provideOfflineCacheInterceptor())
+                    .addNetworkInterceptor(provideCacheInterceptor()) //FOR PLAY STORE*/
+                    .cache(provideCache()).build();
 
-              mRetrofitBuilder = new Retrofit.Builder()
-              .baseUrl(Globals.NewBaseUrl).client(httpClient)
-              .addConverterFactory(GsonConverterFactory.create());
-
-
-
+            mRetrofitBuilder = new Retrofit.Builder()
+                    .baseUrl(Globals.NewBaseUrl).client(httpClient)
+                    .addConverterFactory(GsonConverterFactory.create());
 
         }
 
 
-    return mRetrofitBuilder;
-      }
+        return mRetrofitBuilder;
+    }
 
 
+    public ApiServices getApiService(Context context) {
+        SessionManagement sessionManagement;
+        sessionManagement = new SessionManagement(context);
 
 
-    public ApiServices getApiService()
-           {
-       if (apiServices == null)
-        {
-    HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-    interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-       CookieHandler cookieHandler = new CookieManager();
+        if (apiServices == null) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
+            CookieHandler cookieHandler = new CookieManager();
             CookieManager cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-   httpClient.cookieJar(new JavaNetCookieJar(cookieManager));
+            httpClient.cookieJar(new JavaNetCookieJar(cookieManager));
           /*  File httpCacheDirectory = new File(MyApp.getInstance().getApplicationContext().getCacheDir(), "offlineCache");
              //10 MB
             Cache cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
 */
 
-            httpClient.addInterceptor(new Interceptor()
-                {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
+            httpClient.addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
 
-            Request originalRequest = chain.request();
-                final Request.Builder builder;
-                if(Globals.APILog.equalsIgnoreCase("APILog")){
-                    builder = originalRequest.newBuilder()
-                           .header("content-type","application/json").cacheControl(CacheControl.FORCE_NETWORK);
-                    Globals.APILog = "Not";
-                }
-                else {
-                    builder = originalRequest.newBuilder()
-                            //.removeHeader("Cache-Control")
-                            .addHeader("Authorization","Token "+ Prefs.getString(Globals.SessionID, ""))
-                            // .addHeader("WWW-Authenticate", "Basic " + Prefs.getString(Globals.SessionID, ""))
-                            // .header("User-Agent", "android")
-                            // .addHeader("Cookie", "Bearer " + Prefs.getString(Globals.SessionID, ""))
-                            .header("content-type","application/json").cacheControl(CacheControl.FORCE_NETWORK);
+                    Request originalRequest = chain.request();
+                    final Request.Builder builder;
+                    if (Globals.APILog.equalsIgnoreCase("APILog")) {
+                        builder = originalRequest.newBuilder()
+                                .header("content-type", "application/json").cacheControl(CacheControl.FORCE_NETWORK);
+                        Globals.APILog = "Not";
+                    } else {
+                        if (Prefs.getString(Globals.TOKEN, "").equalsIgnoreCase("")){
+                            builder = originalRequest.newBuilder()
+                                    //.removeHeader("Cache-Control")
+                                    .addHeader("Authorization", "Bearer " + sessionManagement.getToken())
+                                    // .addHeader("WWW-Authenticate", "Basic " + Prefs.getString(Globals.SessionID, ""))
+                                    // .header("User-Agent", "android")
+                                    // .addHeader("Cookie", "Bearer " + Prefs.getString(Globals.SessionID, ""))
+                                    .header("content-type", "application/json").cacheControl(CacheControl.FORCE_NETWORK);
+                        }else {
+                            builder = originalRequest.newBuilder()
+                                    //.removeHeader("Cache-Control")
+                                    .addHeader("Authorization", "Bearer " + Prefs.getString(Globals.TOKEN, ""))
+                                    // .addHeader("WWW-Authenticate", "Basic " + Prefs.getString(Globals.SessionID, ""))
+                                    // .header("User-Agent", "android")
+                                    // .addHeader("Cookie", "Bearer " + Prefs.getString(Globals.SessionID, ""))
+                                    .header("content-type", "application/json").cacheControl(CacheControl.FORCE_NETWORK);
+                        }
 
-                }
+
+                    }
 
 
-             Request newRequest = builder.build();
-             //.header("Authorization", Prefs.getString(Globals.TOKEN,""));
-             return chain.proceed(newRequest);
+                    Request newRequest = builder.build();
+                    //.header("Authorization", Prefs.getString(Globals.TOKEN,""));
+                    return chain.proceed(newRequest);
 
                 }
             });
 
-            httpClient.addInterceptor(interceptor);
-            httpClient.readTimeout(60, TimeUnit.SECONDS);
-            httpClient.connectTimeout(60, TimeUnit.SECONDS);
-            httpClient.writeTimeout(60, TimeUnit.SECONDS);
+            httpClient.addInterceptor(interceptor); //FOR PLAY STORE
+            httpClient.readTimeout(300, TimeUnit.SECONDS);
+            httpClient.connectTimeout(300, TimeUnit.SECONDS);
+            httpClient.writeTimeout(300, TimeUnit.SECONDS);
+
+            // PLAY STORE
             if (SHOW_LOGS)
-            httpClient.addInterceptor(new LoggingInterceptor());
+                httpClient.addInterceptor(new LoggingInterceptor());
 
             OkHttpClient client = httpClient.build();
             Retrofit retrofit = getBuilder().client(client).build();
@@ -133,14 +140,13 @@ public class NewApiClient {
 
             apiServices = retrofit.create(ApiServices.class);
         }
-     return apiServices;
-       }
+        return apiServices;
+    }
 
 
     class LoggingInterceptor implements Interceptor {
-    @Override
-    public Response intercept(Chain chain) throws IOException
-     {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
 
 
             Request request = chain.request();
@@ -167,23 +173,24 @@ public class NewApiClient {
         }
     }
 
-           /************* Offline Work Manager ****************/
+    /************* Offline Work Manager ****************/
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_PRAGMA = "Cinntra";
 
     private Context mContext;
+
     private Cache provideCache() {
-               Cache cache = null;
+        Cache cache = null;
 
-               try {
-                   cache = new Cache(new File(mContext.getCacheDir(), "http-cache"),
-                           10 * 1024 * 1024); // 10 MB
-               } catch (Exception e) {
-                   Log.e(TAG, "Could not create Cache!");
-               }
+        try {
+            cache = new Cache(new File(mContext.getCacheDir(), "http-cache"),
+                    10 * 1024 * 1024); // 10 MB
+        } catch (Exception e) {
+//            Log.e(TAG, "Could not create Cache!");
+        }
 
-               return cache;
-           }
+        return cache;
+    }
 
     private Interceptor provideCacheInterceptor() {
         return chain -> {
@@ -230,8 +237,7 @@ public class NewApiClient {
         };
     }
 
-    public boolean isConnected()
-      {
+    public boolean isConnected() {
         try {
             android.net.ConnectivityManager e = (android.net.ConnectivityManager) mContext.getSystemService(
                     Context.CONNECTIVITY_SERVICE);
@@ -243,9 +249,6 @@ public class NewApiClient {
 
         return false;
     }
-
-
-
 
 
 }

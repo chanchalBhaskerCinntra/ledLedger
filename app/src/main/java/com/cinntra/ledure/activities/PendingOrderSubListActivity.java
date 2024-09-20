@@ -268,11 +268,6 @@ public class PendingOrderSubListActivity extends MainBaseActivity {
 
     private void pendingOrderWiseApi() {
         HashMap<String, String> hde = new HashMap<>();
-        hde.put("CardCode", cardCode);
-        hde.put("OrderByName", quantity);
-        hde.put("OrderByAmt", ammount);//
-        hde.put("MaxSize", "All");
-        hde.put("PageNo", "1");
 
         Call<PendingOrderSubResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
@@ -285,18 +280,18 @@ public class PendingOrderSubListActivity extends MainBaseActivity {
             hde.put("ToDate", "");
             hde.put("SearchText", "");
 
-            call = NewApiClient.getInstance().getApiService().getPendingSubOrderPurchase(hde);
+            call = NewApiClient.getInstance().getApiService(this).getPendingSubOrderPurchase(hde);
         } else {
             hde.put("CardCode", cardCode);
             hde.put("OrderByName", quantity);
             hde.put("OrderByAmt", ammount);//
             hde.put("MaxSize", "All");
             hde.put("PageNo", "1");
-            call = NewApiClient.getInstance().getApiService().getPendingSubOrder(hde);
+            call = NewApiClient.getInstance().getApiService(this).getPendingSubOrder(hde);
         }
 
 
-//        Call<PendingOrderSubResponse> call = NewApiClient.getInstance().getApiService().getPendingSubOrder(hde);
+//        Call<PendingOrderSubResponse> call = NewApiClient.getInstance().getApiService(this).getPendingSubOrder(hde);
         call.enqueue(new Callback<PendingOrderSubResponse>() {
             @Override
             public void onResponse(Call<PendingOrderSubResponse> call, Response<PendingOrderSubResponse> response) {

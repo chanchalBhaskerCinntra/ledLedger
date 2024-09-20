@@ -2,11 +2,11 @@ package com.cinntra.ledure.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LedgerCustomerData implements Serializable
-{
+public class LedgerCustomerData implements Serializable {
 
     @SerializedName("OrderId")
     private Integer orderId;
@@ -41,7 +41,7 @@ public class LedgerCustomerData implements Serializable
     private String TotalReceivePayment;
 
     @SerializedName("IncomingPaymentInvoices")
-    public ArrayList<IncomingPaymentInvoice> incomingPaymentInvoices=null;
+    public ArrayList<IncomingPaymentInvoice> incomingPaymentInvoices = null;
 
 
     public ArrayList<IncomingPaymentInvoice> getIncomingPaymentInvoices() {

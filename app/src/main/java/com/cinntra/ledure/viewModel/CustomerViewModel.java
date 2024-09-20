@@ -41,7 +41,7 @@ public class CustomerViewModel extends ViewModel
 
         /*loader.setVisibility(View.VISIBLE);
         String url = Globals.GetCustomers+" &$skip="+Globals.SkipItem(pageNo);*/
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerpagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(loader.getContext()).getAllBusinessPartnerpagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
         @Override
         public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -83,7 +83,7 @@ public class CustomerViewModel extends ViewModel
                  hde.put("bpZone", Prefs.getString(Globals.ZONE,""));
         /*loader.setVisibility(View.VISIBLE);
         String url = Globals.GetCustomers+" &$skip="+Globals.SkipItem(pageNo);*/
-                 Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBpFilterZoneWise(hde);
+                 Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(loader.getContext()).getAllBpFilterZoneWise(hde);
                  call.enqueue(new Callback<CustomerBusinessRes>() {
                      @Override
                      public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

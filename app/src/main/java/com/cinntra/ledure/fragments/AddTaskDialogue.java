@@ -238,7 +238,7 @@ public class AddTaskDialogue extends DialogFragment implements View.OnClickListe
 
     private void callApi(EventValue eventValue) {
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().createnewevent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).createnewevent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

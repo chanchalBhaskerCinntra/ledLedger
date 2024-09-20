@@ -440,7 +440,7 @@ public class UpdateTaskDetailFragment extends Fragment implements  View.OnClickL
 
     private void callApi(EventValue eventValue) {
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().updateevent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updateevent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

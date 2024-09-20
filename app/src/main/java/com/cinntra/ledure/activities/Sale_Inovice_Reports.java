@@ -91,14 +91,13 @@ public class Sale_Inovice_Reports extends AppCompatActivity {
                 finish();
             }
         });
+
         // loadLedgerCompFragment(new Ledger_Comp_Fragment(salesvalue,type_dropdown));//
         groupby_dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                loadLedgerCompFragment(new Ledger_CompGroup_Fragment(salesvalue, from_to_date, type_dropdown,
-                        groupby_dropdown, fromwhere, groupCode, groupFilter));
-
+                loadLedgerCompFragment(new Ledger_CompGroup_Fragment(salesvalue, from_to_date, type_dropdown, groupby_dropdown, fromwhere, groupCode, groupFilter));
 
             }
 

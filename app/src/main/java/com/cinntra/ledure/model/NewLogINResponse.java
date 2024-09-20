@@ -21,7 +21,7 @@ public class NewLogINResponse implements Parcelable {
     private String token;
     @SerializedName("data")
     @Expose
-    private NewLoginData LogInDetail;
+    private ArrayList<NewLoginData> LogInDetail = new ArrayList<>();
 
     @SerializedName("SAP")
     @Expose
@@ -29,6 +29,7 @@ public class NewLogINResponse implements Parcelable {
 
     @SerializedName("TripExpenses")
     public ArrayList<DataAllTripExpense> tripExpenses;
+
     public final static Creator<NewLogINResponse> CREATOR = new Creator<NewLogINResponse>() {
 
 
@@ -49,7 +50,7 @@ public class NewLogINResponse implements Parcelable {
         this.message = ((String) in.readValue((String.class.getClassLoader())));
         this.token = ((String) in.readValue((String.class.getClassLoader())));
         this.status = ((int) in.readValue((int.class.getClassLoader())));
-        this.LogInDetail = ((NewLoginData) in.readValue((NewLoginData.class.getClassLoader())));
+        this.LogInDetail = ((ArrayList<NewLoginData>) in.readValue((NewLoginData.class.getClassLoader())));
         this.sap = ((Sap) in.readValue((Sap.class.getClassLoader())));
         // this.tripExpenses = ((DataAllTripExpense) in.readValue((DataAllTripExpense.class.getClassLoader())));
 
@@ -67,7 +68,7 @@ public class NewLogINResponse implements Parcelable {
      * @param message
      * @param status
      */
-    public NewLogINResponse(String message, int status, NewLoginData LogInDetail, Sap sap) {
+    public NewLogINResponse(String message, int status, ArrayList<NewLoginData> LogInDetail, Sap sap) {
         super();
         this.message = message;
         this.status = status;
@@ -100,11 +101,11 @@ public class NewLogINResponse implements Parcelable {
         this.status = status;
     }
 
-    public NewLoginData getLogInDetail() {
+    public ArrayList<NewLoginData> getLogInDetail() {
         return LogInDetail;
     }
 
-    public void setLogInDetail(NewLoginData LogInDetail) {
+    public void setLogInDetail(ArrayList<NewLoginData> LogInDetail) {
         this.LogInDetail = LogInDetail;
     }
 

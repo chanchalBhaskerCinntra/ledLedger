@@ -99,7 +99,7 @@ public class LedgersAdapter extends RecyclerView.Adapter <LedgersAdapter.Contact
                 if (st.getAmount() != null && !st.getAmount().isEmpty()) {
                     if (st.getAmount().toLowerCase(Locale.getDefault()).contains(charText)||st.getCardCode().toLowerCase(Locale.getDefault()).contains(charText)) {
                         branchList.add(st);
-                        Log.e("Search==>",""+branchList.size());
+//                        Log.e("Search==>",""+branchList.size());
                     }
                 }
             }

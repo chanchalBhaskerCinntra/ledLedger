@@ -116,7 +116,7 @@ public class CampaignActivity extends MainBaseActivity {
     }
 
     private void callApi() {
-        Call<CampaignResponse> call = NewApiClient.getInstance().getApiService().getAllCampaign();
+        Call<CampaignResponse> call = NewApiClient.getInstance().getApiService(this).getAllCampaign();
         call.enqueue(new Callback<CampaignResponse>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override

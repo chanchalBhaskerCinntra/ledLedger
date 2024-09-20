@@ -104,7 +104,7 @@ public class LocationListingAdapter extends RecyclerView.Adapter<LocationListing
         ls.add(id.toString());
         HashMap<String,List<String>>  hd = new HashMap<>();
         hd.put("id",ls);
-        Call<ExpenseNewModelResponse> call = NewApiClient.getInstance().getApiService().deleteexpense(hd);
+        Call<ExpenseNewModelResponse> call = NewApiClient.getInstance().getApiService(context).deleteexpense(hd);
         call.enqueue(new Callback<ExpenseNewModelResponse>(){
             @Override
             public void onResponse(Call<ExpenseNewModelResponse> call, Response<ExpenseNewModelResponse> response) {

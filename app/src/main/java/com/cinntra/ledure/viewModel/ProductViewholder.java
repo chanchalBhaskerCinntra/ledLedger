@@ -31,40 +31,41 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductViewholder extends ChildViewHolder {
-    TextView item_title,price,item_date,quanity,name,follow_up,mode1;
-    ImageView star,chat;
+    TextView item_title, price, item_date, quanity, name, follow_up, mode1;
+    ImageView star, chat;
     LikeButton star_button;
     Context context;
-    public ProductViewholder(View itemView,Context context) {
+
+    public ProductViewholder(View itemView, Context context) {
         super(itemView);
         item_title = itemView.findViewById(R.id.item_title);
         follow_up = itemView.findViewById(R.id.follow_up);
         mode1 = itemView.findViewById(R.id.mode1);
-        item_date  = itemView.findViewById(R.id.item_date);
-        quanity    = itemView.findViewById(R.id.quanity);
-        price      = itemView.findViewById(R.id.price);
-        name       = itemView.findViewById(R.id.name);
-        star       = itemView.findViewById(R.id.star);
-        star_button       = itemView.findViewById(R.id.star_button);
-        chat       = itemView.findViewById(R.id.chat);
+        item_date = itemView.findViewById(R.id.item_date);
+        quanity = itemView.findViewById(R.id.quanity);
+        price = itemView.findViewById(R.id.price);
+        name = itemView.findViewById(R.id.name);
+        star = itemView.findViewById(R.id.star);
+        star_button = itemView.findViewById(R.id.star_button);
+        chat = itemView.findViewById(R.id.chat);
         this.context = context;
 
 
     }
 
-    public void onBind(NewOpportunityRespose product){
+    public void onBind(NewOpportunityRespose product) {
         item_title.setText(product.getOpportunityName());
         item_date.setText(product.getClosingDate());
         item_date.setText(product.getPredictedClosingDate());
-        price.setText(" : "+product.getMaxLocalTotal());
+        price.setText(" : " + product.getMaxLocalTotal());
         name.setText(product.getCardCode());
 
         mode1.setText(product.getCurrentStageName());
 
-        if(product.getUFav().equalsIgnoreCase("Y")){
-           star_button.setLiked(true);
+        if (product.getUFav().equalsIgnoreCase("Y")) {
+            star_button.setLiked(true);
 
-        }else{
+        } else {
             star_button.setLiked(false);
         }
 
@@ -74,7 +75,6 @@ public class ProductViewholder extends ChildViewHolder {
                 openFollowUpdialog();
             }
         });
-
 
 
         star_button.setOnLikeListener(new OnLikeListener() {
@@ -100,10 +100,10 @@ public class ProductViewholder extends ChildViewHolder {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Globals.OpportunityItem,product);
+                bundle.putParcelable(Globals.OpportunityItem, product);
                 ChatterFragment chatterFragment = new ChatterFragment();
                 chatterFragment.setArguments(bundle);
-                FragmentTransaction chattransaction =  ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
+                FragmentTransaction chattransaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
                 chattransaction.replace(R.id.quatoes_main_container, chatterFragment);
                 chattransaction.addToBackStack("Back");
                 chattransaction.commit();
@@ -122,7 +122,7 @@ public class ProductViewholder extends ChildViewHolder {
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(true);
         dialog.setContentView(R.layout.followup_dialog);
-        dialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
         EditText date_value = dialog.findViewById(R.id.date_value);
         EditText time_value = dialog.findViewById(R.id.time_value);
         Button add = dialog.findViewById(R.id.add);
@@ -130,14 +130,14 @@ public class ProductViewholder extends ChildViewHolder {
         date_value.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Globals.selectDate(dialog.getContext(),date_value);
+                Globals.selectDate(dialog.getContext(), date_value);
 
             }
         });
         time_value.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Globals.selectTime(context,time_value);
+                Globals.selectTime(context, time_value);
             }
         });
 
@@ -149,24 +149,21 @@ public class ProductViewholder extends ChildViewHolder {
         });
 
 
-
-
         dialog.show();
     }
 
-    private void updatefavourites(UpdateFavourites in)
-    {
-        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService().updateoppFavorite(in);
+    private void updatefavourites(UpdateFavourites in) {
+        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService(context).updateoppFavorite(in);
         call.enqueue(new Callback<NewOppResponse>() {
             @Override
             public void onResponse(Call<NewOppResponse> call, Response<NewOppResponse> response) {
                 assert response.body() != null;
-                if(response.code()==200)
-                {
+                if (response.code() == 200) {
 
                 }
 
             }
+
             @Override
             public void onFailure(Call<NewOppResponse> call, Throwable t) {
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();

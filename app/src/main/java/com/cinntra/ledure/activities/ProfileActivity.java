@@ -46,6 +46,7 @@ import com.cinntra.ledure.databinding.ProfilenewPageBinding;
 import com.cinntra.ledure.fragments.SettingFragment;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MainBaseActivity;
+import com.cinntra.ledure.globals.SessionManagement;
 import com.cinntra.ledure.model.AttachmentModel;
 import com.cinntra.ledure.model.MapData;
 import com.cinntra.ledure.model.MapResponse;
@@ -69,6 +70,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.karumi.dexter.Dexter;
@@ -118,7 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     //todo code by chanchal--
-    private static final int REQUEST_CODE_PERMISSIONS = 2;
+    private static final int REQUEST_CODE_PERMISSIONS = 1234;
     private static final String TAG = "ProfileActivity";
 
     private List<Uri> mArrayUriList = new ArrayList<>();
@@ -140,6 +142,7 @@ public class ProfileActivity extends AppCompatActivity {
         long currentTimeMillis = System.currentTimeMillis();
         Prefs.putLong("MilliSeconds", 0);
 
+        sessionManagement = new SessionManagement(this);
         callAttachmentAllApi();
 
         if (currentTimeMillis - Prefs.getLong("MilliSeconds", 0) >= thirtyFiveMillis) {
@@ -160,14 +163,23 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         String json = Prefs.getString(Globals.AppUserDetails, "");
-        NewLoginData obj = gson.fromJson(json, NewLoginData.class);
+
+        Log.e(TAG, "onCreate: "+ json.toString() );
+
+//        ArrayList<NewLoginData> obj = gson.fromJson(json, NewLoginData.class);//todo
+        /*ArrayList<NewLoginData> obj = gson.fromJson(json, new TypeToken<ArrayList<NewLoginData>>(){}.getType());
+
+
+        SetData(obj);*///todo
+
+
         pageBinding.backPress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
-        SetData(obj);
+
 
         pageBinding.linearZone.setOnClickListener(view -> {
             showBottomSheetDialog();
@@ -234,6 +246,8 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+
         if (Prefs.getString(Globals.locationcondition, "Off").equalsIgnoreCase("On")) {
             pageBinding.mode.setChecked(true);
         } else {
@@ -247,12 +261,15 @@ public class ProfileActivity extends AppCompatActivity {
     String linkId = "";
     String linkType = "";
 
+    SessionManagement sessionManagement ;
 
     private void callAttachmentAllApi() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
-        jsonObject.addProperty("LinkType", "ProfilePic");
-        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService().getAllAttachment(jsonObject);
+        jsonObject.addProperty("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+     /*   jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
+        jsonObject.addProperty("LinkType", "ProfilePic");*/
+//        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).getAllAttachment(jsonObject);
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).getNewAllAttachmentApi(jsonObject);
         call.enqueue(new Callback<AttachmentModel>() {
             @Override
             public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
@@ -267,7 +284,7 @@ public class ProfileActivity extends AppCompatActivity {
                             linkType = response.body().getData().get(0).getLinkType();
 
 
-                            String filePath = Globals.ImageURL + response.body().getData().get(0).getFile();
+                            String filePath = Globals.ImageURL + response.body().getData().get(0).getProfileImage();
 
                             if (filePath != null) {
                                 Glide.with(ProfileActivity.this)
@@ -277,9 +294,21 @@ public class ProfileActivity extends AppCompatActivity {
                                 pageBinding.nameIcon.setImageResource(R.drawable.ic_profileicon);
                             }
 
+
+                            SetData(response.body().getData().get(0).getEmployee_detail());//todo
+
                         }
 
-                    } else if (response.code() == 201) {
+                    }   else if (response.body().getStatus() == 401) {
+                        Toast.makeText(ProfileActivity.this, "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                        Prefs.clear();
+                        Intent intent = new Intent(ProfileActivity.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                        sessionManagement.ClearSession();
+                    }
+                    else if (response.code() == 201) {
                         Toast.makeText(ProfileActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
 
                     } else {
@@ -410,7 +439,7 @@ public class ProfileActivity extends AppCompatActivity {
         File imageFile = new File(picturePath);
 
 
-        Log.e("filePath>>>>>", "onCreate: " + picturePath);
+/*        Log.e("filePath>>>>>", "onCreate: " + picturePath);
         Log.e("fileNAme>>>>>", "onCreate: " + imageFile.getName());
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
         MultipartBody.Part File = MultipartBody.Part.createFormData("File", imageFile.getName(), requestBody);
@@ -421,11 +450,19 @@ public class ProfileActivity extends AppCompatActivity {
         RequestBody CreateDate = RequestBody.create(MediaType.parse("multipart/form-data"), Globals.getTodaysDatervrsfrmt());
         RequestBody CreateTime = RequestBody.create(MediaType.parse("multipart/form-data"), Globals.getTCurrentTime());
         RequestBody UpdateDate = RequestBody.create(MediaType.parse("multipart/form-data"), "");
-        RequestBody UpdateTime = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+        RequestBody UpdateTime = RequestBody.create(MediaType.parse("multipart/form-data"), "");*/
 
 
-        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService().uploadProfileAttachment(
-                File, id, LinkType, LinkID, Caption, CreateDate, CreateTime, UpdateDate, UpdateTime);
+        Log.e("filePath>>>>>", "onCreate: " + picturePath);
+        Log.e("fileNAme>>>>>", "onCreate: " + imageFile.getName());
+        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
+        MultipartBody.Part File = MultipartBody.Part.createFormData("Image", imageFile.getName(), requestBody);
+
+        RequestBody SalesEmployeeCode = RequestBody.create(MediaType.parse("multipart/form-data"), Prefs.getString(Globals.SalesEmployeeCode,""));
+
+
+
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).uploadNewProfileAttachment(File, SalesEmployeeCode);
         call.enqueue(new Callback<AttachmentModel>() {
             @Override
             public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
@@ -481,18 +518,9 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private boolean checkAndRequestPermissions() {
-        int camera = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-        );
-        int write = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        );
-        int read = ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        );
+        int camera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int write = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
@@ -506,7 +534,7 @@ public class ProfileActivity extends AppCompatActivity {
             listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
 
-        if (!listPermissionsNeeded.isEmpty()) {
+        if (!listPermissionsNeeded.isEmpty() && camera != 0) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[0]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
         }
@@ -567,6 +595,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }
             }
+        }else {
+            Log.e(TAG, "onRequestPermissionsResult: Not getting Permission"  );
         }
 
 
@@ -603,6 +633,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void SetData(NewLoginData obj) {
+
         pageBinding.empId.setText("EMP00" + obj.getId());
 
         pageBinding.phoneValue.setText(obj.getMobile());
@@ -645,7 +676,11 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.dismissWithAnimation();
-                        Prefs.clear();
+
+                        callLogoutApi();
+
+                        //todo old requirement--
+                       /* Prefs.clear();
                         itemsDatabase.myDataDao().deleteAll();
                         itemsFilterDatabase.myDataDao().deleteAll();
                         itemsInSalesCardDatabase.myDataDao().deleteAll();
@@ -659,7 +694,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(ProfileActivity.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
+                        startActivity(intent);*/
 
                     }
                 })
@@ -667,6 +702,70 @@ public class ProfileActivity extends AppCompatActivity {
                 .show();
 
     }
+
+
+    private void callLogoutApi(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mobile", sessionManagement.getMobileNO());
+
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).logoutApiCall(jsonObject);
+        call.enqueue(new Callback<AttachmentModel>() {
+            @Override
+            public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
+                if (response != null) {
+
+                    if (response.code() == 200) {
+                        Log.e(TAG, "onResponse: "+response.body().getMessage() );
+
+                        if (response.body().getStatus() == 200){
+
+//                            Prefs.clear();
+                            itemsDatabase.myDataDao().deleteAll();
+                            itemsFilterDatabase.myDataDao().deleteAll();
+                            itemsInSalesCardDatabase.myDataDao().deleteAll();
+                            ledgerGroupDatabase.myDataDao().deleteAll();
+                            ledgerZoneDatabase.myDataDao().deleteAll();
+                            pendingOrderDatabase.myDataDao().deleteAll();
+                            receiptDatabase.myDataDao().deleteAll();
+                            receivableDatabase.myDataDao().deleteAll();
+                            saleLedgerDatabase.myDataDao().deleteAll();
+
+
+                            Intent intent = new Intent(ProfileActivity.this, Splash.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        }
+
+
+                        else if (response.body().getStatus() == 401) {
+                            Toast.makeText(ProfileActivity.this, "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                            Prefs.clear();
+                            Intent intent = new Intent(ProfileActivity.this, Login.class);
+                            startActivity(intent);
+                            finish();
+                            sessionManagement.ClearSession();
+                        }
+
+                    } else if (response.code() == 201) {
+                        Toast.makeText(ProfileActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(ProfileActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AttachmentModel> call, Throwable t) {
+                Log.e(TAG, "onFailure: "+t.getMessage() );
+            }
+        });
+    }
+
+
 
     private void callApi(double latitude, double longitude, String type, String address) {
         MapData mapData = new MapData();
@@ -685,7 +784,7 @@ public class ProfileActivity extends AppCompatActivity {
         mapData.setContactPerson("");
 
 
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).sendMaplatlong(mapData);
         call.enqueue(new Callback<MapResponse>() {
             @Override
             public void onResponse(Call<MapResponse> call, Response<MapResponse> response) {

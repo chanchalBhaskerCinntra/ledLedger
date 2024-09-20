@@ -157,7 +157,7 @@ public class TripAndExpenseDetailsActivity extends AppCompatActivity {
 //        mapData.put("UpdateDate", dateText.getText().toString());
 //        mapData.put("shape", "");
 
-        Call<AllTripExpenseResponse> call = NewApiClient.getInstance().getApiService().trip_expense_one(mapData);
+        Call<AllTripExpenseResponse> call = NewApiClient.getInstance().getApiService(this).trip_expense_one(mapData);
         call.enqueue(new Callback<AllTripExpenseResponse>() {
             @Override
             public void onResponse(Call<AllTripExpenseResponse> call, Response<AllTripExpenseResponse> response) {
@@ -645,7 +645,7 @@ public class TripAndExpenseDetailsActivity extends AppCompatActivity {
                     RequestBody remark = RequestBody.create(MediaType.parse("multipart/form-data"), expenseDialogBinding.commentValue.getText().toString());
                     RequestBody tripId = RequestBody.create(MediaType.parse("multipart/form-data"), tripIdGlobal);
                     Call<ExpenseResponse> callExp = NewApiClient.getInstance()
-                            .getApiService().expense_create_multipart(imagePart, id, tripName, typeOfExpense,
+                            .getApiService(TripAndExpenseDetailsActivity.this).expense_create_multipart(imagePart, id, tripName, typeOfExpense,
                                     expenseFrom, expenseTo, cost, createDate, createTime, createBy, updateDate, updateTime, remark
                                     , employeeId, startlat, startlong, endLat, endLong, travelDistance, tripId);
                     callExp.enqueue(new Callback<ExpenseResponse>() {

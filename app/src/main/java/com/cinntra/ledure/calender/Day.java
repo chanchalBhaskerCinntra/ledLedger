@@ -16,7 +16,7 @@ public class Day {
     }
 
     public String getDay() {
-        Log.e("Days=>",String.valueOf(date.getDayOfMonth()));
+//        Log.e("Days=>",String.valueOf(date.getDayOfMonth()));
         return String.valueOf(date.getDayOfMonth());
     }
 

@@ -50,9 +50,10 @@ public class ItemStockAdapter extends RecyclerView.Adapter<ItemStockAdapter.Cont
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
 
-        holder.itemName.setText("" + branchList.get(position).itemName);
+        holder.itemName.setText(branchList.get(position).itemCode+" - " + branchList.get(position).itemName);
 
-        holder.itemPriceIndividual.setText("Std price : " + Globals.numberToK(branchList.get(position).unitPrice));
+        holder.itemPriceIndividual.setText("Std price : " + Globals.numberTokOnlyForStd(branchList.get(position).unitPrice));
+
         holder.itemPriceTotal.setText("Total Price: " + Globals.numberToK(branchList.get(position).totalPrice));
         holder.quantity.setText(" " +Globals.numberToK( branchList.get(position).totalQty) + "");
         if (Globals.numberToK( branchList.get(position).totalQty).equalsIgnoreCase("0")){
@@ -86,8 +87,6 @@ public class ItemStockAdapter extends RecyclerView.Adapter<ItemStockAdapter.Cont
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
 
                     Intent i = new Intent(context, ItemPurchasedByListOfCustomersActivity.class);
 

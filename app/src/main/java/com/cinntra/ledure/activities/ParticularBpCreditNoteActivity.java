@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Toast;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.ParticularBpCreditNoteAdapter;
 import com.cinntra.ledure.databinding.ActivityParticularBpCreditNoteBinding;
@@ -29,20 +31,21 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.pixplicity.easyprefs.library.Prefs;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
 
-
 public class ParticularBpCreditNoteActivity extends AppCompatActivity {
-    private static final String TAG="ParticularBpCreditNoteA";
+    private static final String TAG = "ParticularBpCreditNoteA";
     ActivityParticularBpCreditNoteBinding binding;
 
-    String cardCode, cardName,fromwhere;
+    String cardCode, cardName, fromwhere;
     int pageNo = 1;
     ParticularBpCreditNoteAdapter adapter;
     LinearLayoutManager layoutManager;
@@ -52,7 +55,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
     Long startDatelng = (long) 0.0;
     Long endDatelng = (long) 0.0;
     MaterialDatePicker<Pair<Long, Long>> materialDatePicker;
-    String url="";
+    String url = "";
     WebView dialogWeb;
 
     @Override
@@ -64,34 +67,33 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
         endDate = Prefs.getString(Globals.TO_DATE, "");
 
 
-        layoutManager=new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         binding.cardBig.setVisibility(View.GONE);
         binding.receivePendingLayout.setVisibility(View.GONE);
         cardCode = getIntent().getStringExtra("code");
         cardName = getIntent().getStringExtra("name");
         fromwhere = getIntent().getStringExtra("FromWhere");
-        
-        
+
+
         setUpToolbar();
 
         binding.fromToDate.setText("" + startDate + " To " + endDate);
-        
-        
+
+
         if (Globals.checkInternet(this)) {
             totalOnePageCredits(cardCode, startDate, endDate);
-            if (fromwhere.equalsIgnoreCase("return")){
+            if (fromwhere.equalsIgnoreCase("return")) {
 
-                url = Globals.perticularPurchaseCreditNote+ "CardCode="+cardCode+ "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+                url = Globals.perticularPurchaseCreditNote + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
-            }else {
-                url = Globals.perticularCreditNote+ "CardCode="+cardCode+ "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
-
+            } else {
+                url = Globals.perticularCreditNote + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             }
-            Log.e("PDF URL===>:", "onCreate: "+url);
-         
+            Log.e("PDF URL===>:", "onCreate: " + url);
+
 
         } else {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -102,7 +104,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
             showDateBottomSheetDialog(this);
         });
         binding.toolbarCreditNoteDashBoard.sharePdf.setOnClickListener(view -> {
-          //  showBottomSheetDialog();
+            //  showBottomSheetDialog();
             shareLedgerData();
         });
         binding.toolbarCreditNoteDashBoard.backPress.setOnClickListener(view -> {
@@ -140,13 +142,13 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
                 binding.loader.loader.setVisibility(View.VISIBLE);
                 pageNo++;
                 //  itemOnPageBasis(pageNo);
-              //  (cardCode, startDate, endDate);
-                if (fromwhere.equalsIgnoreCase("return")){
+                //  (cardCode, startDate, endDate);
+                if (fromwhere.equalsIgnoreCase("return")) {
 
-                }else {
+                } else {
                     totalPageBasisCredits(cardCode, startDate, endDate);
                 }
-                
+
                 isScrollingpage = false;
             } else {
                 // Log.d(TAG, "onScrolled:not paginate");
@@ -167,7 +169,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
 
     private void showDateBottomSheetDialog(Context context) {
         BottomSheetDialogSelectDateBinding bindingBottom;
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         bindingBottom = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(bindingBottom.getRoot());
         bindingBottom.ivCloseBottomSheet.setOnClickListener(view ->
@@ -195,7 +197,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
             pageNo = 1;
             //  callDashboardCounter();
             totalOnePageCredits(cardCode, startDate, endDate);
-             bottomSheetDialog.dismiss();
+            bottomSheetDialog.dismiss();
         });
 
         bindingBottom.tvYesterdayDateBottomSheetSelectDate.setOnClickListener(view -> {
@@ -254,7 +256,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
             Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
             totalOnePageCredits(cardCode, startDate, endDate);
-             bottomSheetDialog.dismiss();
+            bottomSheetDialog.dismiss();
         });
         bindingBottom.tvThisQuarterDateBottomSheetSelectDate.setOnClickListener(view -> {
             startDatelng = Globals.thisQuarterCal().getTimeInMillis();
@@ -298,6 +300,25 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
             totalOnePageCredits(cardCode, startDate, endDate);
             bottomSheetDialog.dismiss();
         });
+
+
+        bindingBottom.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                pageNo = 1;
+                binding.fromToDate.setText(startDate + " - " + endDate);
+
+                //  from_to_date.setText(startDate + " - " + endDate);
+                Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+                binding.loader.loader.setVisibility(View.VISIBLE);
+                totalOnePageCredits(cardCode, startDate, endDate);
+                bottomSheetDialog.dismiss();
+            }
+        });
         bindingBottom.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";
@@ -306,7 +327,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
             binding.fromToDate.setText("All");
 
             totalOnePageCredits(cardCode, startDate, endDate);
-             bottomSheetDialog.dismiss();
+            bottomSheetDialog.dismiss();
         });
 
 
@@ -356,6 +377,7 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
 
 
     Call<LedgerCustomerResponse> call;
+
     private void totalOnePageCredits(String cardCode, String startDate, String endDate) {
         new Thread(new Runnable() {
             @Override
@@ -368,10 +390,13 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
 
-                if (fromwhere.equalsIgnoreCase("return")){
-                    call = NewApiClient.getInstance().getApiService().purchase_bp_credit_note(hde);
-                }else {
-                    call = NewApiClient.getInstance().getApiService().bp_credit_note(hde);
+                //todo new method of calling api make sure paginationshould work
+                if (fromwhere.equalsIgnoreCase("return")) {
+                    call = NewApiClient.getInstance().getApiService(ParticularBpCreditNoteActivity.this).purchase_bp_credit_note(hde);
+                } else if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService(ParticularBpCreditNoteActivity.this).purchase_bp_credit_note(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService(ParticularBpCreditNoteActivity.this).bp_credit_note(hde);
                 }
 
 
@@ -391,9 +416,9 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
 
                                 }
                                 AllItemList.addAll(response.body().getData());
-                                Log.e(TAG, "run: "+AllItemList.size());
-                                binding.salesAmount.setText(getResources().getString(R.string.Rs)+" " + Globals.numberToK(response.body().getTotalReceivePayment()));
-                                binding.salesvalue.setText(getResources().getString(R.string.Rs)+" " + Globals.numberToK(response.body().getTotalReceivePayment()));
+                                Log.e(TAG, "run: " + AllItemList.size());
+                                binding.salesAmount.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(response.body().getTotalReceivePayment()));
+                                binding.salesvalue.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(response.body().getTotalReceivePayment()));
                                 adapter = new ParticularBpCreditNoteAdapter(ParticularBpCreditNoteActivity.this, AllItemList, cardName, "");
                                 binding.rvListOfCustomer.setAdapter(adapter);
                                 binding.rvListOfCustomer.setLayoutManager(layoutManager);
@@ -426,11 +451,15 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
                 hde.put("ToDate", endDate);
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-                if (fromwhere.equalsIgnoreCase("return")){
-                    call = NewApiClient.getInstance().getApiService().purchase_bp_credit_note(hde);
-                }else {
-                    call = NewApiClient.getInstance().getApiService().bp_credit_note(hde);
+
+                if (fromwhere.equalsIgnoreCase("return")) {
+                    call = NewApiClient.getInstance().getApiService(ParticularBpCreditNoteActivity.this).purchase_bp_credit_note(hde);
+                } else if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                    call = NewApiClient.getInstance().getApiService(ParticularBpCreditNoteActivity.this).purchase_bp_credit_note(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService(ParticularBpCreditNoteActivity.this).bp_credit_note(hde);
                 }
+
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
                     if (response.isSuccessful()) {
@@ -479,31 +508,31 @@ public class ParticularBpCreditNoteActivity extends AppCompatActivity {
     }
 
 
+    private void shareLedgerData() {
+        String title = "share list";
 
-    private void shareLedgerData()
-    {
-        String title="share list";
-
-        if (fromwhere.equalsIgnoreCase("return")){
+        //todo
+        if (fromwhere.equalsIgnoreCase("return")) {
             //  Log.e(TAG, "onCreate: ", );
             //  Toast.makeText(this, "return", Toast.LENGTH_SHORT).show();
-            url = Globals.perticularPurchaseCreditNote+ "CardCode="+cardCode+ "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+            url = Globals.perticularPurchaseCreditNote + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+        } else if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.perticularPurchaseCreditNote + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
-
-        }else {
-            url = Globals.perticularCreditNote+ "CardCode="+cardCode+ "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
-            Log.e("PDF URL===>:", "onCreate: "+url);
+        } else {
+            url = Globals.perticularCreditNote + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+            Log.e("PDF URL===>:", "onCreate: " + url);
 
 
         }
+
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
-                WebViewBottomSheetFragment.newInstance(dialogWeb,url,title);
+                WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getSupportFragmentManager(),
                 "");
     }
 
     /***shubh****/
-
 
 
 }

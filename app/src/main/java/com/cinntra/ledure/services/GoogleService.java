@@ -201,7 +201,7 @@ public class GoogleService extends Service implements LocationListener {
         mapData.setSourceType("");
         mapData.setContactPerson("");
 
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).sendMaplatlong(mapData);
         call.enqueue(new Callback<MapResponse>() {
             @Override
             public void onResponse(Call<MapResponse> call, Response<MapResponse> response) {

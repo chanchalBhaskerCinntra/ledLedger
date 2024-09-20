@@ -165,7 +165,7 @@ public class Opportunity_Detail_NewFragment extends Fragment implements View.OnC
     private void callApi(String sequentialNo) {
         OpportunityValue opportunityValue = new OpportunityValue();
         opportunityValue.setId(Integer.valueOf(sequentialNo));
-        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService().getparticularopportunity(opportunityValue);
+        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getparticularopportunity(opportunityValue);
         call.enqueue(new Callback<NewOppResponse>() {
             @Override
             public void onResponse(Call<NewOppResponse> call, Response<NewOppResponse> response) {
@@ -188,7 +188,7 @@ public class Opportunity_Detail_NewFragment extends Fragment implements View.OnC
     private void callStagesApi(String opp_id) {
         OpportunityItem oppitem = new OpportunityItem();
         oppitem.setOpp_Id(opp_id);
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().getAllStages(oppitem);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllStages(oppitem);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {
@@ -430,7 +430,7 @@ public class Opportunity_Detail_NewFragment extends Fragment implements View.OnC
     private void callcompletestageApi(CompleteStageResponse completeStageResponse) {
 
 
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().completestage(completeStageResponse);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(getActivity()).completestage(completeStageResponse);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {
@@ -455,7 +455,7 @@ public class Opportunity_Detail_NewFragment extends Fragment implements View.OnC
         stval.setStageno(currentStageNo);
         stval.setComment(Globals.COMMENT);
         stval.setFile("");
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().updatestage(stval);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(getActivity()).updatestage(stval);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {
@@ -611,7 +611,7 @@ public class Opportunity_Detail_NewFragment extends Fragment implements View.OnC
         model.setCreateDate(Globals.getTodaysDate());
         model.setUpdateDate(Globals.getTodaysDate());
 
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().createStages(model);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(getActivity()).createStages(model);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {
@@ -647,7 +647,7 @@ public class Opportunity_Detail_NewFragment extends Fragment implements View.OnC
         StagesValue oppitem = new StagesValue();
         oppitem.setOppId(Integer.valueOf(opportunityItem.getId()));
         oppitem.setStageno(val);
-        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService().getStagesComment(oppitem);
+        Call<OpportunityStageResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getStagesComment(oppitem);
         call.enqueue(new Callback<OpportunityStageResponse>() {
             @Override
             public void onResponse(Call<OpportunityStageResponse> call, Response<OpportunityStageResponse> response) {

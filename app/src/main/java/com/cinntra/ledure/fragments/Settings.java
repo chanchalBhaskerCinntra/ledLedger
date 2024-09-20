@@ -263,7 +263,7 @@ public class Settings extends Fragment implements View.OnClickListener {
        {
            EmpDetails empDetails = new EmpDetails();
            empDetails.setId(Integer.parseInt(userID));
-        Call<EmployeeProfile> call = NewApiClient.getInstance().getApiService().getProfileDetail(empDetails);
+        Call<EmployeeProfile> call = NewApiClient.getInstance().getApiService(getActivity()).getProfileDetail(empDetails);
         call.enqueue(new Callback<EmployeeProfile>() {
         @Override
         public void onResponse(Call<EmployeeProfile> call, Response<EmployeeProfile> response) {

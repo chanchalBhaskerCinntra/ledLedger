@@ -112,6 +112,12 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
     @BindView(R.id.btnRemindNow)
     Button btnRemindNow;
 
+    @BindView(R.id.tvSalesCardSmall)
+    TextView tvSalesCardSmall;
+
+    @BindView(R.id.pending_amount)
+    TextView pending_amount;
+
 
     String cardCode, cardName;
     /***shubh****/
@@ -134,11 +140,21 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
     LinearLayoutManager layoutManager;
 
     private void shareLedgerData() {
-        url = Globals.perticularBpPaymentCollection + "CardCode=" + cardCode + "&DueDaysGroup=" + overdueDaysFilter;
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.perticularBpPaymentCollectionPurchse + "CardCode=" + cardCode + "&DueDaysGroup=" + overdueDaysFilter;
+
+        } else {
+            url = Globals.perticularBpPaymentCollection + "CardCode=" + cardCode + "&DueDaysGroup=" + overdueDaysFilter;
+
+        }
+        Log.e(TAG, "shareLedgerData: " + url);
+
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getSupportFragmentManager(),
                 "");
+
     }
 
 
@@ -156,6 +172,12 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
         type_dropdown.setVisibility(View.GONE);
         fromWhere = getIntent().getStringExtra("FromWhere");
         overdueDaysFilter = getIntent().getStringExtra("filterValue");
+
+        if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+            tvSalesCardSmall.setText("Purchase");
+            pending_amount.setText("JE/Debit Note");
+        }
+
 
         if (Prefs.getString("ForReports", "").equalsIgnoreCase("overDue")) {
             overdueDaysFilter = "-1";
@@ -435,10 +457,10 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
                 hde.put(Globals.payLoadDueDaysGroup, overdueDaysFilter);
 
                 Call<ResponseParticularCustomerPaymentDue> call;
-                if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomerPurchase(hde);
+                if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerPaymentDueInfo.this).getPaymentDueDashboardParticularCustomerPurchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomer(hde);
+                    call =  NewApiClient.getInstance().getApiService(ParticularCustomerPaymentDueInfo.this).getPaymentDueDashboardParticularCustomer(hde);
                 }
                 try {
                     Response<ResponseParticularCustomerPaymentDue> response = call.execute();
@@ -529,9 +551,9 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
 
                 Call<ResponseParticularCustomerPaymentDue> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomerPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerPaymentDueInfo.this).getPaymentDueDashboardParticularCustomerPurchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getPaymentDueDashboardParticularCustomer(hde);
+                    call =  NewApiClient.getInstance().getApiService(ParticularCustomerPaymentDueInfo.this).getPaymentDueDashboardParticularCustomer(hde);
                 }
 
                 try {
@@ -611,7 +633,8 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
             case R.id.share_received:
                 // Globals.selectDat(this);
 /***shubh****/
-                showBottomSheetDialog();
+//                showBottomSheetDialog();
+                shareLedgerData();
                 // showCustomerBottomSheetDialog(ParticularCustomerReceivableInfo.this, cardName, groupName, creditLimit, creditDate, gstNo, mobile, address, email);
                 break;
 
@@ -631,6 +654,8 @@ public class ParticularCustomerPaymentDueInfo extends MainBaseActivity {
         BottomSheetDialogShareReportBinding binding;
         binding = BottomSheetDialogShareReportBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(binding.getRoot());
+
+
         url = Globals.receivableParticular + "Type=Gross&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&DueDaysGroup=" + overdueDaysFilter;
 
 

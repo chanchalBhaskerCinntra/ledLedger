@@ -217,7 +217,7 @@ public class CustomersAdapterDetals extends RecyclerView.Adapter<CustomersAdapte
                   transaction.addToBackStack(null);
                   transaction.commit();*/
 
-                    Bundle b = new Bundle();
+                   /* Bundle b = new Bundle();
                     b.putSerializable(Globals.BussinessItemData, customerList.get(getAdapterPosition()));
                     // Opportunity_Detail_Fragment fragment = new Opportunity_Detail_Fragment();
                     BusinessPartnerDetail fragment = new BusinessPartnerDetail();
@@ -225,7 +225,7 @@ public class CustomersAdapterDetals extends RecyclerView.Adapter<CustomersAdapte
                     FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
                     transaction.replace(R.id.main_edit_qt_frame, fragment);
                     transaction.addToBackStack(null);
-                    transaction.commit();
+                    transaction.commit();*/
 
                 }
             });
@@ -256,9 +256,7 @@ public class CustomersAdapterDetals extends RecyclerView.Adapter<CustomersAdapte
         geo.put("id", String.valueOf(id));
         geo.put("U_LAT", String.valueOf(latitude));
         geo.put("U_LONG", String.valueOf(longitude));
-
-
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().updateBusinessPartnerGeoLocation(geo);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(context).updateBusinessPartnerGeoLocation(geo);
 
         call.enqueue(new Callback<LeadResponse>() {
             @Override

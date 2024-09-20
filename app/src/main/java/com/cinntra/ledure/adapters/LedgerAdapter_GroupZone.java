@@ -35,7 +35,7 @@ public class LedgerAdapter_GroupZone extends RecyclerView.Adapter<LedgerAdapter_
     public LedgerAdapter_GroupZone(Context context1, List<BusinessPartnerData> branchList) {
        // this.branchList.addAll(branchList);
         this.branchList=branchList;
-        Log.e("COnstructor", "LedgerAdapter: "+branchList.size());
+//        Log.e("COnstructor", "LedgerAdapter: "+branchList.size());
         this.context = context1;
         tempList = new ArrayList<>();
         tempList.addAll(branchList);
@@ -52,7 +52,7 @@ public class LedgerAdapter_GroupZone extends RecyclerView.Adapter<LedgerAdapter_
 
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Log.e("Bind=>" + position, branchList.get(position).getCardName());
+//        Log.e("Bind=>" + position, branchList.get(position).getCardName());
         holder.title.setText(branchList.get(position).getCardCode()+" "+branchList.get(position).getCardName());
         holder.unit_price.setText("₹ " + Globals.numberToK(branchList.get(position).getTotalSales()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +83,7 @@ public class LedgerAdapter_GroupZone extends RecyclerView.Adapter<LedgerAdapter_
 
     @Override
     public int getItemCount() {
-        Log.e("TAG==>ADAPETR", "getItemCount: "+branchList.size() );
+//        Log.e("TAG==>ADAPETR", "getItemCount: "+branchList.size() );
         return branchList.size();
     }
 
@@ -134,7 +134,7 @@ public class LedgerAdapter_GroupZone extends RecyclerView.Adapter<LedgerAdapter_
             public int compare(BusinessPartnerData item, BusinessPartnerData t1) {
                 String s1 = item.getCardName();
                 String s2 = t1.getCardName();
-                Log.e("T1=>", t1.getCardName());
+//                Log.e("T1=>", t1.getCardName());
                 if (type.equalsIgnoreCase("AtoZ"))
                     return s1.compareToIgnoreCase(s2);
                 else
@@ -187,7 +187,7 @@ public class LedgerAdapter_GroupZone extends RecyclerView.Adapter<LedgerAdapter_
             public int compare(BusinessPartnerData item, BusinessPartnerData t1) {
                 String s1 = item.getCreateDate();
                 String s2 = t1.getCreateDate();
-                Log.e("T1=>", t1.getCardName());
+//                Log.e("T1=>", t1.getCardName());
 
                 return s1.compareToIgnoreCase(s2);
 //                if(type.equalsIgnoreCase("AtoZ"))

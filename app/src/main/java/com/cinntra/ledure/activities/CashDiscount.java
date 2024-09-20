@@ -236,7 +236,7 @@ public class CashDiscount extends MainBaseActivity implements View.OnClickListen
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
         hde.put("FromDate","");
         hde.put("ToDate","");
-        Call<CashDiscountResponse> call = NewApiClient.getInstance().getApiService().cashDiscountList(hde);
+        Call<CashDiscountResponse> call = NewApiClient.getInstance().getApiService(this).cashDiscountList(hde);
         call.enqueue(new Callback<CashDiscountResponse>() {
             @Override
             public void onResponse(Call<CashDiscountResponse> call, Response<CashDiscountResponse> response) {
@@ -282,7 +282,7 @@ public class CashDiscount extends MainBaseActivity implements View.OnClickListen
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
         hde.put("FromDate","");
         hde.put("ToDate","");
-        Call<CashDiscountResponse> call = NewApiClient.getInstance().getApiService().cashDiscountList(hde);
+        Call<CashDiscountResponse> call = NewApiClient.getInstance().getApiService(this).cashDiscountList(hde);
         call.enqueue(new Callback<CashDiscountResponse>() {
             @Override
             public void onResponse(Call<CashDiscountResponse> call, Response<CashDiscountResponse> response) {
@@ -331,7 +331,7 @@ public class CashDiscount extends MainBaseActivity implements View.OnClickListen
     {
         HashMap<String,String> hde = new HashMap<>();
         hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode,""));
-        Call<String> call = NewApiClient.getInstance().getApiService().cashDiscountListTest();
+        Call<String> call = NewApiClient.getInstance().getApiService(this).cashDiscountListTest();
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

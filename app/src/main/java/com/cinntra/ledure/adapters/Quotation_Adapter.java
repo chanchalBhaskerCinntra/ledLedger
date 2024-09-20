@@ -285,7 +285,7 @@ public class Quotation_Adapter extends RecyclerView.Adapter<Quotation_Adapter.Vi
         QuotationItem qt = new QuotationItem();
         qt.setId(QT_ID);
         qt.setU_FAV(in);
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().updateFavQuotation(qt);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(context).updateFavQuotation(qt);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {

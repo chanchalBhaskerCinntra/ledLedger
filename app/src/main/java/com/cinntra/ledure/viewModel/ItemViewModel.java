@@ -1,5 +1,6 @@
 package com.cinntra.ledure.viewModel;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -53,6 +54,7 @@ import retrofit2.Response;
 public class ItemViewModel extends ViewModel
      {
     MutableLiveData<List<DocumentLines>> businessPartners;
+    Context context;
     public LiveData<List<DocumentLines>> getItemsList(ProgressBar loader, ItemCategoryData pageNo)
           {
              //if the list is null
@@ -73,7 +75,7 @@ public class ItemViewModel extends ViewModel
 
 
         loader.setVisibility(View.VISIBLE);
-        Call<ItemResponse> call = NewApiClient.getInstance().getApiService().ItemsList(pageNo);
+        Call<ItemResponse> call = NewApiClient.getInstance().getApiService(loader.getContext()).ItemsList(pageNo);
         call.enqueue(new Callback<ItemResponse>() {
         @Override
         public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response)
@@ -95,7 +97,7 @@ public class ItemViewModel extends ViewModel
 
 
              loader.setVisibility(View.VISIBLE);
-             Call<ItemResponse> call = NewApiClient.getInstance().getApiService().ItemsList(pageNo);
+             Call<ItemResponse> call = NewApiClient.getInstance().getApiService(loader.getContext()).ItemsList(pageNo);
              call.enqueue(new Callback<ItemResponse>() {
                  @Override
                  public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response)
@@ -244,7 +246,7 @@ public class ItemViewModel extends ViewModel
 
          private void loadDepartMent()
          {
-             Call<DepartMentDetail> call = NewApiClient.getInstance().getApiService().getDepartMent();
+             Call<DepartMentDetail> call = NewApiClient.getInstance().getApiService(context).getDepartMent();
              call.enqueue(new Callback<DepartMentDetail>()
              {
                  @Override
@@ -277,7 +279,7 @@ public class ItemViewModel extends ViewModel
 
          private void loadRole()
               {
-         Call<RoleListDetail> call = NewApiClient.getInstance().getApiService().getRole();
+         Call<RoleListDetail> call = NewApiClient.getInstance().getApiService(context).getRole();
          call.enqueue(new Callback<RoleListDetail>()
              {
          @Override
@@ -393,7 +395,7 @@ public class ItemViewModel extends ViewModel
 
              EmployeeValue employeeValue = new EmployeeValue();
              employeeValue.setSalesEmployeeCode(Globals.TeamSalesEmployeCode);
-           Call<SaleEmployeeResponse> call = NewApiClient.getInstance().getApiService().getSalesEmplyeeList(employeeValue);
+           Call<SaleEmployeeResponse> call = NewApiClient.getInstance().getApiService(context).getSalesEmplyeeList(employeeValue);
      call.enqueue(new Callback<SaleEmployeeResponse>() {
          @Override
      public void onResponse(Call<SaleEmployeeResponse> call, Response<SaleEmployeeResponse> response) {
@@ -442,7 +444,7 @@ public class ItemViewModel extends ViewModel
             {
                 ContactPersonData businessPartnerData = new ContactPersonData();
                 businessPartnerData.setCardCode(cardCode);
-             Call<ContactPerson> call = NewApiClient.getInstance().getApiService().ContactEmployeesList(businessPartnerData);
+             Call<ContactPerson> call = NewApiClient.getInstance().getApiService(context).ContactEmployeesList(businessPartnerData);
              call.enqueue(new Callback<ContactPerson>() {
                  @Override
                  public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {
@@ -477,7 +479,7 @@ public class ItemViewModel extends ViewModel
 
          private void loadBPtypelist()
          {
-             Call<BPTypeResponse> call = NewApiClient.getInstance().getApiService().getBptypelist();
+             Call<BPTypeResponse> call = NewApiClient.getInstance().getApiService(context).getBptypelist();
              call.enqueue(new Callback<BPTypeResponse>()
              {
                  @Override
@@ -514,7 +516,7 @@ public class ItemViewModel extends ViewModel
 
          private void loadOpptypelist()
          {
-             Call<BPTypeResponse> call = NewApiClient.getInstance().getApiService().getopptypelist();
+             Call<BPTypeResponse> call = NewApiClient.getInstance().getApiService(context).getopptypelist();
              call.enqueue(new Callback<BPTypeResponse>()
              {
                  @Override
@@ -549,7 +551,7 @@ public class ItemViewModel extends ViewModel
 
          private void loadIndustry()
            {
-       Call<IndustryResponse> call = NewApiClient.getInstance().getApiService().getIndustryList();
+       Call<IndustryResponse> call = NewApiClient.getInstance().getApiService(context).getIndustryList();
        call.enqueue(new Callback<IndustryResponse>()
           {
           @Override
@@ -651,7 +653,7 @@ public class ItemViewModel extends ViewModel
 
          private void loadPayment()
            {
-             Call<PayMentTermsDetail> call = NewApiClient.getInstance().getApiService().getPaymentTerm();
+             Call<PayMentTermsDetail> call = NewApiClient.getInstance().getApiService(context).getPaymentTerm();
              call.enqueue(new Callback<PayMentTermsDetail>()
              {
                  @Override

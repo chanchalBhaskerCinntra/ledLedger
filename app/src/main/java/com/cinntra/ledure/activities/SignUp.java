@@ -110,7 +110,7 @@ public class SignUp extends MainBaseActivity
 
           private void callNewemployeCreateApi(NewEmployeeUser newEmployeeUser) {
 
-              Call<LeadResponse> call = NewApiClient.getInstance().getApiService().createdemoEmployee(newEmployeeUser);
+              Call<LeadResponse> call = NewApiClient.getInstance().getApiService(this).createdemoEmployee(newEmployeeUser);
               call.enqueue(new Callback<LeadResponse>() {
                   @Override
                   public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {

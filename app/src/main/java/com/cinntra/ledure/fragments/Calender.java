@@ -174,7 +174,7 @@ public class Calender extends Fragment implements DatePickerListener, View.OnCli
         String dd = formatter1.format(day);
       //  picker.setDateSelectedColor(getResources().getColor(R.color.yellow));
         Globals.CurrentSelectedDate = dateSelected.getYear()+"-"+month+"-"+dd;
-        Log.e("Date=>C",Globals.CurrentSelectedDate);
+//        Log.e("Date=>C",Globals.CurrentSelectedDate);
       //  callApi();
         viewpager.getAdapter().notifyDataSetChanged();
     }

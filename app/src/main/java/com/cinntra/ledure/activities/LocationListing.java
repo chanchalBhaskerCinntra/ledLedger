@@ -293,7 +293,7 @@ public class LocationListing extends MainBaseActivity {
         Log.e("TAG", "callgetlocationApi: "+mapData.size());
         Log.e("TAG", "callgetlocationApi: "+mapData.get("Emp_Id"));
 
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().getmaplocation(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).getmaplocation(mapData);
         call.enqueue(new Callback<MapResponse>() {
             @Override
             public void onResponse(Call<MapResponse> call, Response<MapResponse> response) {
@@ -345,7 +345,7 @@ public class LocationListing extends MainBaseActivity {
         Log.e("TAG", "callgetlocationApimap: "+map.size());
         Log.e("TAG", "callgetlocationApimap: "+map.get("Emp_Id"));
 
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().getmaplocation(map);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).getmaplocation(map);
         call.enqueue(new Callback<MapResponse>() {
             @Override
             public void onResponse(Call<MapResponse> call, Response<MapResponse> response) {
@@ -393,7 +393,7 @@ public class LocationListing extends MainBaseActivity {
 //        mapData.put("UpdateDate", dateText.getText().toString());
 //        mapData.put("shape", "");
 
-        Call<AllTripExpenseResponse> call = NewApiClient.getInstance().getApiService().getAllTripExpense(mapData);
+        Call<AllTripExpenseResponse> call = NewApiClient.getInstance().getApiService(this).getAllTripExpense(mapData);
         call.enqueue(new Callback<AllTripExpenseResponse>() {
             @Override
             public void onResponse(Call<AllTripExpenseResponse> call, Response<AllTripExpenseResponse> response) {

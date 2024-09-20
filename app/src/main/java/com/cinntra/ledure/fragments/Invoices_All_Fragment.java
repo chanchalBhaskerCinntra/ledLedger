@@ -103,7 +103,7 @@ public class Invoices_All_Fragment extends Fragment implements View.OnClickListe
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.e("dy = All ,Visible",""+dy+" , "+AllItemList.size()+" , "+layoutManager.findLastCompletelyVisibleItemPosition());
+//                Log.e("dy = All ,Visible",""+dy+" , "+AllItemList.size()+" , "+layoutManager.findLastCompletelyVisibleItemPosition());
 
                 if(layoutManager.findLastCompletelyVisibleItemPosition() == AllItemList.size()-3 && recallApi)
                 {

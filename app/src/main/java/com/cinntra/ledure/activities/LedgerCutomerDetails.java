@@ -12,12 +12,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.cinntra.ledure.R;
@@ -26,6 +28,7 @@ import com.cinntra.ledure.databinding.ActivityLedgerCustomerDetailsBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShowCustomerDataBinding;
 import com.cinntra.ledure.fragments.Customer_Summary;
+import com.cinntra.ledure.fragments.ItemsTabFromPartyFragment;
 import com.cinntra.ledure.fragments.StockGroupBPWiseFragment;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.interfaces.DateCallBacks;
@@ -56,6 +59,9 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
     @BindView(R.id.relativeeSummary)
     RelativeLayout relativeeSummary;
 
+    @BindView(R.id.relativeItems)
+    RelativeLayout relativeItems;
+
     @BindView(R.id.relativeSold)
     RelativeLayout relativeSold;
 
@@ -73,6 +79,15 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
     TextView current_text;
     @BindView(R.id.past_text)
     TextView past_text;
+
+    @BindView(R.id.itemsText)
+    TextView itemsText;
+
+    @BindView(R.id.tvItemWise)
+    TextView tvItemWise;
+
+    @BindView(R.id.tvCategoryWise)
+    TextView tvCategoryWise;
 
     @BindView(R.id.relativeInfoView)
     RelativeLayout relativeInfoView;
@@ -92,7 +107,7 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
     public String endDate = "";
 
 
-    private String[] tabs = {"SUMMARY", "SOLD"};
+    private String[] tabs = {"SUMMARY", "SOLD", "ITEMS"};
     private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
     public static String nameCustomer;
     String cardCode, email, mobile, address;
@@ -140,18 +155,14 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
         if (fragment instanceof MyFragmentListener) {
             listener = (MyFragmentListener) fragment;
         } else {
-            throw new RuntimeException(fragment.toString()
-                    + " must implement OnDataReceivedListener");
+            throw new RuntimeException(fragment.toString() + " must implement OnDataReceivedListener");
         }
-
-
         if (fragment instanceof MyFragmentCustomerListener) {
             listenerCustomer = (MyFragmentCustomerListener) fragment;
         } else {
             throw new RuntimeException(fragment.toString()
                     + " must implement OnDataReceivedListener");
         }
-
 
     }
 
@@ -168,10 +179,12 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
         //listener = (MyFragmentListener) this;
         //listenerCustomer = (MyFragmentCustomerListener) this;
 
-        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
             activityLedgerCustomerDetailsBinding.pastText.setText("Purchase");
-        }else {
+            activityLedgerCustomerDetailsBinding.itemsText.setText("Purchase");
+        } else {
             activityLedgerCustomerDetailsBinding.pastText.setText("Sold");
+            activityLedgerCustomerDetailsBinding.itemsText.setText("Sold");
         }
 
         filterView.setVisibility(View.GONE);
@@ -227,22 +240,31 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
 
         //  setOnDataListener(listener);
         // setOnCustomerDataListener(listenerCustomer);
+
+        //todo here setting tabs fragment in fragment manager--
         fragments.add(new Customer_Summary(cardCode, from_to_date, relativeCalView));
 //        fragments.add(new Sold_ItemBases(cardCode, startDate, endDate, relativeCalView));
         fragments.add(new StockGroupBPWiseFragment(cardCode, startDate, endDate, relativeCalView));
+        fragments.add(new ItemsTabFromPartyFragment(cardCode, startDate, endDate, relativeCalView));
 
         Customer_Summary fragment2 = new Customer_Summary(cardCode, from_to_date, relativeCalView);
 //        Sold_ItemBases fragmentSold = new Sold_ItemBases(cardCode, startDate, endDate, relativeCalView);
         StockGroupBPWiseFragment fragmentSold = new StockGroupBPWiseFragment(cardCode, startDate, endDate, relativeCalView);
+
+        ItemsTabFromPartyFragment fragmentItems = new ItemsTabFromPartyFragment(cardCode, startDate, endDate, relativeCalView);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.containerSummarySold, fragment2);
         fragmentTransaction.commit();
 
+        //todo on click listeners work here---
         relativeeSummary.setOnClickListener(view -> {
-
             current_text.setTextColor(getResources().getColor(R.color.colorPrimary));
             past_text.setTextColor(getResources().getColor(R.color.grey));
+            itemsText.setTextColor(getResources().getColor(R.color.grey));
+            tvCategoryWise.setTextColor(getResources().getColor(R.color.grey));
+            tvItemWise.setTextColor(getResources().getColor(R.color.grey));
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.containerSummarySold, fragment2)
@@ -252,9 +274,23 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
 
         relativeSold.setOnClickListener(view -> {
             current_text.setTextColor(getResources().getColor(R.color.grey));
+            itemsText.setTextColor(getResources().getColor(R.color.grey));
             past_text.setTextColor(getResources().getColor(R.color.colorPrimary));
+            tvCategoryWise.setTextColor(getResources().getColor(R.color.colorPrimary));
+            tvItemWise.setTextColor(getResources().getColor(R.color.grey));
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.containerSummarySold, fragmentSold)
+                    .commit();
+        });
+
+        relativeItems.setOnClickListener(view -> {
+            current_text.setTextColor(getResources().getColor(R.color.grey));
+            past_text.setTextColor(getResources().getColor(R.color.grey));
+            itemsText.setTextColor(getResources().getColor(R.color.colorPrimary));
+            tvCategoryWise.setTextColor(getResources().getColor(R.color.grey));
+            tvItemWise.setTextColor(getResources().getColor(R.color.colorPrimary));
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.containerSummarySold, fragmentItems)
                     .commit();
         });
 
@@ -263,8 +299,8 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
         pagerAdapter = new InvoicePagerAdapter(getSupportFragmentManager(), fragments, tabs);
 
 
-//        viewpager.setAdapter(pagerAdapter);
-//        tabLayout.setupWithViewPager(viewpager);
+
+
         pagerAdapter.notifyDataSetChanged();
         back_press.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,8 +313,6 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
         /***shubh****/
         relativeInfoView.setOnClickListener(view -> {
             showCustomerBottomSheetDialog(this, name, GroupName, creditLimit, PaymentDays, contactName, address, email);
-
-
         });
 
 //        relativeCalView.setOnClickListener(view -> {
@@ -312,13 +346,13 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
         HashMap<String, String> hde = new HashMap<>();
         hde.put("CardCode", cardCode);
 
-        Call<ResponseBusinessPartner> call = NewApiClient.getInstance().getApiService().bp_one(hde);
+        Call<ResponseBusinessPartner> call = NewApiClient.getInstance().getApiService(this).bp_one(hde);
         call.enqueue(new Callback<ResponseBusinessPartner>() {
             @Override
             public void onResponse(Call<ResponseBusinessPartner> call, Response<ResponseBusinessPartner> response) {
                 if (response.isSuccessful()) {
                     activityLedgerCustomerDetailsBinding.loader.loader.setVisibility(View.GONE);
-                    if(response.body().getData().size()>0) {
+                    if (response.body().getData().size() > 0) {
                         Dataobj = response.body().getData().get(0);
                         //   salesamount.setText("Rs." + response.body().getTotalSales());
                         //    total_amount.setText("Rs." + response.body().getTotalSales());
@@ -327,15 +361,15 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
 //                        creditLimit = response.body().getbPData().get(0).getCreditLimit();
 //                        groupName = response.body().getbPData().get(0).getGroupName();
 //                        gstNo = response.body().getbPData().get(0).getGstIn();
-                        if(response.body().getData().get(0).getContactEmployees().size()>0)
-                        mobile = response.body().getData().get(0).getContactEmployees().get(0).getMobilePhone();
+                        if (response.body().getData().get(0).getContactEmployees().size() > 0)
+                            mobile = response.body().getData().get(0).getContactEmployees().get(0).getMobilePhone();
                         email = response.body().getData().get(0).getEmailAddress();
                         address = "" + response.body().getData().get(0).getBPAddresses().get(0).getAddressName() + ", "
                                 + " " + response.body().getData().get(0).getBPAddresses().get(0).getStreet() + ", "
                                 + response.body().getData().get(0).getBPAddresses().get(0).getBlock() + ", " + response.body().getData().get(0).getBPAddresses().get(0).getState()
                                 + ", " + response.body().getData().get(0).getBPAddresses().get(0).getZipCode();
                         name = response.body().getData().get(0).getCardName();
-                        Globals.cardNameGlobal=name;
+                        Globals.cardNameGlobal = name;
                         // gstNo=response.body().getData().get(0).getGstIn();
                         if (Dataobj.getBPAddresses().size() > 0) {
                             GSTIN = response.body().getData().get(0).getBPAddresses().get(0).getGSTIN();
@@ -441,19 +475,18 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
 
     private void showDateBottomSheetDialog(Context context) {
 
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         binding = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(binding.getRoot());
-        binding.ivCloseBottomSheet.setOnClickListener(view ->
-        {
+        binding.ivCloseBottomSheet.setOnClickListener(view -> {
             bottomSheetDialog.dismiss();
         });
-        binding.tvCustomDateBottomSheetSelectDate.setOnClickListener(view ->
-        {
+        binding.tvCustomDateBottomSheetSelectDate.setOnClickListener(view -> {
             // Toast.makeText(context, "today", Toast.LENGTH_SHORT).show();
 
             bottomSheetDialog.dismiss();
-            // dateRangeSelector();
+
+//            dateRangeSelector();
 
         });
         binding.tvTodayDateBottomSheetSelectDate.setOnClickListener(view -> {
@@ -532,7 +565,7 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
             Prefs.putString(Globals.FROM_DATE, startDate);
             Prefs.putString(Globals.TO_DATE, endDate);
             listener.onDataPassed(startDate, endDate);
-            activityLedgerCustomerDetailsBinding.tvDateText.setText(Globals.convertDateFormat(startDate)+" to "+Globals.convertDateFormat(endDate));
+            activityLedgerCustomerDetailsBinding.tvDateText.setText(Globals.convertDateFormat(startDate) + " to " + Globals.convertDateFormat(endDate));
 
             bottomSheetDialog.dismiss();
         });
@@ -598,9 +631,7 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
 
     }
 
-    private void dateRangeSelector()
-            {
-
+    private void dateRangeSelector() {
 
         if (startDatelng == 0.0) {
             materialDatePicker = MaterialDatePicker.Builder.dateRangePicker().setSelection(Pair.create(MaterialDatePicker.thisMonthInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds())).build();
@@ -641,7 +672,7 @@ public class LedgerCutomerDetails extends AppCompatActivity implements FragmentC
 
     private void showCustomerBottomSheetDialog(Context context, String title, String groupName, String creditLimit, String creditDate, String mobile, String address, String email) {
         BottomSheetDialogShowCustomerDataBinding binding;
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         binding = BottomSheetDialogShowCustomerDataBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(binding.getRoot());
         binding.ivCloseBottomSheet.setOnClickListener(view ->

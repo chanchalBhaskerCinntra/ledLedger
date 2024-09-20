@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
@@ -29,6 +30,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.BussinessPartners;
 import com.cinntra.ledure.activities.CampaignActivity;
@@ -55,8 +57,10 @@ import com.cinntra.ledure.model.SalesEmployeeItem;
 import com.cinntra.ledure.viewModel.ItemViewModel;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.pixplicity.easyprefs.library.Prefs;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -132,35 +136,33 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
 
 
     String userTyep;
-      /*String []mainItems = {"Lead Generation/Opportunities","Inventory","Sales Quotation",
-      "Sales Order","Delivery","Invoice "};*/
-    String []mainItems     = {"Opportunities","Quotations","Orders","Invoice "};
-    String []inventoryItem = {"Fast Moving","Slow Moving","Non Moving"};
-    int  []inventoryIcons=   {R.drawable.ic_inventory,R.drawable.ic_inventory,R.drawable.ic_inventory};
-    String []deliveryItem  = {"Overdue","Open","Closed"};
-    String []colorarray    = {"#F3425F","#763EE7","#1878F3"};
-    int  []deliveryIcons   = {R.drawable.ic_delivery_overdue,R.drawable.ic_delivery_open,R.drawable.ic_delivery_closed};
+    /*String []mainItems = {"Lead Generation/Opportunities","Inventory","Sales Quotation",
+    "Sales Order","Delivery","Invoice "};*/
+    String[] mainItems = {"Opportunities", "Quotations", "Orders", "Invoice "};
+    String[] inventoryItem = {"Fast Moving", "Slow Moving", "Non Moving"};
+    int[] inventoryIcons = {R.drawable.ic_inventory, R.drawable.ic_inventory, R.drawable.ic_inventory};
+    String[] deliveryItem = {"Overdue", "Open", "Closed"};
+    String[] colorarray = {"#F3425F", "#763EE7", "#1878F3"};
+    int[] deliveryIcons = {R.drawable.ic_delivery_overdue, R.drawable.ic_delivery_open, R.drawable.ic_delivery_closed};
 
-    int  []images          = {R.drawable.ic_opportunity,R.drawable.ic_quotation,R.drawable.ic_order,R.drawable.ic_invoice};
+    int[] images = {R.drawable.ic_opportunity, R.drawable.ic_quotation, R.drawable.ic_order, R.drawable.ic_invoice};
 
     public Dashboard() {
-    //Required empty public constructor
+        //Required empty public constructor
 
     }
 
 
     // TODO: Rename and change types and number of parameters
-    public static Dashboard newInstance(String param1, String param2)
-     {
-    Dashboard fragment = new Dashboard();
-    Bundle args = new Bundle();
-    fragment.setArguments(args);
-    return fragment;
-      }
+    public static Dashboard newInstance(String param1, String param2) {
+        Dashboard fragment = new Dashboard();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-     {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
 
@@ -171,7 +173,7 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
     public void onResume() {
         super.onResume();
         setDashboardCounters();
-        userRole_txt.setText(Prefs.getString(Globals.SalesEmployeeName,""));
+        userRole_txt.setText(Prefs.getString(Globals.SalesEmployeeName, ""));
         Globals.inventory_item_close = false;
 
     }
@@ -179,38 +181,36 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(LayoutInflater inflater,
-    ViewGroup container,
-    Bundle savedInstanceState)
-      {
-    //Inflate the layout for this fragment
-    View v=inflater.inflate(R.layout.fragment_dashboard2, container, false);
-    ButterKnife.bind(this,v);
-    Globals.CURRENT_CLASS = getClass().getName();
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        //Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_dashboard2, container, false);
+        ButterKnife.bind(this, v);
+        Globals.CURRENT_CLASS = getClass().getName();
 
 
-     userTyep = Prefs.getString(Globals.USER_TYPE,"manager");
-    if(Globals.checkInternet(getActivity())){
-    setDefaults(userTyep);
-              //setSqlDetails();
-        user_name.setText(Prefs.getString(Globals.SalesEmployeeName,""));
-        pro_pic.setText(String.valueOf(Prefs.getString(Globals.Employee_Name,"").charAt(0)).toUpperCase());
+        userTyep = Prefs.getString(Globals.USER_TYPE, "manager");
+        if (Globals.checkInternet(getActivity())) {
+            setDefaults(userTyep);
+            //setSqlDetails();
+            user_name.setText(Prefs.getString(Globals.SalesEmployeeName, ""));
+            pro_pic.setText(String.valueOf(Prefs.getString(Globals.Employee_Name, "").charAt(0)).toUpperCase());
+        }
+
+
+        return v;
     }
 
-
-
-    return v;
-      }
     public static ArrayList<CountryData> countrylist = new ArrayList<>();
-    private void setDefaults(String type)
-            {
+
+    private void setDefaults(String type) {
 
         callCountryApi();
 
-       loadHeirarchi();
+        loadHeirarchi();
 
 
-
-        GridViewAdapter adapter = new GridViewAdapter(getActivity(),mainItems,images);
+        GridViewAdapter adapter = new GridViewAdapter(getActivity(), mainItems, images);
         grid.setAdapter(adapter);
 
         view_all_delivery.setOnClickListener(this);
@@ -222,39 +222,37 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
         userRole.setOnClickListener(this);
         notification.setOnClickListener(this);
         customer_card.setOnClickListener(this);
-         pro_pic.setOnClickListener(this);
+        pro_pic.setOnClickListener(this);
         notification_view.setOnClickListener(this);
-         lead_card.setOnClickListener(this);
+        lead_card.setOnClickListener(this);
         campaign_card.setOnClickListener(this);
 
 
-
-
-
-           intAdpt = new InventoryAdapter(getActivity(),inventoryItem,inventoryIcons);
-          invetory_recycler.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
-          invetory_recycler.setAdapter(intAdpt);
-          invetory_recycler.smoothScrollToPosition(0);
-          intAdpt.notifyDataSetChanged();
+        intAdpt = new InventoryAdapter(getActivity(), inventoryItem, inventoryIcons);
+        invetory_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+        invetory_recycler.setAdapter(intAdpt);
+        invetory_recycler.smoothScrollToPosition(0);
+        intAdpt.notifyDataSetChanged();
 
 
     }
 
     private void callCountryApi() {
 
-        Call<CountryResponse> call = NewApiClient.getInstance().getApiService().getCountryList();
+        Call<CountryResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getCountryList();
         call.enqueue(new Callback<CountryResponse>() {
             @Override
             public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
-                if(response.code()==200) {
+                if (response.code() == 200) {
                     if (response.body().getData().size() > 0) {
                         countrylist.clear();
-                         countrylist.addAll(response.body().getData());
+                        countrylist.addAll(response.body().getData());
                     }
 
 
                 }
             }
+
             @Override
             public void onFailure(Call<CountryResponse> call, Throwable t) {
                 Toast.makeText(getContext(), t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -266,30 +264,28 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
     @SuppressLint("NonConstantResourceId")
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public void onClick(View v)
-      {
-   switch (v.getId())
-      {
-    case R.id.view_all_delivery:
-        startActivity(new Intent(getActivity(), DeliveryActivity.class));
-      break;
-      case R.id.see_all:
-       Intent i = new Intent(getActivity(), InventoryActivity.class);
-       i.putExtra("IN_Type","All");
-       startActivity(i);
-       break;
-          case R.id.lead_card:
-              Prefs.putString(Globals.BussinessPageType,"DashBoard");
-              startActivity(new Intent(getActivity(), LeadsActivity.class));
-              break;
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.view_all_delivery:
+                startActivity(new Intent(getActivity(), DeliveryActivity.class));
+                break;
+            case R.id.see_all:
+                Intent i = new Intent(getActivity(), InventoryActivity.class);
+                i.putExtra("IN_Type", "All");
+                startActivity(i);
+                break;
+            case R.id.lead_card:
+                Prefs.putString(Globals.BussinessPageType, "DashBoard");
+                startActivity(new Intent(getActivity(), LeadsActivity.class));
+                break;
             case R.id.opportunity_card:
-               // startActivity(new Intent(getActivity(), OpportunitiesActivity.class));
-                Prefs.putString(Globals.SelectOpportnity,"Dashboard");
+                // startActivity(new Intent(getActivity(), OpportunitiesActivity.class));
+                Prefs.putString(Globals.SelectOpportnity, "Dashboard");
                 startActivity(new Intent(getActivity(), Opportunities_Pipeline_Activity.class));
                 break;
             case R.id.quotation_card:
-                Prefs.putString(Globals.QuotationListing,"null");
-                Prefs.putBoolean(Globals.SelectQuotation,true);
+                Prefs.putString(Globals.QuotationListing, "null");
+                Prefs.putBoolean(Globals.SelectQuotation, true);
                 startActivity(new Intent(getActivity(), QuotationActivity.class));
                 break;
             case R.id.order_card:
@@ -298,59 +294,55 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
             case R.id.invoices_card:
                 startActivity(new Intent(getActivity(), InvoiceActivity.class));
                 break;
-          case R.id.campaign_card:
-              startActivity(new Intent(getActivity(), CampaignActivity.class));
+            case R.id.campaign_card:
+                startActivity(new Intent(getActivity(), CampaignActivity.class));
 
-              break;
+                break;
             case R.id.userRole:
                 //createPdf();
-               showBottomSheet();
+                showBottomSheet();
                 break;
             case R.id.notification:
-          case R.id.notification_view:
-               // openNotification();
+            case R.id.notification_view:
+                // openNotification();
                 //startActivity(new Intent(getActivity(), Navigation_drawer.class));
                 // startActivity(new Intent(getActivity(), AdminMainActivity.class));
                 // startActivity(new Intent(getActivity(), MapsActivity.class));
                 startActivity(new Intent(getActivity(), Notifications.class));
                 break;
             case R.id.customer_card:
-                Prefs.putString(Globals.BussinessPageType,"DashBoard");
+                Prefs.putString(Globals.BussinessPageType, "DashBoard");
                 startActivity(new Intent(getActivity(), BussinessPartners.class));
                 break;
-          case R.id.pro_pic:
-             // startActivity(new Intent(getActivity(), AdminMainActivity.class));
-              break;
+            case R.id.pro_pic:
+                // startActivity(new Intent(getActivity(), AdminMainActivity.class));
+                break;
         }
-     }
+    }
 
 
+    private void showBottomSheet() {
 
+        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(Dashboard.this);
+        bottomSheetFragment.show(getFragmentManager(), bottomSheetFragment.getTag());
 
-    private void showBottomSheet()
-       {
+    }
 
-     BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(Dashboard.this);
-     bottomSheetFragment.show(getFragmentManager(), bottomSheetFragment.getTag());
-
-       }
-
-    private void setDashboardCounters()
-      {
-    dashboardcounter();
-      }
+    private void setDashboardCounters() {
+        dashboardcounter();
+    }
 
 
     public static ArrayList<EmployeeValue> teamList_Hearchi = new ArrayList<>();
-    private void loadHeirarchi()
-            {
+
+    private void loadHeirarchi() {
         EmployeeValue employeeValue = new EmployeeValue();
         employeeValue.setSalesEmployeeCode(Globals.TeamSalesEmployeCode);
-        Call<HeirarchiResponse> call = NewApiClient.getInstance().getApiService().getAllEmployeelist(employeeValue);
+        Call<HeirarchiResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllEmployeelist(employeeValue);
         call.enqueue(new Callback<HeirarchiResponse>() {
             @Override
             public void onResponse(Call<HeirarchiResponse> call, Response<HeirarchiResponse> response) {
-                if(response !=null) {
+                if (response != null) {
                     teamList_Hearchi.clear();
                     if (response.body().getData().size() > 0) {
                         teamList_Hearchi.addAll(response.body().getData());
@@ -359,6 +351,7 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
 
                 }
             }
+
             @Override
             public void onFailure(Call<HeirarchiResponse> call, Throwable t) {
 
@@ -367,39 +360,35 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
     }
 
 
-
-
-    private void dashboardcounter()
-         {
+    private void dashboardcounter() {
         SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
-        salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode,""));
-    Call<CounterResponse> call = NewApiClient.getInstance().getApiService().dashboardcounter(salesEmployeeItem);
-     call.enqueue(new Callback<CounterResponse>() {
-         @Override
-     public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {
-        if (response != null)
-                {
+        salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
+        Call<CounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).dashboardcounter(salesEmployeeItem);
+        call.enqueue(new Callback<CounterResponse>() {
+            @Override
+            public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {
+                if (response != null) {
 
                     String[] deliverycounter = new String[3];
                     deliverycounter[0] = response.body().getValue().get(0).getOver();
                     deliverycounter[1] = response.body().getValue().get(0).getOpen();
                     deliverycounter[2] = response.body().getValue().get(0).getClose();
-                    delivery_recycler.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL,false));
-                    adpt = new DeliveryItemAdapter(getActivity(),deliveryItem,deliveryIcons,deliverycounter);
+                    delivery_recycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+                    adpt = new DeliveryItemAdapter(getActivity(), deliveryItem, deliveryIcons, deliverycounter);
                     delivery_recycler.setAdapter(adpt);
                     adpt.notifyDataSetChanged();
                     lead_counter.setText(response.body().getValue().get(0).getLeads());
-                    balnce.setText("₹ " +response.body().getValue().get(0).getSale());
-                    different_sale.setText("₹ " +response.body().getValue().get(0).getSale_diff());
-                        project_sale.setText("₹ " +response.body().getValue().get(0).getAmount());
+                    balnce.setText("₹ " + response.body().getValue().get(0).getSale());
+                    different_sale.setText("₹ " + response.body().getValue().get(0).getSale_diff());
+                    project_sale.setText("₹ " + response.body().getValue().get(0).getAmount());
                     opportunity_counter.setText(response.body().getValue().get(0).getOpportunity());
-                        quotation_counter.setText(response.body().getValue().get(0).getQuotation());
-                        order_counter.setText(response.body().getValue().get(0).getOrder());
-                        customer_counter.setText(response.body().getValue().get(0).getCustomer());
+                    quotation_counter.setText(response.body().getValue().get(0).getQuotation());
+                    order_counter.setText(response.body().getValue().get(0).getOrder());
+                    customer_counter.setText(response.body().getValue().get(0).getCustomer());
                     campaign_counter.setText(response.body().getValue().get(0).getCampaign_count());
-                    if(response.body().getValue().get(0).getNotification().equalsIgnoreCase("0")){
+                    if (response.body().getValue().get(0).getNotification().equalsIgnoreCase("0")) {
                         count_layout.setVisibility(View.GONE);
-                    }else {
+                    } else {
                         count_layout.setVisibility(View.VISIBLE);
                         count.setText(response.body().getValue().get(0).getNotification());
                     }
@@ -408,6 +397,7 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
                     Invoicescounter();
                 }
             }
+
             @Override
             public void onFailure(Call<CounterResponse> call, Throwable t) {
 
@@ -416,48 +406,40 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
     }
 
 
-
-    private void Invoicescounter()
-         {
-             SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
-             salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode,""));
-    Call<CounterResponse> call = NewApiClient.getInstance().getApiService().InvoicesCount(salesEmployeeItem);
-    call.enqueue(new Callback<CounterResponse>()
-        {
+    private void Invoicescounter() {
+        SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
+        salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
+        Call<CounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).InvoicesCount(salesEmployeeItem);
+        call.enqueue(new Callback<CounterResponse>() {
             @Override
             public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {
-                if (response != null&&response.code()==200)
-                {
-             if(response.body().getValue().size()>0)
-                    invoices_counter.setText(response.body().getValue().get(0).getInvoice());
-             else
-                 invoices_counter.setText("0");
+                if (response != null && response.code() == 200) {
+                    if (response.body().getValue().size() > 0)
+                        invoices_counter.setText(response.body().getValue().get(0).getInvoice());
+                    else
+                        invoices_counter.setText("0");
 
 
-                }else {
-                    Toast.makeText(getContext(),response.message(),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), response.message(), Toast.LENGTH_LONG).show();
                 }
             }
+
             @Override
             public void onFailure(Call<CounterResponse> call, Throwable t) {
-                Toast.makeText(getContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
 
             }
         });
 
 
-        }
-
-
-
+    }
 
 
     /******************** Save User ID**************************/
 
 
-   /************************ Delievry Counter ************************/
-
-
+    /************************ Delievry Counter ************************/
 
 
     public static ArrayList<Inventory> fastInventoryList = new ArrayList<>();
@@ -466,26 +448,22 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
     public static ArrayList<Inventory> allInventoryList = new ArrayList<>();
 
 
-    private void callSalesApi()
-         {
+    private void callSalesApi() {
         ItemViewModel model = ViewModelProviders.of(this).get(ItemViewModel.class);
         model.getSalesEmployeeList().observe(getActivity(), new Observer<List<SalesEmployeeItem>>() {
             @Override
-            public void onChanged(@Nullable List<SalesEmployeeItem> itemsList)
-            {
-               if(itemsList!=null){
-                   Globals.saveSaleEmployeeArrayList(itemsList,Globals.SalesEmployeeList);
-               }
+            public void onChanged(@Nullable List<SalesEmployeeItem> itemsList) {
+                if (itemsList != null) {
+                    Globals.saveSaleEmployeeArrayList(itemsList, Globals.SalesEmployeeList);
+                }
 
             }
         });
     }
 
 
-
-    private void openNotification()
-           {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(),"NewNotification")
+    private void openNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), "NewNotification")
                 .setContentTitle("Hey,")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setAutoCancel(true)
@@ -499,12 +477,12 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
             e.printStackTrace();
         }
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getContext());
-        managerCompat.notify(999,builder.build());
+        managerCompat.notify(999, builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-       NotificationChannel channel = new NotificationChannel("NewNotification", "NewNotification", NotificationManager.IMPORTANCE_DEFAULT);
-       NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
-      notificationManager.createNotificationChannel(channel);
+            NotificationChannel channel = new NotificationChannel("NewNotification", "NewNotification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 
@@ -513,10 +491,6 @@ public class Dashboard extends Fragment implements View.OnClickListener, ChangeT
         userRole_txt.setText(name);
         setDashboardCounters();
     }
-
-
-
-
 
 
 }

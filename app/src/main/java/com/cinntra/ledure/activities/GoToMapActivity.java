@@ -39,7 +39,7 @@ public class GoToMapActivity extends FragmentActivity implements OnMapReadyCallb
         setContentView(binding.getRoot());
         lat = getIntent().getStringExtra("lat");
         longitudeTT = getIntent().getStringExtra("long");
-        Log.e("TAG", "onCreate: "+lat+" "+longitudeTT );
+//        Log.e("TAG", "onCreate: "+lat+" "+longitudeTT );
        // Toast.makeText(this, "" + lat+"  " + longitudeTT, Toast.LENGTH_SHORT).show();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

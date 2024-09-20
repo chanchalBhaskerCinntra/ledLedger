@@ -387,7 +387,7 @@ public class AddOrderAct extends MainBaseActivity implements View.OnClickListene
     private void warehouseList(String zone) {
         HashMap<String, String> hde = new HashMap<>();
         hde.put("BusinessPlaceID", zone);
-        Call<WareHouseResponse> call = NewApiClient.getInstance().getApiService().warehouseList(hde);
+        Call<WareHouseResponse> call = NewApiClient.getInstance().getApiService(this).warehouseList(hde);
         call.enqueue(new Callback<WareHouseResponse>() {
             @Override
             public void onResponse(Call<WareHouseResponse> call, Response<WareHouseResponse> response) {
@@ -562,7 +562,7 @@ public class AddOrderAct extends MainBaseActivity implements View.OnClickListene
         ContactPersonData contactPersonData = new ContactPersonData();
         contactPersonData.setCardCode(id);
         loader.setVisibility(View.VISIBLE);
-        Call<ContactPerson> call = NewApiClient.getInstance().getApiService().contactemplist(contactPersonData);
+        Call<ContactPerson> call = NewApiClient.getInstance().getApiService(this).contactemplist(contactPersonData);
         call.enqueue(new Callback<ContactPerson>() {
             @Override
             public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {
@@ -646,7 +646,7 @@ public class AddOrderAct extends MainBaseActivity implements View.OnClickListene
 
     private void addQuotation(AddQuotation in, ProgressBar loader) {
 
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().addOrder(in);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(this).addOrder(in);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {
@@ -719,7 +719,7 @@ public class AddOrderAct extends MainBaseActivity implements View.OnClickListene
     private void callparticularcustomerdetails(String cardCode) {
         BusinessPartnerData contactPersonData = new BusinessPartnerData();
         contactPersonData.setCardCode(cardCode);
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().particularcustomerdetails(contactPersonData);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).particularcustomerdetails(contactPersonData);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -37,6 +39,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.ParticularCustomerSalesTransactionAdapter;
 import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
@@ -53,6 +56,7 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.webviewtopdf.PdfView;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -78,6 +82,10 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
     TextView salesamount;
     @BindView(R.id.tvSalesCardSmall)
     TextView tvSalesCardSmall;
+
+    @BindView(R.id.pending_amount)
+    TextView pending_amount;
+
     @BindView(R.id.loader)
     ProgressBar loader;
     @BindView(R.id.type_dropdown)
@@ -115,9 +123,9 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
     String gstNo;
     String mobile;
     String email;
-    String address,contactPersonName;
-    private String startDateReverseFormat="";
-    private String endDateReverseFormat="";
+    String address, contactPersonName;
+    private String startDateReverseFormat = "";
+    private String endDateReverseFormat = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,23 +135,28 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        layoutManager=new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         fromWhere = getIntent().getStringExtra("FromWhere");
         summary = getIntent().getStringExtra("summary");
         startDate = getIntent().getStringExtra("startDate");
         endDate = getIntent().getStringExtra("endDate");
 //        startDate = Prefs.getString(Globals.FROM_DATE,"");
 //        endDate = Prefs.getString(Globals.TO_DATE,"");
-        startDateReverseFormat=Globals.convertDateFormat(startDate);
-        endDateReverseFormat=Globals.convertDateFormat(endDate);
-        from_to_date.setText(startDateReverseFormat+" To "+endDateReverseFormat);
+        startDateReverseFormat = Globals.convertDateFormat(startDate);
+        endDateReverseFormat = Globals.convertDateFormat(endDate);
+        from_to_date.setText(startDateReverseFormat + " To " + endDateReverseFormat);
 
         cardCode = getIntent().getStringExtra("cardCode");
         cardName = getIntent().getStringExtra("cardName");
 
         btnRemindNow.setVisibility(View.GONE);
 
-        url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+        if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+            tvSalesCardSmall.setText("Purchase");
+            pending_amount.setText("JE/Debit Note");
+        }
+
+        url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
         toolbar.setTitle(cardName);
         //setList();
@@ -155,10 +168,10 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
         customerRecyclerView.addOnScrollListener(scrollListener);
 
         cardCreditNote.setOnClickListener(view -> {
-            Intent i =new Intent(this, ParticularBpCreditNoteActivity.class);
-            i.putExtra("FromWhere","Credits");
-            i.putExtra("code",cardCode);
-            i.putExtra("name",cardName);
+            Intent i = new Intent(this, ParticularBpCreditNoteActivity.class);
+            i.putExtra("FromWhere", "Credits");
+            i.putExtra("code", cardCode);
+            i.putExtra("name", cardName);
             startActivity(i);
         });
 
@@ -172,7 +185,7 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
                 reportType = type_dropdown.getSelectedItem().toString();
                 if (fromWhere.trim().equalsIgnoreCase("SaleLedger")) {
                     callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
-                    url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+                    url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
                 }
 
@@ -191,7 +204,7 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
     private void showCustomerBottomSheetDialog(Context context, String title, String groupName,
                                                String creditLimit, String creditDate, String gstNo, String mobile, String address, String email) {
         BottomSheetDialogShowCustomerDataBinding binding;
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         binding = BottomSheetDialogShowCustomerDataBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(binding.getRoot());
         binding.ivCloseBottomSheet.setOnClickListener(view ->
@@ -216,25 +229,32 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
     }
 
 
-
     /*************** Bhupi *********************/ // Calling one BottomSheet for Ledger Sharing
-
-    private void shareLedgerData()
-    {
+    private void shareLedgerData() {
         String title = "Share";
 
-        url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.particularBpPurchase + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
+        } else {
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        }
+        Log.e("PDF=======>", "shareLedgerData: " + url);
+
+
+//        url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
-                WebViewBottomSheetFragment.newInstance(dialogWeb,url,title);
+                WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getSupportFragmentManager(),
                 "");
     }
+
     /***shubh****/
-    private void showBottomSheetDialog()
-       {
+    private void showBottomSheetDialog() {
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ParticularCustomerSaleInfo.this);
         final ProgressDialog progressDialog = new ProgressDialog(ParticularCustomerSaleInfo.this);
@@ -245,9 +265,9 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
         binding = BottomSheetDialogShareReportBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(binding.getRoot());
 
-        url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+        url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
-        setUpWebViewDialog(binding.webViewBottomSheetDialog, url, false, binding.loader,binding.linearWhatsappShare,binding.linearGmailShare,binding.linearOtherShare);
+        setUpWebViewDialog(binding.webViewBottomSheetDialog, url, false, binding.loader, binding.linearWhatsappShare, binding.linearGmailShare, binding.linearOtherShare);
 
 
         bottomSheetDialog.show();
@@ -392,14 +412,13 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             share.setAction(Intent.ACTION_SEND);
             share.setType("application/pdf");
             share.putExtra(Intent.EXTRA_STREAM, apkURI);
-            if(isAppInstalled("com.whatsapp"))
+            if (isAppInstalled("com.whatsapp"))
                 share.setPackage("com.whatsapp");
-            else if(isAppInstalled("com.whatsapp.w4b"))
+            else if (isAppInstalled("com.whatsapp.w4b"))
                 share.setPackage("com.whatsapp.w4b");
 
             startActivity(share);
-        }
-        catch (ActivityNotFoundException e) {
+        } catch (ActivityNotFoundException e) {
             Toast.makeText(this, " WhatsApp is not currently installed on your phone.", Toast.LENGTH_LONG).show();
         }
     }
@@ -486,9 +505,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
-            public void onPageStarted(WebView view, String url, Bitmap btm)
-            {
-                super.onPageStarted(view, url,null);
+            public void onPageStarted(WebView view, String url, Bitmap btm) {
+                super.onPageStarted(view, url, null);
                 dialog.setVisibility(View.VISIBLE);
             }
 
@@ -546,11 +564,11 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
                 endDate = Globals.Date_yyyy_mm_dd(endDatelng);
 
                 if (fromWhere.trim().equalsIgnoreCase("SaleLedger")) {
-                    startDateReverseFormat=Globals.convertDateFormat(startDate);
-                    endDateReverseFormat=Globals.convertDateFormat(endDate);
+                    startDateReverseFormat = Globals.convertDateFormat(startDate);
+                    endDateReverseFormat = Globals.convertDateFormat(endDate);
                     from_to_date.setText(startDateReverseFormat + " - " + endDateReverseFormat);
                     callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
-                    url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+                    url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
                 }
 
@@ -561,14 +579,14 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
 
     }
 
-    int pageNo=1;
+    int pageNo = 1;
     ParticularCustomerSalesTransactionAdapter adapter;
-    ArrayList<LedgerCustomerData> AllItemList=new ArrayList<>();
+    ArrayList<LedgerCustomerData> AllItemList = new ArrayList<>();
 
     Call<LedgerCustomerResponse> call;
-    private void callparticularledgerOnePageinfo(String cardcode, String type, String startDate, String endDate)
-            {
-        pageNo=1;
+
+    private void callparticularledgerOnePageinfo(String cardcode, String type, String startDate, String endDate) {
+        pageNo = 1;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -580,13 +598,13 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
 
-                if (summary.equalsIgnoreCase("purchase")){
+                if (summary.equalsIgnoreCase("purchase")) {
                     tvSalesCardSmall.setText("Purchase");
-                    Prefs.putString(Globals.Sale_Purchse_Diff,"ttAPInvoice");
-                    call = NewApiClient.getInstance().getApiService().getBppurchasedetails(hde);
-                }else {
-                    Prefs.putString(Globals.Sale_Purchse_Diff,"ttARInvoice");
-                    call = NewApiClient.getInstance().getApiService().getparticularledgerdetails(hde);
+                    Prefs.putString(Globals.Sale_Purchse_Diff, "ttAPInvoice");
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerSaleInfo.this).getBppurchasedetails(hde);
+                } else {
+                    Prefs.putString(Globals.Sale_Purchse_Diff, "ttARInvoice");
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerSaleInfo.this).getparticularledgerdetails(hde);
                 }
 
                 try {
@@ -597,29 +615,28 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
                             @Override
                             public void run() {
 
-
-                                salesamount.setText(getResources().getString(R.string.Rs)+" " + Globals.numberToK(response.body().getTotalSales()));
-                                total_amount.setText(getResources().getString(R.string.Rs)+" " + Globals.numberToK(response.body().getTotalSales()));
-                                if(response.body().getbPData().size()>0) {
-                                    creditDate  = response.body().getbPData().get(0).getCreditLimitDayes();
+                                salesamount.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(response.body().getTotalSales()));
+                                total_amount.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(response.body().getTotalSales()));
+                                if (response.body().getbPData().size() > 0) {
+                                    creditDate = response.body().getbPData().get(0).getCreditLimitDayes();
                                     creditLimit = response.body().getbPData().get(0).getCreditLimit();
-                                    groupName   = response.body().getbPData().get(0).getGroupName();
-                                    gstNo   = response.body().getbPData().get(0).getGstIn();
-                                    email   = response.body().getbPData().get(0).getEmailAddress();
-                                    mobile  = response.body().getbPData().get(0).getPhone1();
+                                    groupName = response.body().getbPData().get(0).getGroupName();
+                                    gstNo = response.body().getbPData().get(0).getGstIn();
+                                    email = response.body().getbPData().get(0).getEmailAddress();
+                                    mobile = response.body().getbPData().get(0).getPhone1();
                                     address = response.body().getbPData().get(0).getBPAddress();
                                     contactPersonName = response.body().getbPData().get(0).getContactPerson();
                                 }
                                 AllItemList.clear();
                                 AllItemList.addAll(response.body().getData());
-                                 adapter = new ParticularCustomerSalesTransactionAdapter(ParticularCustomerSaleInfo.this,AllItemList, cardName, fromWhere);
+                                adapter = new ParticularCustomerSalesTransactionAdapter(ParticularCustomerSaleInfo.this, AllItemList, cardName, fromWhere);
                                 customerRecyclerView.setAdapter(adapter);
                                 // Update UI element here
                                 loader.setVisibility(View.GONE);
 
-                                if (response.body().getData().isEmpty()){
+                                if (response.body().getData().isEmpty()) {
                                     no_datafound.setVisibility(View.VISIBLE);
-                                }else {
+                                } else {
                                     no_datafound.setVisibility(View.GONE);
                                 }
                             }
@@ -636,8 +653,7 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
         }).start();
     }
 
-    private void callparticularledgerAllPageinfo(String cardcode, String type, String startDate, String endDate)
-            {
+    private void callparticularledgerAllPageinfo(String cardcode, String type, String startDate, String endDate) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -648,12 +664,12 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
                 hde.put("ToDate", endDate);
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-              //  Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService().getparticularledgerdetails(hde);
+                //  Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService(this).getparticularledgerdetails(hde);
 
-                if (summary.equalsIgnoreCase("purchase")){
-                    call = NewApiClient.getInstance().getApiService().getBppurchasedetails(hde);
-                }else {
-                    call = NewApiClient.getInstance().getApiService().getparticularledgerdetails(hde);
+                if (summary.equalsIgnoreCase("purchase")) {
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerSaleInfo.this).getBppurchasedetails(hde);
+                } else {
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerSaleInfo.this).getparticularledgerdetails(hde);
                 }
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
@@ -703,12 +719,12 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             }
         }).start();
     }
-     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-           {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.transaction_menu, menu);
-        MenuItem menuItem=menu.findItem(R.id.share_received);
-        MenuItem ledger=menu.findItem(R.id.ledger);
+        MenuItem menuItem = menu.findItem(R.id.share_received);
+        MenuItem ledger = menu.findItem(R.id.ledger);
         menuItem.setVisible(true);
         ledger.setVisible(true);
         return true;
@@ -717,15 +733,14 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-           {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
             case R.id.ledger:
-                Prefs.putString(Globals.FROM_DATE,startDate);
-                Prefs.putString(Globals.TO_DATE,endDate);
+                Prefs.putString(Globals.FROM_DATE, startDate);
+                Prefs.putString(Globals.TO_DATE, endDate);
                 Intent i = new Intent(this, LedgerReports.class);
                 i.putExtra("cardCode", cardCode);
                 i.putExtra("where", "particular");
@@ -743,23 +758,22 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
 //                showCustomerBottomSheetDialog(ParticularCustomerSaleInfo.this,cardName,groupName,creditLimit
 //                ,creditDate,gstNo,mobile,address,email);
 
-                Globals.showCustomerBottomSheetDialog(ParticularCustomerSaleInfo.this, cardName, groupName, creditLimit, creditDate, mobile, address, email,getLayoutInflater(),gstNo,contactPersonName);
+                Globals.showCustomerBottomSheetDialog(ParticularCustomerSaleInfo.this, cardName, groupName, creditLimit, creditDate, mobile, address, email, getLayoutInflater(), gstNo, contactPersonName);
 
                 break;
 
             case R.id.share_received:
-               // showBottomSheetDialog();
-               shareLedgerData();
+                // showBottomSheetDialog();
+                shareLedgerData();
                 break;
         }
         return true;
     }
 
 
-    private void showDateBottomSheetDialog(Context context)
-    {
+    private void showDateBottomSheetDialog(Context context) {
         BottomSheetDialogSelectDateBinding binding;
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context,R.style.BottomSheetDialogTheme);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         binding = BottomSheetDialogSelectDateBinding.inflate(getLayoutInflater());
         bottomSheetDialog.setContentView(binding.getRoot());
         binding.ivCloseBottomSheet.setOnClickListener(view ->
@@ -783,8 +797,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.Date_yyyy_mm_dd(endDatelng);
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvTodayDateBottomSheetSelectDate.getText().toString());
@@ -799,8 +813,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.Date_yyyy_mm_dd(startDatelng);
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvYesterdayDateBottomSheetSelectDate.getText().toString());
@@ -814,15 +828,13 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.thisWeekLastDayOfMonth();
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvThisWeekDateBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
-
-
 
 
         binding.tvThisMonthBottomSheetSelectDate.setOnClickListener(view ->
@@ -834,8 +846,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.lastDateOfMonth();
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvThisMonthBottomSheetSelectDate.getText().toString());
@@ -850,8 +862,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.lastMonthlastDate();
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvLastMonthDateBottomSheetSelectDate.getText().toString());
@@ -866,8 +878,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.lastMonthlastDate();
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvThisQuarterDateBottomSheetSelectDate.getText().toString());
@@ -882,8 +894,8 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.lastDateOfFinancialYear();
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvThisYearDateBottomSheetSelectDate.getText().toString());
@@ -898,8 +910,26 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
             endDate = Globals.lastYearLastDate();
             from_to_date.setText(startDate + " - " + endDate);
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+
+            from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });
+
+
+        binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            loader.setVisibility(View.VISIBLE);
+            startDatelng = Globals.lastyearCal().getTimeInMillis();
+            endDatelng = Globals.thisyearCal().getTimeInMillis();
+            startDate = Globals.lastYearFirstDate();
+            endDate = Globals.getCurrentDateInLastFinancialYear();
+            from_to_date.setText(startDate + " - " + endDate);
+
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
@@ -909,17 +939,16 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
         {
             loader.setVisibility(View.VISIBLE);
 
-            startDate="";
-            endDate="";
+            startDate = "";
+            endDate = "";
 
-                callparticularledgerOnePageinfo(cardCode,reportType,startDate,endDate);
-            url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
+            callparticularledgerOnePageinfo(cardCode, reportType, startDate, endDate);
+            url = Globals.particularBpSales + "Type=" + reportType + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
             from_to_date.setText(binding.tvAllBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
-
 
 
         bottomSheetDialog.show();
@@ -953,9 +982,9 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
                             && isScrollingpage;
 
             if (isScrollingpage && (visibleItemCount + firstVisibleitempositon == totalItemCount)) {
-                callparticularledgerAllPageinfo(cardCode,reportType,startDate,endDate);
+                callparticularledgerAllPageinfo(cardCode, reportType, startDate, endDate);
                 pageNo++;
-                isScrollingpage=false;
+                isScrollingpage = false;
 
 //                if (fromWhere.trim().equalsIgnoreCase("Ledger")) {
 //                    callparticularledgerAllPageinfo(cde.getCardCode(), reportType, startDate, endDate);
@@ -995,12 +1024,11 @@ public class ParticularCustomerSaleInfo extends MainBaseActivity {
     };
 
 
-    public  boolean isAppInstalled(String packageName) {
+    public boolean isAppInstalled(String packageName) {
         try {
             getPackageManager().getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
             return true;
-        }
-        catch (PackageManager.NameNotFoundException ignored) {
+        } catch (PackageManager.NameNotFoundException ignored) {
             return false;
         }
     }

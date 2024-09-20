@@ -39,7 +39,7 @@ public class ReceivableCustomerAdapter extends RecyclerView.Adapter<ReceivableCu
         this.fromWhere = fromWhere;
         this.tempList = new ArrayList<ReceivableCustomerData>();
         this.tempList.addAll(branchList);
-        Log.e(TAG, "ReceivableCustomerAdapter: " + branchList.size());
+//        Log.e(TAG, "ReceivableCustomerAdapter: " + branchList.size());
 
 
     }
@@ -54,7 +54,7 @@ public class ReceivableCustomerAdapter extends RecyclerView.Adapter<ReceivableCu
 
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Log.e(TAG, "ReceivableCustomerAdapter: " + branchList.get(position).getCardName());
+//        Log.e(TAG, "ReceivableCustomerAdapter: " + branchList.get(position).getCardName());
         holder.title.setText(branchList.get(position).getCardCode() + " " + branchList.get(position).getCardName());
         holder.unit_price.setText("₹ " + Globals.numberToK(branchList.get(position).getDifferenceAmount()));
         /*if (branchList.get(position).getCreditLimitDayes().equalsIgnoreCase("Cash Basic")){
@@ -151,7 +151,7 @@ public class ReceivableCustomerAdapter extends RecyclerView.Adapter<ReceivableCu
             public int compare(ReceivableCustomerData item, ReceivableCustomerData t1) {
                 String s1 = item.getCardName();
                 String s2 = t1.getCardName();
-                Log.e("T1=>", t1.getCardName());
+//                Log.e("T1=>", t1.getCardName());
                 if (type.equalsIgnoreCase("AtoZ"))
                     return s1.compareToIgnoreCase(s2);
                 else

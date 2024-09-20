@@ -377,8 +377,8 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
     private void ReceivableZoneGraphApi() {
 
         HashMap obj = new HashMap<String, String>();
-        obj.put("FromDate", Globals.firstDateOfFinancialYear());
-        obj.put("ToDate", Globals.lastDateOfFinancialYear());
+        obj.put("FromDate", "");//Globals.firstDateOfFinancialYear() remove by ashutosh sir said
+        obj.put("ToDate", "");//Globals.lastDateOfFinancialYear()
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         obj.put("Filter", "zone");
         obj.put("Code", groupCode);
@@ -387,9 +387,9 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
 
         Call<ResponseReceivableGraph> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().receivableZoneMonthGraphPurchase(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).receivableZoneMonthGraphPurchase(obj);
         } else {
-            call =  NewApiClient.getInstance().getApiService().receivableZoneMonthGraph(obj);
+            call =  NewApiClient.getInstance().getApiService(getActivity()).receivableZoneMonthGraph(obj);
         }
         call.enqueue(new Callback<ResponseReceivableGraph>() {
             @Override
@@ -438,7 +438,7 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(10f);
+        roundedBarChartRenderer.setmRadius(0f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);
@@ -521,7 +521,7 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
         yAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                axis.setLabelCount(3, true);
+//                axis.setLabelCount(3, true);
                 return "" + Globals.convertToLakhAndCroreFromFloat(value);
             }
         });
@@ -604,7 +604,17 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
     private void shareLedgerData() {
         String title = getString(R.string.share_customer_list);
 
-        url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter;
+        Log.e(TAG, "shareLedgerData: "+url);
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.overAllReceivablePurchase + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        } else {
+            url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        }
+
+//        url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=" + groupFIlter + "&Code=" + groupCode + "&DueDaysGroup=" + overDueFilter;
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
@@ -685,9 +695,9 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
 
         Call<DashboardCounterResponse> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger_purchase(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger_purchase(obj);
         } else {
-            call =  NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+            call =  NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         }
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
@@ -910,9 +920,9 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
 
                 Call<ReceivableResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().payable_dashboard_post(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).payable_dashboard_post(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).receivable_dashboard_post(hde);
                 }
                 try {
                     Response<ReceivableResponse> response = call.execute();
@@ -1004,9 +1014,9 @@ public class PaymentCollection_ZoneFragment extends Fragment implements Toolbar.
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
                 Call<ReceivableResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().payable_dashboard_post(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).payable_dashboard_post(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().receivable_dashboard_post(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).receivable_dashboard_post(hde);
                 }
                 try {
                     Response<ReceivableResponse> response = call.execute();

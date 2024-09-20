@@ -69,12 +69,12 @@ public class PendingByOrderActivity extends AppCompatActivity {
 
         Call<ResponseDeliveryNotePendingByOrder> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getDeliveryNotePendingByOrderPurchase(hde);
+            call = NewApiClient.getInstance().getApiService(this).getDeliveryNotePendingByOrderPurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().getDeliveryNotePendingByOrder(hde);
+            call = NewApiClient.getInstance().getApiService(this).getDeliveryNotePendingByOrder(hde);
         }
 
-//        Call<ResponseDeliveryNotePendingByOrder> call = NewApiClient.getInstance().getApiService().getDeliveryNotePendingByOrder(hde);
+//        Call<ResponseDeliveryNotePendingByOrder> call = NewApiClient.getInstance().getApiService(this).getDeliveryNotePendingByOrder(hde);
         call.enqueue(new Callback<ResponseDeliveryNotePendingByOrder>() {
             @Override
             public void onResponse(Call<ResponseDeliveryNotePendingByOrder> call, Response<ResponseDeliveryNotePendingByOrder> response) {

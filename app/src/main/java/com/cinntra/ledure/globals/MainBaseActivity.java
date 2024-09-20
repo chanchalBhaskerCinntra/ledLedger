@@ -190,7 +190,7 @@ public class MainBaseActivity extends AppCompatActivity {
 
     private void userLogin(LogInDetail in)
              {
-        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService().loginEmployee(in);
+        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService(this).loginEmployee(in);
         call.enqueue(new Callback<NewLogINResponse>() {
             @Override
             public void onResponse(Call<NewLogINResponse> call, Response<NewLogINResponse> response) {

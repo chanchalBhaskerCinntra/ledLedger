@@ -164,7 +164,7 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
 
     private static final String TAG = "PaymentCollection_Fragm";
 
-    String groupType = "Ledger";
+    String groupType = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -188,21 +188,46 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
 
         groupby_dropdown.setVisibility(View.VISIBLE);
 
+        if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+            groupType = "Vendor";
+        }else {
+            groupType = "Customer";
+        }
 
         //todo set zone --
         if (Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("admin") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Director") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Accounts")) {
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_receivable_dropdown, // Replace with your item array resource
-                    R.layout.spinner_textview_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            groupby_dropdown.setAdapter(spinnerArrayAdapter);
+
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_receivable_dropdown_purchase,
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            }else {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_receivable_dropdown, // Replace with your item array resource
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            }
+
+
         } else {
 
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_receivable_dropdown, // Replace with your item array resource
-                    R.layout.spinner_textview_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_receivable_dropdown_purchase,
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            }else {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_receivable_dropdown, // Replace with your item array resource
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                groupby_dropdown.setAdapter(spinnerArrayAdapter);
+            }
+
         }
 
         groupby_dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -222,8 +247,13 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                     all_customer.setText("Zone");
 
                     callGroupZoneOneApi(reportType, startDate, endDate, groupType);//todo comment by shubh--
-                } else {
+                } else if (groupType.equals("Customer")){
                     all_customer.setText("Customer");
+
+                    callledgerOneapi(reportType, startDate, endDate);
+                }
+                else {
+                    all_customer.setText("Vendor");
 
                     callledgerOneapi(reportType, startDate, endDate);
                 }
@@ -300,8 +330,14 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                             if (groupType.equals("Zone")) {
                                 all_customer.setText("Zone");
                                 callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                            } else {
+                            }  else if (groupType.equals("Customer")){
                                 all_customer.setText("Customer");
+
+                                callledgerOneapi(reportType, startDate, endDate);
+                            }
+                            else {
+                                all_customer.setText("Vendor");
+
                                 callledgerOneapi(reportType, startDate, endDate);
                             }
 
@@ -319,8 +355,14 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                             if (groupType.equals("Zone")) {
                                 all_customer.setText("Zone");
                                 callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                            } else {
+                            } else if (groupType.equals("Customer")){
                                 all_customer.setText("Customer");
+
+                                callledgerOneapi(reportType, startDate, endDate);
+                            }
+                            else {
+                                all_customer.setText("Vendor");
+
                                 callledgerOneapi(reportType, startDate, endDate);
                             }
                             break;
@@ -337,8 +379,14 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                             if (groupType.equals("Zone")) {
                                 all_customer.setText("Zone");
                                 callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                            } else {
+                            } else if (groupType.equals("Customer")){
                                 all_customer.setText("Customer");
+
+                                callledgerOneapi(reportType, startDate, endDate);
+                            }
+                            else {
+                                all_customer.setText("Vendor");
+
                                 callledgerOneapi(reportType, startDate, endDate);
                             }
                             break;
@@ -354,8 +402,14 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                             if (groupType.equals("Zone")) {
                                 all_customer.setText("Zone");
                                 callGroupZoneOneApi(reportType, startDate, endDate, groupType);
-                            } else {
+                            }  else if (groupType.equals("Customer")){
                                 all_customer.setText("Customer");
+
+                                callledgerOneapi(reportType, startDate, endDate);
+                            }
+                            else {
+                                all_customer.setText("Vendor");
+
                                 callledgerOneapi(reportType, startDate, endDate);
                             }
 //                            callledgerOneapi(reportType, startDate, endDate);
@@ -395,7 +449,7 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                     overDueFilter = "";
                     Prefs.putString(Globals.FROM_DATE_receivable, "All");
                     from_to_date.setText("All");
-                    if (groupType.equalsIgnoreCase("Ledger")) {
+                    if (groupType.equalsIgnoreCase("Customer")||groupType.equalsIgnoreCase("Vendor")) {
                         callledgerOneapi(reportType, startDate, endDate);
                     } else {
                         callGroupZoneOneApi(reportType, startDate, endDate, groupType);
@@ -562,7 +616,17 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
         String title = getString(R.string.share_customer_list);
 
         //  url = Globals.overAllPaymentCollectionOverDue + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode,"") + "&DueDaysGroup=" + overDueFilter + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter;
-        url = Globals.overAllPaymentCollectionOverDue + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&DueDaysGroup=" + overDueFilter;
+
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.overAllPaymentCollectionOverDuePurchase + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&DueDaysGroup=" + overDueFilter;
+        } else {
+            url = Globals.overAllPaymentCollectionOverDue + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&DueDaysGroup=" + overDueFilter;
+        }
+        Log.e(TAG, "shareLedgerData: "+url);
+
+
+//        url = Globals.overAllPaymentCollectionOverDue + "SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "") + "&DueDaysGroup=" + overDueFilter;
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getChildFragmentManager(),
@@ -634,7 +698,7 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
         obj.put("ToDate", endDate);
         obj.put(Globals.payLoadDueDaysGroup, overDueFilter);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -697,9 +761,9 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
 
         Call<ResponsePayMentDueCounter> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getPurchasePaymentDueCounter(jsonObject);
         } else {
-            call =  NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+            call =  NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueCounter(jsonObject);
         }
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
@@ -712,7 +776,7 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                         //  Toast.makeText(requireContext(), "success 200", Toast.LENGTH_SHORT).show();
                         try {
                             salesvalue.setText(requireActivity().getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(response.body().getTotalPaybal())));
-                        } catch (Resources.NotFoundException e) {
+                        } catch (IllegalStateException e) {
                             Log.e(TAG, "onResponse: "+e.getMessage() );
                         }
 
@@ -861,7 +925,9 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                /* if (ALlItemList.size() != 0) {
                     pageNo = ALlItemList.size() / Globals.QUERY_PAGE_SIZE;
                 }*///todo
-                if (ALlItemList.size() != 0 && groupType.equalsIgnoreCase("Ledger")) {
+                if (ALlItemList.size() != 0 && groupType.equalsIgnoreCase("Customer")) {
+                    pageNo = ALlItemList.size() / Globals.QUERY_PAGE_SIZE;
+                }else if (ALlItemList.size() != 0 && groupType.equalsIgnoreCase("Vendor")) {
                     pageNo = ALlItemList.size() / Globals.QUERY_PAGE_SIZE;
                 }
                 else if ((allZoneSaleList.size() != 0 && groupType.equalsIgnoreCase("Zone"))) {
@@ -931,9 +997,9 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
 
                 Call<ResponseZoneGroup> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getGroupDuesPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getGroupDuesPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getGroupDues(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getGroupDues(hde);
                 }
                 try {
                     Response<ResponseZoneGroup> response = call.execute();
@@ -1036,9 +1102,9 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
 
                 Call<ResponseZoneGroup> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getGroupDuesPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getGroupDuesPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getGroupDues(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getGroupDues(hde);
                 }
                 try {
                     Response<ResponseZoneGroup> response = call.execute();
@@ -1135,9 +1201,9 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
 
                 Call<ResponsePaymentDueDashboardCustomerList> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerListPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerListPurchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 }
 
 
@@ -1244,9 +1310,9 @@ public class DueFragment extends Fragment implements Toolbar.OnMenuItemClickList
                 //  hde.put(Globals.payLoadDueDaysGroup, "-1");
                 Call<ResponsePaymentDueDashboardCustomerList> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerListPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerListPurchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                    call =  NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 }
 
                 try {

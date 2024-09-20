@@ -239,6 +239,14 @@ public class CustomersWiseLedger extends MainBaseActivity implements View.OnClic
         bottomSheetDialog.setContentView(bindingBottom.getRoot());
 
 
+           //todo pdf
+           if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+               url = Globals.allCustomerPdfUrlPurchase + Prefs.getString(Globals.SalesEmployeeCode, "") +"&CardType=cSupplier";
+           } else {
+               url = Globals.allCustomerPdfUrl + Prefs.getString(Globals.SalesEmployeeCode, "") +"&CardType=cCustomer";
+
+           }
+
         setUpWebViewDialog(bindingBottom.webViewBottomSheetDialog, url, false, bindingBottom.loader, bindingBottom.linearWhatsappShare, bindingBottom.linearGmailShare, bindingBottom.linearOtherShare);
 
 
@@ -707,7 +715,7 @@ public class CustomersWiseLedger extends MainBaseActivity implements View.OnClic
         hde.put("Zones", Zones);
 
 
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -771,7 +779,7 @@ public class CustomersWiseLedger extends MainBaseActivity implements View.OnClic
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
         hde.put("SearchText", searchTextValue);
         hde.put("Zones", Zones);
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

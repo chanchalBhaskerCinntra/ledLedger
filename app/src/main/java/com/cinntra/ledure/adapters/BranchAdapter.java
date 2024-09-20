@@ -236,7 +236,7 @@ public class BranchAdapter extends RecyclerView.Adapter <BranchAdapter.ContactVi
 
     private void callupdatebranchAPi(Branch branch) {
 
-        Call<BranchResponse> call = NewApiClient.getInstance().getApiService().updateBranch(branch);
+        Call<BranchResponse> call = NewApiClient.getInstance().getApiService(context).updateBranch(branch);
         call.enqueue(new Callback<BranchResponse>() {
             @Override
             public void onResponse(Call<BranchResponse> call, Response<BranchResponse> response) {
@@ -275,7 +275,7 @@ public class BranchAdapter extends RecyclerView.Adapter <BranchAdapter.ContactVi
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(context).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {

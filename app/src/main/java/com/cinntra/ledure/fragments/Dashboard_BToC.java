@@ -245,7 +245,7 @@ public class Dashboard_BToC extends Fragment implements View.OnClickListener, Ch
 
     private void callCountryApi() {
 
-        Call<CountryResponse> call = NewApiClient.getInstance().getApiService().getCountryList();
+        Call<CountryResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getCountryList();
         call.enqueue(new Callback<CountryResponse>() {
             @Override
             public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
@@ -343,7 +343,7 @@ public class Dashboard_BToC extends Fragment implements View.OnClickListener, Ch
             {
         EmployeeValue employeeValue = new EmployeeValue();
         employeeValue.setSalesEmployeeCode(Globals.TeamSalesEmployeCode);
-        Call<HeirarchiResponse> call = NewApiClient.getInstance().getApiService().getAllEmployeelist(employeeValue);
+        Call<HeirarchiResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllEmployeelist(employeeValue);
         call.enqueue(new Callback<HeirarchiResponse>() {
             @Override
             public void onResponse(Call<HeirarchiResponse> call, Response<HeirarchiResponse> response) {
@@ -370,7 +370,7 @@ public class Dashboard_BToC extends Fragment implements View.OnClickListener, Ch
          {
         SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
         salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode,""));
-    Call<CounterResponse> call = NewApiClient.getInstance().getApiService().dashboardcounter(salesEmployeeItem);
+    Call<CounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).dashboardcounter(salesEmployeeItem);
      call.enqueue(new Callback<CounterResponse>() {
          @Override
      public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {
@@ -418,7 +418,7 @@ public class Dashboard_BToC extends Fragment implements View.OnClickListener, Ch
          {
              SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
              salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode,""));
-    Call<CounterResponse> call = NewApiClient.getInstance().getApiService().InvoicesCount(salesEmployeeItem);
+    Call<CounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).InvoicesCount(salesEmployeeItem);
     call.enqueue(new Callback<CounterResponse>()
         {
             @Override

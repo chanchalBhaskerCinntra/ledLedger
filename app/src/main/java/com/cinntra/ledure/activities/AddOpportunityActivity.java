@@ -409,7 +409,7 @@ public class AddOpportunityActivity extends MainBaseActivity implements View.OnC
          ContactPersonData contactPersonData = new ContactPersonData();
          contactPersonData.setCardCode(id);
         loader.setVisibility(View.VISIBLE);
-        Call<ContactPerson> call = NewApiClient.getInstance().getApiService().contactemplist(contactPersonData);
+        Call<ContactPerson> call = NewApiClient.getInstance().getApiService(this).contactemplist(contactPersonData);
         call.enqueue(new Callback<ContactPerson>() {
             @Override
             public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {
@@ -485,7 +485,7 @@ public class AddOpportunityActivity extends MainBaseActivity implements View.OnC
     private void addQuotation(AddOpportunityModel in)
        {
          loader.setVisibility(View.VISIBLE);
-        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService().createopportunity(in);
+        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService(this).createopportunity(in);
         call.enqueue(new Callback<NewOppResponse>() {
             @Override
             public void onResponse(Call<NewOppResponse> call, Response<NewOppResponse> response) {

@@ -72,7 +72,7 @@ public class Sale_Group_Inovice_Reports extends AppCompatActivity {
         groupFilter = getIntent().getStringExtra("group");
         intentStockGroupFromWHere = getIntent().getStringExtra("stockFormWhere");
         fromwhere = "";
-        Log.e(TAG, "onCreate: " + groupCode);
+//        Log.e(TAG, "onCreate: " + groupCode);
 
 
         if (intentStockGroupFromWHere.equalsIgnoreCase("zonesub")) {

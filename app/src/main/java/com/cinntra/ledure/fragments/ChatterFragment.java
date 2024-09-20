@@ -123,7 +123,7 @@ public class ChatterFragment extends Fragment implements View.OnClickListener {
         followUpData.setEmp(Integer.parseInt(Prefs.getString(Globals.EmployeeID,"")));
         followUpData.setSourceType("Opportunity");
         followUpData.setSourceID(sequentialNo);
-        Call<ChatResponse> call = NewApiClient.getInstance().getApiService().getAllLeadChat(followUpData);
+        Call<ChatResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllLeadChat(followUpData);
         call.enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
@@ -157,7 +157,7 @@ public class ChatterFragment extends Fragment implements View.OnClickListener {
 
     private void callcreateApi(ChatModel chatModel) {
 
-        Call<ChatResponse> call = NewApiClient.getInstance().getApiService().createChat(chatModel);
+        Call<ChatResponse> call = NewApiClient.getInstance().getApiService(getActivity()).createChat(chatModel);
         call.enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {

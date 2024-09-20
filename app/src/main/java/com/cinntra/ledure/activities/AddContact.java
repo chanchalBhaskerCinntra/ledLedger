@@ -356,7 +356,7 @@ public class AddContact extends MainBaseActivity implements View.OnClickListener
     private void addContact(CreateContactData contactData)
          {
 
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().createcontact(contactData);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(this).createcontact(contactData);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {

@@ -68,7 +68,7 @@ public class BPTasks_Fragment extends Fragment {
         eventValue.setEmp(Integer.valueOf(Prefs.getString(Globals.EmployeeID,"")));
 
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().getallevent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getallevent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

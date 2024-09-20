@@ -183,7 +183,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
     private void callexpenseapi(String customerName) {
 
-        Call<ExpenseNewModelResponse> call = NewApiClient.getInstance().getApiService().getAllNewExpense();
+        Call<ExpenseNewModelResponse> call = NewApiClient.getInstance().getApiService(this).getAllNewExpense();
         call.enqueue(new Callback<ExpenseNewModelResponse>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -605,7 +605,7 @@ public class ExpenseActivity extends AppCompatActivity {
                     RequestBody tripId = RequestBody.create(MediaType.parse("multipart/form-data"), "");
 
                     Call<ExpenseResponse> callExp = NewApiClient.getInstance()
-                            .getApiService().expense_create_multipart(imagePart, id, tripName, typeOfExpense,
+                            .getApiService(ExpenseActivity.this).expense_create_multipart(imagePart, id, tripName, typeOfExpense,
                                     expenseFrom, expenseTo, cost, createDate, createTime, createBy, updateDate, updateTime, remark
                                     , employeeId, startlat, startlong, endLat, endLong, travelDistance,tripId);
                     callExp.enqueue(new Callback<ExpenseResponse>() {
@@ -741,7 +741,7 @@ public class ExpenseActivity extends AppCompatActivity {
 //        mapData.put("UpdateDate", dateText.getText().toString());
 //        mapData.put("shape", "");
 
-        Call<AllTripExpenseResponse> call = NewApiClient.getInstance().getApiService().getAllTripExpense(mapData);
+        Call<AllTripExpenseResponse> call = NewApiClient.getInstance().getApiService(this).getAllTripExpense(mapData);
         call.enqueue(new Callback<AllTripExpenseResponse>() {
             @Override
             public void onResponse(Call<AllTripExpenseResponse> call, Response<AllTripExpenseResponse> response) {

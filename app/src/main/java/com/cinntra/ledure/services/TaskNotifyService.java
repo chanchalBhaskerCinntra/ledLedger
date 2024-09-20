@@ -26,7 +26,7 @@ public class TaskNotifyService extends Service {
     }
     @Override
     public IBinder onBind (Intent intent) {
-        Log.e("Test==>","TaskNotification");
+//        Log.e("Test==>","TaskNotification");
         openNotification(getApplicationContext());
         Intent notificationIntent = new Intent(getApplicationContext() ,  MainActivity. class ) ;
         notificationIntent.putExtra( "fromNotification" , true ) ;

@@ -85,7 +85,7 @@ public class DemoActivity extends AppCompatActivity {
 
     private void callApi(DemoValue demoValue) {
 
-        Call<DemoResponse> call = NewApiClient.getInstance().getApiService().createDemo(demoValue);
+        Call<DemoResponse> call = NewApiClient.getInstance().getApiService(this).createDemo(demoValue);
         call.enqueue(new Callback<DemoResponse>() {
             @Override
             public void onResponse(Call<DemoResponse> call, Response<DemoResponse> response) {

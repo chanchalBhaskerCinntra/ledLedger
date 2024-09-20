@@ -144,7 +144,7 @@ public class LeadFollowUpFragment extends Fragment implements View.OnClickListen
         followUpData.setEmp(Integer.parseInt(Prefs.getString(Globals.EmployeeID,"")));
         followUpData.setSourceType("Lead");
         followUpData.setSourceID(sequentialNo.toString());
-        Call<ChatResponse> call = NewApiClient.getInstance().getApiService().getAllLeadChat(followUpData);
+        Call<ChatResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllLeadChat(followUpData);
         call.enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
@@ -179,7 +179,7 @@ public class LeadFollowUpFragment extends Fragment implements View.OnClickListen
 
     private void callcreateApi(ChatModel chatModel) {
 
-        Call<ChatResponse> call = NewApiClient.getInstance().getApiService().createChat(chatModel);
+        Call<ChatResponse> call = NewApiClient.getInstance().getApiService(getActivity()).createChat(chatModel);
         call.enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {

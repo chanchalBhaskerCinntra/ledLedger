@@ -6,6 +6,8 @@ import com.cinntra.ledure.newapimodel.AddOpportunityModel;
 import com.cinntra.ledure.newapimodel.LeadResponse;
 import com.cinntra.ledure.newapimodel.LeadValue;
 import com.cinntra.ledure.newapimodel.OpportunityValue;
+import com.cinntra.ledure.newapimodel.ResponseBackGroundLocation;
+import com.cinntra.ledure.newapimodel.ResponseForDocId;
 import com.cinntra.ledure.newapimodel.ResponseItemFilterDashboard;
 import com.cinntra.ledure.newapimodel.ResponseParticularCustomerPaymentDue;
 import com.cinntra.ledure.newapimodel.ResponsePayMentDueCounter;
@@ -531,6 +533,22 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<NewLogINResponse> loginEmployee(@Body LogInDetail logInDetail);
 
+    @POST("employee/bizz_login_or_signup")
+//    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<NewLogINResponse> loginOrSignUpEmployee(@Body JsonObject logInDetail);
+
+    @POST("employee/bizz_status")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<NewLogINResponse> callMPINApi(@Body HashMap logInDetail);
+
+    @POST("employee/bizz_signout")
+//    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<NewLogINResponse> logOutAPi(@Body JsonObject logInDetail);
+
+    @POST("employee/bizz_verify_otp")
+//    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<NewLogINResponse> getVerifyOtpApi(@Body HashMap logInDetail);
+
 
     @POST("stage/stage_detail")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
@@ -910,6 +928,10 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<CustomerBusinessRes> credit_note_dashboard(@Body HashMap<String, String> pay);
 
+    @POST("purchaseinvoices/ap_credit_note_dashboard")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<CustomerBusinessRes> credit_note_dashboard_purchase(@Body HashMap<String, String> pay);
+
     @POST(" invoice/bp_credit_note")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<LedgerCustomerResponse> bp_credit_note(@Body HashMap<String, String> logInDetail);
@@ -978,6 +1000,14 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<CustomerItemResponse> bpWiseSoldFilterItems(@Body HashMap<String, String> obj);
 
+    @POST("item/filter_bpitem_all")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<CustomerItemResponse> itemListFromParty(@Body HashMap<String, String> obj);
+
+    @POST("item/ap_filter_bpitem_all")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<CustomerItemResponse> itemListFromPurchaseParty(@Body HashMap<String, String> obj);
+
     @POST("item/ap_filter_bpitem")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<CustomerItemResponse> bpWiseSoldFilterItemsPurchase(@Body HashMap<String, String> obj);
@@ -1007,6 +1037,21 @@ public interface ApiServices {
             @Part("CheckInRemarks") RequestBody CheckInRemarks
     );
 
+    @POST("activity/bizz_punch_daily_attendance")
+    Call<ResponseTripCheckIn> punchDailyAttendance(@Body MultipartBody requestBody);
+
+
+
+    @POST("activity/bizz_galaxy_tracking_create")
+    Call<ResponseTripCheckIn> galaxyTrackingCreate(@Body JsonObject jsonObject);
+
+    @POST("activity/bizz_galaxy_tracking_all_filter")
+    Call<ResponseBackGroundLocation> galaxyTrackingFilter(@Body JsonObject jsonObject);
+
+
+
+
+
     @Multipart
     @POST("attachment/create")
     Call<AttachmentModel> uploadProfileAttachment(
@@ -1022,9 +1067,24 @@ public interface ApiServices {
             @Part("UpdateTime") RequestBody UpdateTime
     );
 
+    @Multipart
+    @POST("employee/bizz_image_upload")
+    Call<AttachmentModel> uploadNewProfileAttachment(
+            @Part MultipartBody.Part Image,
+            @Part("SalesEmployeeCode") RequestBody SalesEmployeeCode
+    );
+
     @POST("attachment/all")
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<AttachmentModel> getAllAttachment(@Body JsonObject jsonObject);
+
+    @POST("employee/bizz_profile") //todo
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<AttachmentModel> getNewAllAttachmentApi(@Body JsonObject jsonObject);
+
+    @POST("employee/bizz_signout") //todo
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<AttachmentModel> logoutApiCall(@Body JsonObject jsonObject);
 
 
     @Multipart
@@ -1215,6 +1275,11 @@ public interface ApiServices {
     @Headers({"Content-Type: application/json;charset=UTF-8"})
     Call<ResponseReceivableGraph> receivableDueMonthGraphPurchase(@Body HashMap<String, String> hd);
 
+
+    //todo for doc id in general entries
+    @POST("journalentries/bp_wise_docdetail")
+    @Headers({"Content-Type: application/json;charset=UTF-8"})
+    Call<ResponseForDocId> getDocIDForGeneralEntry(@Body JsonObject jsonObject);
 
 }
 

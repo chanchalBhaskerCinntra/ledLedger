@@ -47,7 +47,7 @@ public class CustomerPurchasedItemAdapter extends RecyclerView.Adapter<CustomerP
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
 
-        holder.itemName.setText("" + branchList.get(position).getCardName());
+        holder.itemName.setText(branchList.get(position).getCardCode()+" - " + branchList.get(position).getCardName());
 //        holder.itemPriceIndividual.setText("Std price : " + branchList.get(position).unitPrice);
         holder.itemPriceTotal.setText("Total Price : ₹ "+ Globals.numberToK(branchList.get(position).getTotalPrice()));
         holder.tvQuantitiyPrice.setText("Qty: " + Globals.numberToK(branchList.get(position).getTotalQty()));

@@ -1,25 +1,42 @@
 package com.cinntra.ledure.activities;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MyApp;
+import com.cinntra.ledure.globals.SessionManagement;
 import com.cinntra.ledure.interfaces.DatabaseClick;
 import com.cinntra.ledure.model.LogInDetail;
 import com.cinntra.ledure.model.LogInRequest;
@@ -28,13 +45,27 @@ import com.cinntra.ledure.model.NewLogINResponse;
 import com.cinntra.ledure.model.QuotationResponse;
 import com.cinntra.ledure.webservices.APIsClient;
 import com.cinntra.ledure.webservices.NewApiClient;
+import com.github.ybq.android.spinkit.SpinKitView;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.safetynet.SafetyNet;
+import com.google.android.gms.safetynet.SafetyNetApi;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.recaptcha.Recaptcha;
+import com.google.android.recaptcha.RecaptchaAction;
+import com.google.android.recaptcha.RecaptchaTasksClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.hbb20.CountryCodePicker;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,16 +73,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Login extends AppCompatActivity implements View.OnClickListener, DatabaseClick {
+public class Login extends AppCompatActivity implements View.OnClickListener, DatabaseClick, GoogleApiClient.ConnectionCallbacks {
+
+    private static final String TAG = "Login";
     private Button signin;
     @BindView(R.id.progressBar1)
-    ProgressBar progressBar;
+    SpinKitView progressBar;
     @BindView(R.id.goto_reg)
     LinearLayout goto_reg;
     @BindView(R.id.sql_setting)
     RelativeLayout sql_setting;
-    @BindView(R.id.login_username)
-    EditText login_username;
+    @BindView(R.id.edtMobileNo)
+    EditText edtMobileNo;
     @BindView(R.id.login_password)
     EditText login_password;
     @BindView(R.id.register_here)
@@ -59,8 +92,73 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
 
     @BindView(R.id.rememberme)
     CheckBox rememberme;
+
+
+    @BindView(R.id.checkBoxNOtARobot)
+    CheckBox checkBoxNOtARobot;
+
+
+    @BindView(R.id.countryPickerAlternate)
+    CountryCodePicker countryPickerAlternate;
+
+
     private AppCompatActivity activity;
     private String token = "";
+
+    private SessionManagement sessionManagement;
+
+    //  GoogleApiClient googleApiClient;
+
+
+    //todo recaptcha
+    @Nullable
+    private RecaptchaTasksClient recaptchaTasksClient = null;
+
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 333;
+
+    private void checkAndRequestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    REQUEST_NOTIFICATION_PERMISSION);
+        } else {
+            // Permission is already granted
+            sendNotification();
+        }
+    }
+
+    private void sendNotification() {
+        // Implement your notification logic here
+       // Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+        // Create and display a notification
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_NOTIFICATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                sendNotification();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
 
     @Override
     protected void onRestart() {
@@ -77,6 +175,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         }
 
     }
+    String selectedCountry="India";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +189,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         Animation animation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
         relativeLayout.startAnimation(animation);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkAndRequestNotificationPermission();
+        } else {
+            // For older Android versions, notification permission is granted by default
+            sendNotification();
+        }
+
+
         FirebaseMessaging messaging = FirebaseMessaging.getInstance();
         messaging.getToken().addOnSuccessListener(s -> {
 
@@ -99,6 +206,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
             }
         });
 
+        sessionManagement = new SessionManagement(this);
         progressBar.setVisibility(View.GONE);
         signin = findViewById(R.id.login_button);
         signin.setOnClickListener(this);
@@ -106,26 +214,314 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         sql_setting.setOnClickListener(this);
         register_here.setOnClickListener(this);
 
+
+
+        //todo countrypicker
+        countryPickerAlternate.setOnCountryChangeListener(() -> {
+            selectedCountry = countryPickerAlternate.getSelectedCountryName();
+
+        });
+
+/*
+        googleApiClient = new GoogleApiClient.Builder(Login.this).addApi(SafetyNet.API).addConnectionCallbacks(this).build();
+        googleApiClient.connect();
+        initializeRecaptchaClient();
+
+        findViewById(R.id.checkBoxNOtARobot).setOnClickListener(this::executeLoginAction);
+        findViewById(R.id.ivLogo).setOnClickListener(this::executeRedeemAction);*/
+
+        checkBoxNOtARobot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBoxNOtARobot.isChecked()) {
+                /*    SafetyNet.SafetyNetApi.verifyWithRecaptcha(googleApiClient, Globals.CAPTCHA_SITE_KEY)
+                            .setResultCallback(new ResultCallback<SafetyNetApi.RecaptchaTokenResult>() {
+                                @Override
+                                public void onResult(@NonNull SafetyNetApi.RecaptchaTokenResult recaptchaTokenResult) {
+                                    Status status = recaptchaTokenResult.getStatus();
+                                    if ((status != null) && status.isSuccess()) {
+                                        Toast.makeText(Login.this, "Successfully Verified", Toast.LENGTH_SHORT).show();
+                                    }else {
+                                        Log.e(TAG, "onResult: "+status.getStatusMessage());
+                                    }
+                                }
+                            });*/
+                    //  verifyGoogleReCAPTCHA();
+
+
+                } else {
+                    Toast.makeText(Login.this, "unSuccessfully", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+     /*   checkBoxNOtARobot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    Toast.makeText(Login.this, "CHECKED", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(Login.this, "UN_CHECKED", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });*/
+
         if (Prefs.getString(Globals.REMEMBER_ME, "").equalsIgnoreCase("rem")) {
-            login_username.setText(Prefs.getString(Globals.USERNAME, ""));
+            edtMobileNo.setText(Prefs.getString(Globals.USERNAME, ""));
             login_password.setText(Prefs.getString(Globals.USER_PASSWORD, ""));
             rememberme.setChecked(true);
         } else {
-            login_username.setText("");
+            edtMobileNo.setText("");
             login_password.setText("");
             rememberme.setChecked(false);
         }
 
         if (Prefs.getString(Globals.Employee_Name, "").isEmpty() && Prefs.getString(Globals.USER_PASSWORD, "").isEmpty()) {
-            login_username.setText("");
+            edtMobileNo.setText("");
             login_password.setText("");
         } else {
-            login_username.setText(Prefs.getString(Globals.Employee_Name, ""));
+            edtMobileNo.setText(Prefs.getString(Globals.Employee_Name, ""));
             login_password.setText(Prefs.getString(Globals.USER_PASSWORD, ""));
         }
-        login_username.setText("");
+        edtMobileNo.setText("");
         login_password.setText("");
     }
+
+
+    private void initializeRecaptchaClient() {
+        Recaptcha
+                .getTasksClient(getApplication(), Globals.CAPTCHA_SITE_KEY)
+                .addOnSuccessListener(
+                        this,
+                        new OnSuccessListener<RecaptchaTasksClient>() {
+                            @Override
+                            public void onSuccess(RecaptchaTasksClient client) {
+                                Login.this.recaptchaTasksClient = client;
+                                Log.e(TAG, "onSuccess: " + client.toString());
+
+                            }
+                        })
+                .addOnFailureListener(
+                        this,
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Handle communication errors ...
+                                // See "Handle communication errors" section
+                                Log.e(TAG, "onFailure: " + e.getMessage());
+                            }
+                        });
+    }
+
+    private void executeLoginAction(View v) {
+        assert recaptchaTasksClient != null;
+        recaptchaTasksClient
+                .executeTask(RecaptchaAction.LOGIN)
+                .addOnSuccessListener(
+                        this,
+                        new OnSuccessListener<String>() {
+                            @Override
+                            public void onSuccess(String token) {
+                                Log.e(TAG, "onSuccess: " + token);
+                                // Handle success ...
+                                // See "What's next" section for instructions
+                                // about handling tokens.
+                            }
+                        })
+                .addOnFailureListener(
+                        this,
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG, "onFailure: " + e.getMessage());
+                                // Handle communication errors ...
+                                // See "Handle communication errors" section
+                            }
+                        });
+    }
+
+    private void executeRedeemAction(View v) {
+        assert recaptchaTasksClient != null;
+        recaptchaTasksClient
+                .executeTask(RecaptchaAction.custom("redeem"))
+                .addOnSuccessListener(
+                        this,
+                        new OnSuccessListener<String>() {
+                            @Override
+                            public void onSuccess(String token) {
+                                // Handle success ...
+                                // See "What's next" section for instructions
+                                // about handling tokens.
+                            }
+                        })
+                .addOnFailureListener(
+                        this,
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Handle communication errors ...
+                                // See "Handle communication errors" section
+                            }
+                        });
+    }
+
+
+/*    private void initializeRecaptcha() {
+        SafetyNet.getClient(this).verifyWithRecaptcha(Globals.CAPTCHA_SITE_KEY)
+                .addOnSuccessListener(this, response -> {
+                    // Successfully received CAPTCHA token
+                    String userResponseToken = response.getTokenResult();
+                    Log.e(TAG, "initializeRecaptcha: " + userResponseToken);
+                    // Now validate this token with your backend server
+                    checkBoxNOtARobot.setChecked(true);
+                })
+                .addOnFailureListener(this, e -> {
+                    // Error handling
+                    Log.e(TAG, "initializeRecaptcha: " + e.getMessage());
+                    checkBoxNOtARobot.setChecked(false);
+                });
+    }*/
+
+
+    public void initializeRecaptcha() {
+        SafetyNet.getClient(this).verifyWithRecaptcha(Globals.CAPTCHA_SITE_KEY)
+                .addOnSuccessListener(this,
+                        new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
+                            @Override
+                            public void onSuccess(SafetyNetApi.RecaptchaTokenResponse response) {
+                                // Indicates communication with reCAPTCHA service was
+                                // successful.
+                                String userResponseToken = response.getTokenResult();
+                                if (!userResponseToken.isEmpty()) {
+                                    // Validate the user response token using the
+                                    // reCAPTCHA siteverify API.
+                                    Log.e(TAG, "onSuccess: " + userResponseToken);
+                                }
+                            }
+                        })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (e instanceof ApiException) {
+                            // An error occurred when communicating with the
+                            // reCAPTCHA service. Refer to the status code to
+                            // handle the error appropriately.
+                            ApiException apiException = (ApiException) e;
+                            int statusCode = apiException.getStatusCode();
+                            Log.d(TAG, "Error: " + CommonStatusCodes
+                                    .getStatusCodeString(statusCode));
+                        } else {
+                            // A different, unknown type of error occurred.
+                            Log.d(TAG, "Error: " + e.getMessage());
+                        }
+                    }
+                });
+    }
+
+
+    private void verifyGoogleReCAPTCHA() {
+
+        // below line is use for getting our safety
+        // net client and verify with reCAPTCHA
+        SafetyNet.getClient(this).verifyWithRecaptcha(Globals.CAPTCHA_SITE_KEY)
+                // after getting our client we have
+                // to add on success listener.
+                .addOnSuccessListener(this, new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
+                    @Override
+                    public void onSuccess(SafetyNetApi.RecaptchaTokenResponse response) {
+                        // in below line we are checking the response token.
+                        if (!response.getTokenResult().isEmpty()) {
+                            // if the response token is not empty then we
+                            // are calling our verification method.
+                            //   handleVerification(response.getTokenResult());
+                            Log.e(TAG, "onSuccess: " + response.getTokenResult());
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // this method is called when we get any error.
+                        if (e instanceof ApiException) {
+                            ApiException apiException = (ApiException) e;
+                            // below line is use to display an error message which we get.
+                            Log.d("TAG", "Error message: " +
+                                    CommonStatusCodes.getStatusCodeString(apiException.getStatusCode()));
+                        } else {
+                            // below line is use to display a toast message for any error.
+                            Toast.makeText(Login.this, "Error found is : " + e, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+  /*  protected void handleVerification(final String responseToken) {
+        // inside handle verification method we are
+        // verifying our user with response token.
+        // url to sen our site key and secret key
+        // to below url using POST method.
+        String url = "https://www.google.com/recaptcha/api/siteverify";
+
+        // in this we are making a string request and
+        // using a post method to pass the data.
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // inside on response method we are checking if the
+                        // response is successful or not.
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (jsonObject.getBoolean("success")) {
+                                // if the response is successful then we are
+                                // showing below toast message.
+                                Toast.makeText(MainActivity.this, "User verified with reCAPTCHA", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // if the response if failure we are displaying
+                                // a below toast message.
+                                Toast.makeText(getApplicationContext(), String.valueOf(jsonObject.getString("error-codes")), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception ex) {
+                            // if we get any exception then we are
+                            // displaying an error message in logcat.
+                            Log.d("TAG", "JSON exception: " + ex.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // inside error response we are displaying
+                        // a log message in our logcat.
+                        Log.d("TAG", "Error message: " + error.getMessage());
+                    }
+                }) {
+            // below is the getParams method in which we will
+            // be passing our response token and secret key to the above url.
+            @Override
+            protected Map<String, String> getParams() {
+                // we are passing data using hashmap
+                // key and value pair.
+                Map<String, String> params = new HashMap<>();
+                params.put("secret", SECRET_KEY);
+                params.put("response", responseToken);
+                return params;
+            }
+        };
+        // below line of code is use to set retry
+        // policy if the api fails in one try.
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                // we are setting time for retry is 5 seconds.
+                50000,
+
+                // below line is to perform maximum retries.
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        // at last we are adding our request to queue.
+        queue.add(request);
+    }*/
+
 
     @Override
     public void onClick(View v) {
@@ -135,20 +531,23 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
 
                 if (Globals.checkInternet(this)) {
 
-                    if (validation(login_username.getText().toString().trim(), login_password.getText().toString().trim())) {
 
-                        Globals.APILog = "APILog";
+                    if (validation(edtMobileNo.getText().toString().trim(),selectedCountry)) {//, login_password.getText().toString().trim()
 
                         Prefs.putString(Globals.SelectedBranch, "");
                         Prefs.putString(Globals.SelectedBranchID, "");
                         Prefs.putString(Globals.SelectedWareHose, "");
                         Prefs.putString(Globals.SessionID, "");
 
+                        sessionManagement.setMobileNo(edtMobileNo.getText().toString());
 
-//             sessionloginApi();
-                        //loginUser(Globals.SelectedDB,login_username.getText().toString().trim(),login_password.getText().toString().trim());
 
-                        callLogInApi(login_username.getText().toString().trim(), login_password.getText().toString().trim());
+//                        callLogInApi(login_username.getText().toString().trim(), login_password.getText().toString().trim());//todo comment due to new
+
+                        signin.setEnabled(false);
+                        signin.setClickable(false);
+                        
+                        callLogInOrSignUpApi(edtMobileNo.getText().toString().trim());
 
 
                     }
@@ -183,7 +582,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         session.put("password", "Sunil@123");
 
 
-        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService().sessionlogin(session);
+        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService(this).sessionlogin(session);
         call.enqueue(new Callback<NewLogINResponse>() {
             @Override
             public void onResponse(Call<NewLogINResponse> call, Response<NewLogINResponse> response) {
@@ -192,7 +591,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
                 Globals.APILog = "Not";
 //                Prefs.putBoolean(Globals.AutoLogIn,true);
                 Prefs.putString(Globals.SessionID, response.body().getToken());
-                callLogInApi(login_username.getText().toString().trim(), login_password.getText().toString().trim());
+                callLogInApi(edtMobileNo.getText().toString().trim(), login_password.getText().toString().trim());
 
 
             }
@@ -213,7 +612,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
         logInDetail.setFcm(token);
         Prefs.putString(Globals.USER_PASSWORD, password);
 
-        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService().loginEmployee(logInDetail);
+        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService(this).loginEmployee(logInDetail);
         call.enqueue(new Callback<NewLogINResponse>() {
             @Override
             public void onResponse(Call<NewLogINResponse> call, Response<NewLogINResponse> response) {
@@ -225,56 +624,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
                     }
 
 
-                    Prefs.putString(Globals.USERNAME, login_username.getText().toString().trim());
-                    Prefs.putString(Globals.USER_PASSWORD, login_password.getText().toString().trim());
-                    Gson gson = new Gson();
-                    String json = gson.toJson(response.body().getLogInDetail());
-                    Prefs.putString(Globals.AppUserDetails, json);
-                    // Globals.APILog = "APILog";
-                    Globals.TeamSalesEmployeCode = response.body().getLogInDetail().getSalesEmployeeCode();
-                    Globals.TeamRole = response.body().getLogInDetail().getRole();
-                    Globals.TeamEmployeeID = String.valueOf(response.body().getLogInDetail().getId());
-                    Globals.SelectedDB = String.valueOf(response.body().getSap().getCompanyDB());
-
-                    Prefs.putString(Globals.USER_PASSWORD, response.body().getLogInDetail().getPassword());
-                    Prefs.putString(Globals.Employee_Name, response.body().getLogInDetail().getUserName());
-                    Prefs.putString(Globals.CHECK_IN_STATUS, response.body().getLogInDetail().getCheckInStatus());
-                    Prefs.putString(Globals.EmployeeID, String.valueOf(response.body().getLogInDetail().getId()));
-                    Prefs.putString(Globals.SalesEmployeeCode, String.valueOf(response.body().getLogInDetail().getSalesEmployeeCode()));
-                    Prefs.putString(Globals.SalesEmployeeName, String.valueOf(response.body().getLogInDetail().getSalesEmployeeName()));
-                    Prefs.putString(Globals.SelectedDB, String.valueOf(response.body().getSap().getCompanyDB()));
-                    Prefs.putString(Globals.Role, String.valueOf(response.body().getLogInDetail().getRole()));
-                    Prefs.putString(Globals.MyID, String.valueOf(response.body().getLogInDetail().getId()));
-                    Prefs.putString(Globals.BranchId, String.valueOf(response.body().getLogInDetail().getBranch()));
-                    Prefs.putString(Globals.ZONE, String.valueOf(response.body().getLogInDetail().getZone()));
-                    Prefs.putString(Globals.ADDRESS_LOGIN, String.valueOf(response.body().getLogInDetail().getAddress()));
-
-
-                    if (response.body().getTripExpenses().size() > 0) {
-                        Prefs.putString(Globals.BP_TYPE_CHECK_IN, response.body().getTripExpenses().get(0).getBPType());
-                        Prefs.putString(Globals.BP_NAME_CHECK_IN, response.body().getTripExpenses().get(0).getBPName());
-                        Prefs.putDouble(Globals.START_LAT, Double.parseDouble(response.body().getTripExpenses().get(0).getCheckInLat()));
-                        Prefs.putDouble(Globals.START_LONG, Double.parseDouble(response.body().getTripExpenses().get(0).getCheckInLong()));
-                        Prefs.putString(Globals.START_DATE, response.body().getTripExpenses().get(0).getCheckInDate());
-                        Prefs.putString(Globals.MODE_OF_TRANSPORT, response.body().getTripExpenses().get(0).getModeOfTransport());
-                        Prefs.putString(Globals.TRIP_ID, response.body().getTripExpenses().get(0).getId());
-                    } else {
-
-                    }
-
-                    //Prefs.putString(Globals.MYEmployeeID, String.valueOf(response.body().getLogInDetail().getId()));
-
-                    long session = Long.parseLong("30");
-                    session = session * 60 * 1000;
-
-                    Prefs.putLong(Globals.SESSION_TIMEOUT, session);
-                    Prefs.putLong(Globals.SESSION_REMAIN_TIME, 0);
-                            /* LogInRequest in = new LogInRequest();
-                            in.setCompanyDB(response.body().getSap().getCompanyDB());  //HANA
-                            in.setPassword(response.body().getSap().getPassword());//"manager"//8097
-                            in.setUserName(response.body().getSap().getUserName());//"manager"
-                             userLogin(in);*/
-                    gotoHome();
+                    showMpinRegistrationProcessPopup(response);
 
 
                 } else {
@@ -292,6 +642,242 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
 
             }
         });
+    }
+
+
+    //todo Login Sign Up
+    private void callLogInOrSignUpApi(String edtMobileNo) {
+        progressBar.setVisibility(View.VISIBLE);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mobile", edtMobileNo);
+
+        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService(this).loginOrSignUpEmployee(jsonObject);
+        call.enqueue(new Callback<NewLogINResponse>() {
+            @Override
+            public void onResponse(Call<NewLogINResponse> call, Response<NewLogINResponse> response) {
+
+                if (response.body().getStatus() == 200) {
+                    signin.setEnabled(true);
+                    signin.setClickable(true);
+
+                    if (rememberme.isChecked()) {
+                        Prefs.putString(Globals.REMEMBER_ME, "rem");
+                    }
+
+//                    showMpinRegistrationProcessPopup(response);//todo comment for now-
+
+
+                    Prefs.putString(Globals.OTP, response.body().getLogInDetail().get(0).getOtp());
+
+//                    sessionManagement.setMobileNo(response.body().getLogInDetail().get(0).getMobile());
+
+                    if (sessionManagement.getMPINValue().equals("")){
+                        Intent intent = new Intent(Login.this, OtpActivity.class);
+                        startActivity(intent);
+                    }
+                    else{
+                        Intent intent = new Intent(Login.this, MainActivity_B2C.class);
+                        startActivity(intent);
+                    }
+
+
+                }
+                else if (response.body().getStatus() == 400){
+                    progressBar.setVisibility(View.GONE);
+                    signin.setEnabled(true);
+                    signin.setClickable(true);
+                    alertOnSameLoginNo();
+                }
+                else {
+                    progressBar.setVisibility(View.GONE);
+                    signin.setEnabled(true);
+                    signin.setClickable(true);
+                    Toast.makeText(Login.this, "Check Login Credentials.", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewLogINResponse> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                signin.setEnabled(true);
+                signin.setClickable(true);
+                Toast.makeText(Login.this, "Check Login Credentials.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private void alertOnSameLoginNo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getTitle());
+        builder.setMessage("Already logged in with another device. Logout From all other Devices?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                signin.setEnabled(false);
+                signin.setClickable(false);
+
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("mobile", edtMobileNo.getText().toString());
+                bindLogoutObserver(jsonObject);
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    void bindLogoutObserver(JsonObject jsonObject) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        Call<NewLogINResponse> call = NewApiClient.getInstance().getApiService(this).logOutAPi(jsonObject);
+        call.enqueue(new Callback<NewLogINResponse>() {
+            @Override
+            public void onResponse(Call<NewLogINResponse> call, Response<NewLogINResponse> response) {
+                try {
+                    if (response.body().getStatus() == 200) {
+                        progressBar.setVisibility(View.GONE);
+
+                        signin.setEnabled(false);
+                        signin.setClickable(false);
+                        callLogInOrSignUpApi(edtMobileNo.getText().toString());
+
+                    } else if (response.body().getStatus() == 401) {
+                        Prefs.clear();
+                        Globals.logoutScreen(Login.this);
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+
+                        Toast.makeText(Login.this, "Warning "+ response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    signin.setEnabled(true);
+                    signin.setClickable(true);
+                    progressBar.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NewLogINResponse> call, Throwable t) {
+                signin.setEnabled(true);
+                signin.setClickable(true);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(Login.this, "Error "+ t.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+
+    private void showMpinRegistrationProcessPopup(Response<NewLogINResponse> response) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this, R.style.CustomAlertDialog);
+        View dialogView = LayoutInflater.from(Login.this).inflate(R.layout.dialog_setup_mpin, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        layoutParams.gravity = Gravity.CENTER;
+        dialog.getWindow().setAttributes(layoutParams);
+
+        dialog.show();
+
+        EditText etMpin = dialogView.findViewById(R.id.mpinEditText);
+        EditText etReMpin = dialogView.findViewById(R.id.confirmMpinEditText);
+        Button btnContinue = dialogView.findViewById(R.id.continueBtn);
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateEditTexts(etMpin, etReMpin)) {
+                    Prefs.putString(Globals.USERNAME, edtMobileNo.getText().toString().trim());
+                    Prefs.putString(Globals.USER_PASSWORD, login_password.getText().toString().trim());
+                    Gson gson = new Gson();
+                    String json = gson.toJson(response.body().getLogInDetail());
+                    Prefs.putString(Globals.AppUserDetails, json);
+                    // Globals.APILog = "APILog";
+                    Globals.TeamSalesEmployeCode = response.body().getLogInDetail().get(0).getSalesEmployeeCode();
+                    Globals.TeamRole = response.body().getLogInDetail().get(0).getRole();
+                    Globals.TeamEmployeeID = String.valueOf(response.body().getLogInDetail().get(0).getId());
+                    Globals.SelectedDB = String.valueOf(response.body().getSap().getCompanyDB());
+
+                    Prefs.putString(Globals.USER_PASSWORD, response.body().getLogInDetail().get(0).getPassword());
+                    Prefs.putString(Globals.Employee_Name, response.body().getLogInDetail().get(0).getUserName());
+                    Prefs.putString(Globals.CHECK_IN_STATUS, response.body().getLogInDetail().get(0).getCheckInStatus());
+                    Prefs.putString(Globals.EmployeeID, String.valueOf(response.body().getLogInDetail().get(0).getId()));
+                    Prefs.putString(Globals.SalesEmployeeCode, String.valueOf(response.body().getLogInDetail().get(0).getSalesEmployeeCode()));
+                    Prefs.putString(Globals.SalesEmployeeName, String.valueOf(response.body().getLogInDetail().get(0).getSalesEmployeeName()));
+                    Prefs.putString(Globals.SelectedDB, String.valueOf(response.body().getSap().getCompanyDB()));
+                    Prefs.putString(Globals.Role, String.valueOf(response.body().getLogInDetail().get(0).getRole()));
+                    Prefs.putString(Globals.MyID, String.valueOf(response.body().getLogInDetail().get(0).getId()));
+                    Prefs.putString(Globals.BranchId, String.valueOf(response.body().getLogInDetail().get(0).getBranch()));
+                    Prefs.putString(Globals.ZONE, String.valueOf(response.body().getLogInDetail().get(0).getZone()));
+                    Prefs.putString(Globals.ADDRESS_LOGIN, String.valueOf(response.body().getLogInDetail().get(0).getAddress()));
+
+                    //todo mpinPrefs
+                    Prefs.putString(Globals.MPIN_VALUE, etMpin.getText().toString().trim());
+
+
+                    if (response.body().getTripExpenses().size() > 0) {
+                        Prefs.putString(Globals.BP_TYPE_CHECK_IN, response.body().getTripExpenses().get(0).getBPType());
+                        Prefs.putString(Globals.BP_NAME_CHECK_IN, response.body().getTripExpenses().get(0).getBPName());
+                        Prefs.putDouble(Globals.START_LAT, Double.parseDouble(response.body().getTripExpenses().get(0).getCheckInLat()));
+                        Prefs.putDouble(Globals.START_LONG, Double.parseDouble(response.body().getTripExpenses().get(0).getCheckInLong()));
+                        Prefs.putString(Globals.START_DATE, response.body().getTripExpenses().get(0).getCheckInDate());
+                        Prefs.putString(Globals.MODE_OF_TRANSPORT, response.body().getTripExpenses().get(0).getModeOfTransport());
+                        Prefs.putString(Globals.TRIP_ID, response.body().getTripExpenses().get(0).getId());
+                    } else {
+
+                    }
+
+
+
+                    long session = Long.parseLong("30");
+                    session = session * 60 * 1000;
+
+                    Prefs.putLong(Globals.SESSION_TIMEOUT, session);
+                    Prefs.putLong(Globals.SESSION_REMAIN_TIME, 0);
+
+                    gotoHome();
+                    Toast.makeText(Login.this, "MPIN Created SuccessFully Successfully", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(Login.this, "Please Enter MPIN Correctly", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+    }
+
+    private boolean validateEditTexts(EditText editText1, EditText editText2) {
+        String text1 = editText1.getText().toString().trim();
+        String text2 = editText2.getText().toString().trim();
+
+        if (TextUtils.isEmpty(text1) || TextUtils.isEmpty(text2)) {
+            // If any of the EditTexts is empty, return false
+
+            return false;
+        }
+
+        // If both EditTexts are not empty, compare their contents
+        return text1.equals(text2);
     }
 
 
@@ -348,12 +934,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
     }
 
 
-    private boolean validation(String user, String pass) {
+    private boolean validation(String user, String selectedCountry) {//, String pass
         if (user.isEmpty()) {
-            Toast.makeText(activity, getResources().getString(R.string.enter_user), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Enter Mobile Number", Toast.LENGTH_SHORT).show();
             return false;
-        } else if (pass.isEmpty()) {
-            Toast.makeText(activity, getResources().getString(R.string.enter_sql_pass), Toast.LENGTH_SHORT).show();
+        } else if (!"India".equalsIgnoreCase(selectedCountry)) {
+            Toast.makeText(Login.this, "Please Choose India", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -372,11 +958,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Da
 
     @Override
     public void onClick(int po) {
-
-
         Prefs.putString(Globals.SessionID, "");
         Globals.APILog = "APILog";
-        callLogInApi(login_username.getText().toString().trim(), login_password.getText().toString().trim());
+//        callLogInApi(login_username.getText().toString().trim(), login_password.getText().toString().trim());
+        callLogInOrSignUpApi(edtMobileNo.getText().toString().trim());
 
         if (dialog != null)
             dialog.dismiss();

@@ -265,6 +265,21 @@ public class ItemDashboardListActivity extends AppCompatActivity {
 
             bottomSheetDialog.dismiss();
         });
+
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                binding.loader.setVisibility(View.VISIBLE);
+                pageNo = 1;
+                callApi("");
+
+                bottomSheetDialog.dismiss();
+            }
+        });
         bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
         {
             startDate = "";
@@ -412,6 +427,7 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                     hde.put("FromDate", startDate);
                     hde.put("ToDate", endDate);
                     hde.put("SubGroupCode", StockGroupCode);
+                    hde.put("Zone", zoneCode);
                     hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 } else if (fromwhere.equalsIgnoreCase("fromSaleCategory")) {
 
@@ -438,9 +454,9 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                 Call<ResponseItemDashboard> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemDashboardListActivity.this).getItemOnDashboardPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemDashboardListActivity.this).getItemOnDashboard(hde);
                 }
                 try {
                     Response<ResponseItemDashboard> response = call.execute();
@@ -524,9 +540,9 @@ public class ItemDashboardListActivity extends AppCompatActivity {
                 Call<ResponseItemDashboard> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemDashboardListActivity.this).getItemOnDashboardPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemDashboardListActivity.this).getItemOnDashboard(hde);
                 }
 
 

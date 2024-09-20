@@ -174,7 +174,7 @@ public class Invoices_Override_Fragment extends Fragment implements View.OnClick
 
     private void callApi(ProgressBar loader) {
         loader.setVisibility(View.VISIBLE);
-        Call<InvoiceResponse> call = NewApiClient.getInstance().getApiService().getallinvoice();
+        Call<InvoiceResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getallinvoice();
         call.enqueue(new Callback<InvoiceResponse>() {
             @Override
             public void onResponse(Call<InvoiceResponse> call, Response<InvoiceResponse> response) {

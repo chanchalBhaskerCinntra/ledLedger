@@ -112,7 +112,8 @@ public class ItemPurchasedParticularCustomerInfo extends AppCompatActivity {
         });
 
         binding.toolbarItemDashBoard.search.setOnClickListener(view -> {
-            showBottomSheetDialog();
+//            showBottomSheetDialog();
+            shareLedgerData();
         });
 
         binding.toolbarItemDashBoard.newQuatos.setOnClickListener(view -> {
@@ -134,6 +135,26 @@ public class ItemPurchasedParticularCustomerInfo extends AppCompatActivity {
 
 
     }
+
+
+    private void shareLedgerData() {
+        String title = getString(R.string.share_customer_list);
+
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.itemParticularBpPurchase + "ItemCode=" + id + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate;
+
+        } else {
+            url = Globals.itemParticularBpSales + "ItemCode=" + id + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate;
+        }
+        Log.e("PDF=======>", "shareLedgerData: " + url);
+
+        WebViewBottomSheetFragment addPhotoBottomDialogFragment =
+                WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
+        addPhotoBottomDialogFragment.show(getSupportFragmentManager(),
+                "");
+    }
+
 
     public void hideToolbarMenu() {
         getSupportActionBar().hide();
@@ -187,9 +208,9 @@ public class ItemPurchasedParticularCustomerInfo extends AppCompatActivity {
 
                 Call<ResponseItemParticularCustomerInfo> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call =  NewApiClient.getInstance().getApiService().getItemParticularBpLedgerPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemPurchasedParticularCustomerInfo.this).getItemParticularBpLedgerPurchase(hde);
                 } else {
-                    call =  NewApiClient.getInstance().getApiService().getItemParticularBpLedger(hde);
+                    call = NewApiClient.getInstance().getApiService(ItemPurchasedParticularCustomerInfo.this).getItemParticularBpLedger(hde);
                 }
                 try {
                     Response<ResponseItemParticularCustomerInfo> response = call.execute();
@@ -702,6 +723,26 @@ public class ItemPurchasedParticularCustomerInfo extends AppCompatActivity {
             binding.tvDateFrom.setText(bindingBottom.tvLastYearBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
+
+        bindingBottom.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                //  from_to_date.setText(startDate + " - " + endDate);
+                Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+                // callApi(startDate, endDate);
+                binding.loader.setVisibility(View.VISIBLE);
+                callParticularItemLedgerInfo(cardCode, id, startDate, endDate);
+                url = Globals.itemParticularBpSales + "ItemCode=" + id + "&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate;
+
+                binding.tvDateFrom.setText(bindingBottom.tvLastYearBottomSheetSelectDate.getText().toString());
+                bottomSheetDialog.dismiss();
+            }
+        });
+
         bindingBottom.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";

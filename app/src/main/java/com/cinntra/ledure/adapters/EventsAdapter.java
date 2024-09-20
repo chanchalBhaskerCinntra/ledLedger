@@ -171,7 +171,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         EventValue eventValue = new EventValue();
         eventValue.setId(id);
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().deleteEvent(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(context).deleteEvent(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

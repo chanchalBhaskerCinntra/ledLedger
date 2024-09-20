@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -99,13 +100,13 @@ public class ActivityOrderOneDetails extends AppCompatActivity {
                 hde.put("id", invoiceID);
                 Call<ResPonseOrderOne> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().order_one_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ActivityOrderOneDetails.this).order_one_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().order_one(hde);
+                    call = NewApiClient.getInstance().getApiService(ActivityOrderOneDetails.this).order_one(hde);
                 }
 
 
-//                Call<ResPonseOrderOne> call = NewApiClient.getInstance().getApiService().order_one(hde);
+//                Call<ResPonseOrderOne> call = NewApiClient.getInstance().getApiService(this).order_one(hde);
                 try {
                     Response<ResPonseOrderOne> response = call.execute();
                     if (response.isSuccessful()) {
@@ -162,6 +163,14 @@ public class ActivityOrderOneDetails extends AppCompatActivity {
     /*************** Bhupi *********************/ // Calling one BottomSheet for Ledger Sharing
     private void shareLedgerData() {
         String title = "Share";
+
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.orderOnePdfUrPurchase + "id=" + orderId;
+        } else {
+            url = Globals.orderOnePdfUr + "id=" + orderId;
+        }
+        Log.e("PDf=====>", "shareLedgerData: "+url);
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);

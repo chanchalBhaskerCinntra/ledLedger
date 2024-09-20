@@ -85,7 +85,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             startDate = Globals.Date_yyyy_mm_dd(startDatelng);
             endDate = Globals.Date_yyyy_mm_dd(endDatelng);
             // from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
             // binding
             pageNo = 1;
@@ -104,7 +104,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.Date_yyyy_mm_dd(endDatelng);
             pageNo = 1;
             //  from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
             //TotalCreditNotesOnePage(startDate, endDate);
             ///   callDashboardCounter();
@@ -121,7 +121,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.thisWeekLastDayOfMonth();
             pageNo = 1;
             //  from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
          //   TotalCreditNotesOnePage(startDate, endDate);
             //    callDashboardCounter();
@@ -140,7 +140,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.lastDateOfMonth();
             pageNo = 1;
             // from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
           //  TotalCreditNotesOnePage(startDate, endDate);
             //callDashboardCounter();
@@ -157,7 +157,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.lastMonthlastDate();
             pageNo = 1;
             // from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
 
             //callDashboardCounter();
@@ -174,7 +174,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.lastQuarterlastDate();
             pageNo = 1;
             //  from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
           //  TotalCreditNotesOnePage(startDate, endDate);
             // callDashboardCounter();
@@ -191,7 +191,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.thisYearLastDate();
             pageNo = 1;
             // from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
          //   TotalCreditNotesOnePage(startDate, endDate);
             //  callDashboardCounter();
@@ -208,7 +208,7 @@ public class CreditNoteParticularActivity extends AppCompatActivity {
             endDate = Globals.lastYearLastDate();
             pageNo = 1;
             //  from_to_date.setText(startDate + " - " + endDate);
-            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+//            Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
             binding.loader.loader.setVisibility(View.VISIBLE);
           //  TotalCreditNotesOnePage(startDate, endDate);
             //   callDashboardCounter();

@@ -309,12 +309,12 @@ public class ParticularCustomerReceiptInfo extends MainBaseActivity {
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 Call<LedgerCustomerResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().bp_receipt_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceiptInfo.this).bp_receipt_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().bp_receipt(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceiptInfo.this).bp_receipt(hde);
                 }
 
-//                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService().bp_receipt(hde);
+//                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService(this).bp_receipt(hde);
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
                     if (response.isSuccessful()) {
@@ -376,12 +376,12 @@ public class ParticularCustomerReceiptInfo extends MainBaseActivity {
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
                 Call<LedgerCustomerResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().bp_receipt_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceiptInfo.this).bp_receipt_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().bp_receipt(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceiptInfo.this).bp_receipt(hde);
                 }
 
-//                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService().bp_receipt(hde);
+//                Call<LedgerCustomerResponse> call = NewApiClient.getInstance().getApiService(this).bp_receipt(hde);
 
 
                 try {
@@ -468,7 +468,16 @@ public class ParticularCustomerReceiptInfo extends MainBaseActivity {
     private void shareLedgerData() {
         String title = getString(R.string.share_reciept_list);
 
-        url = Globals.particularBpRceipt + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.particularBpRceiptPurchase + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        } else {
+            url = Globals.particularBpRceipt + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        }
+
+//        url = Globals.particularBpRceipt + "CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
@@ -900,6 +909,26 @@ public class ParticularCustomerReceiptInfo extends MainBaseActivity {
             Log.e("particularBpRceipt", "onCreate: " + url);
             from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
+        });
+
+
+        binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                from_to_date.setText(startDate + " - " + endDate);
+                if (fromWhere.trim().equalsIgnoreCase("ReceiptLedger")) {
+                    particulalCustomerOnOnePageReceipts(cardCode, cardName, reportType, startDate, endDate);
+                }
+                loader.setVisibility(View.VISIBLE);
+                url = Globals.particularBpRceipt + "CardCode=" + cardCode + "&FromDate=&ToDate=" + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+                Log.e("particularBpRceipt", "onCreate: " + url);
+                from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+                bottomSheetDialog.dismiss();
+            }
         });
         binding.tvAllBottomSheetSelectDate.setOnClickListener(view ->
         {

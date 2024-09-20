@@ -222,7 +222,7 @@ public class SelectedItems extends MainBaseActivity implements View.OnClickListe
                 TaxListdialog.dismiss();
             }
         });
-        Call<ItemCategoryResponse> call = NewApiClient.getInstance().getApiService().getAllCategory();
+        Call<ItemCategoryResponse> call = NewApiClient.getInstance().getApiService(this).getAllCategory();
         call.enqueue(new Callback<ItemCategoryResponse>() {
             @Override
             public void onResponse(Call<ItemCategoryResponse> call, Response<ItemCategoryResponse> response) {

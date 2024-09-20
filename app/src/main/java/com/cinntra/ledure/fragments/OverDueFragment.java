@@ -173,7 +173,17 @@ public class OverDueFragment extends Fragment implements Toolbar.OnMenuItemClick
     private void shareLedgerData() {
         String title = getString(R.string.share_customer_list);
 
-        url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter;
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)) {
+            url = Globals.overAllReceivablePurchase + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        } else {
+            url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter+"&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+        }
+        Log.e(TAG, "shareLedgerData: "+url);
+
+//        url = Globals.overAllReceivable + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&Filter=&Code=&DueDaysGroup=" + overDueFilter;
 
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
@@ -246,7 +256,7 @@ public class OverDueFragment extends Fragment implements Toolbar.OnMenuItemClick
         obj.put("ToDate", endDate);
         obj.put(Globals.payLoadDueDaysGroup, overDueFilter);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -302,7 +312,7 @@ public class OverDueFragment extends Fragment implements Toolbar.OnMenuItemClick
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", overDueFilter);
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -689,7 +699,7 @@ public class OverDueFragment extends Fragment implements Toolbar.OnMenuItemClick
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
 
-                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 try {
                     Response<ResponsePaymentDueDashboardCustomerList> response = call.execute();
                     if (response.isSuccessful()) {
@@ -788,7 +798,7 @@ public class OverDueFragment extends Fragment implements Toolbar.OnMenuItemClick
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
                 hde.put(Globals.payLoadDueDaysGroup, overDueFilter);
-                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService().getPaymentDueDashboardCustomerList(hde);
+                Call<ResponsePaymentDueDashboardCustomerList> call = NewApiClient.getInstance().getApiService(getActivity()).getPaymentDueDashboardCustomerList(hde);
                 try {
                     Response<ResponsePaymentDueDashboardCustomerList> response = call.execute();
                     if (response.isSuccessful()) {

@@ -2,9 +2,11 @@ package com.cinntra.ledure.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.cinntra.ledure.R;
+import com.cinntra.ledure.activities.Login;
 import com.cinntra.ledure.activities.MainActivity_B2C;
 import com.cinntra.ledure.customUI.RoundedBarChart;
 import com.cinntra.ledure.globals.Globals;
+import com.cinntra.ledure.globals.SessionManagement;
+import com.cinntra.ledure.model.AttachmentModel;
 import com.cinntra.ledure.model.CounterResponse;
 import com.cinntra.ledure.model.SalesEmployeeItem;
 import com.cinntra.ledure.model.Team;
@@ -42,6 +48,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.gson.JsonObject;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.text.SimpleDateFormat;
@@ -195,8 +202,71 @@ public class Graph_ extends Fragment implements View.OnClickListener {
         addData();
         setProjectionData("1");
         loadTop5Customer();
+        sessionManagement=new SessionManagement(getActivity());
+        callAttachmentAllApi();
 
         return v;
+    }
+
+    SessionManagement sessionManagement;
+
+    private static final String TAG = "Graph_";
+    private void callAttachmentAllApi(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+     /*   jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
+        jsonObject.addProperty("LinkType", "ProfilePic");*/
+//        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(getActivity()).getAllAttachment(jsonObject);
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(getActivity()).getNewAllAttachmentApi(jsonObject);
+        call.enqueue(new Callback<AttachmentModel>() {
+            @Override
+            public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
+                if (response != null) {
+
+                    if (response.code() == 200) {
+                        Log.e(TAG, "onResponse: "+response.body().getMessage() );
+
+                        if (response.body().getStatus() == 200){
+                            if (response.body().getData().size() > 0) {
+                                String filePath = Globals.ImageURL + response.body().getData().get(0).getProfileImage();
+
+                                if (filePath != null) {
+                                /*Glide.with(getActivity())
+                                        .load(filePath)
+                                        .into(binding.proImg);*/
+                                } else {
+                                    // binding.proImg.setImageResource(R.drawable.ic_profileicon);
+                                }
+
+                            }
+                        }
+
+                        else if (response.body().getStatus() == 401) {
+                            Toast.makeText(getActivity(), "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                            Prefs.clear();
+                            Intent intent = new Intent(getActivity(), Login.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                            sessionManagement.ClearSession();
+                        }
+
+                    } else if (response.code() == 201) {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AttachmentModel> call, Throwable t) {
+                Log.e(TAG, "onFailure: "+t.getMessage() );
+            }
+        });
     }
 
     public void hideToolbarMenu() {
@@ -327,7 +397,7 @@ public class Graph_ extends Fragment implements View.OnClickListener {
         HashMap<String, String> hd = new HashMap<>();
         hd.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<Top5ItemResponse> call = NewApiClient.getInstance().getApiService().getTop5Items(hd);
+        Call<Top5ItemResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getTop5Items(hd);
         call.enqueue(new Callback<Top5ItemResponse>() {
             @Override
             public void onResponse(Call<Top5ItemResponse> call, Response<Top5ItemResponse> response) {
@@ -457,7 +527,7 @@ public class Graph_ extends Fragment implements View.OnClickListener {
         HashMap<String, String> hd = new HashMap<>();
         hd.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<Top5CustomerResponse> call = NewApiClient.getInstance().getApiService().getTop5Customer(hd);
+        Call<Top5CustomerResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getTop5Customer(hd);
         call.enqueue(new Callback<Top5CustomerResponse>() {
             @Override
             public void onResponse(Call<Top5CustomerResponse> call, Response<Top5CustomerResponse> response) {
@@ -594,7 +664,7 @@ public class Graph_ extends Fragment implements View.OnClickListener {
         SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
         salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
         salesEmployeeItem.setMonth(month);
-        Call<CounterResponse> call = NewApiClient.getInstance().getApiService().projectiondata(salesEmployeeItem);
+        Call<CounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).projectiondata(salesEmployeeItem);
         call.enqueue(new Callback<CounterResponse>() {
             @Override
             public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {

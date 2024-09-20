@@ -74,7 +74,7 @@ public class LedgerGroupWiseAdapter extends RecyclerView.Adapter<LedgerGroupWise
 
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Log.e("Bind=>" + position, branchList.get(position).getGroupName());
+//        Log.e("Bind=>" + position, branchList.get(position).getGroupName());
 
         if (branchList.get(position).getGroupName()!=null){
             holder.title.setText(branchList.get(position).getGroupName());
@@ -87,7 +87,7 @@ public class LedgerGroupWiseAdapter extends RecyclerView.Adapter<LedgerGroupWise
 
 
         holder.unit_price.setOnClickListener(view -> {
-            Log.e("group", "onBindViewHolder: "+position);
+//            Log.e("group", "onBindViewHolder: "+position);
             if (clickListener!=null){
                 clickListener.onItemGroupClick(position,branchList.get(position).getGroupCode(),branchList.get(position).getGroupName());
             }
@@ -97,7 +97,7 @@ public class LedgerGroupWiseAdapter extends RecyclerView.Adapter<LedgerGroupWise
             @Override
             public void onClick(View v) {
                 Prefs.putString("FromLedger", "Ledger");
-                Log.e("group", "onBindViewHolder: "+position);
+//                Log.e("group", "onBindViewHolder: "+position);
                 if (clickListener!=null){
                     clickListener.onItemGroupClick(position,branchList.get(position).getGroupCode(),branchList.get(position).getGroupName());
                 }

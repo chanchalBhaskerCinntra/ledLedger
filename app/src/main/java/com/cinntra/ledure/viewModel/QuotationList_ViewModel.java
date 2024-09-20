@@ -1,5 +1,6 @@
 package com.cinntra.ledure.viewModel;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -31,12 +32,12 @@ public class QuotationList_ViewModel extends ViewModel {
     public static List<QuotationItem> qutotaionOpenList = new ArrayList<>();
 
     //we will call this method to get the data
-    public LiveData<List<QuotationItem>> getQutotation(ProgressBar loader) {
+    public LiveData<List<QuotationItem>> getQutotation(ProgressBar loader, Context activity) {
         //if the list is null
 
         quatotaionAllList = new MutableLiveData<List<QuotationItem>>();
         //we will load it asynchronously from server in this method
-        loadQuotation(loader);
+        loadQuotation(loader,activity);
 
 
         //finally we will return the list
@@ -44,7 +45,7 @@ public class QuotationList_ViewModel extends ViewModel {
     }
 
 
-    private void loadQuotation(ProgressBar loader) {
+    private void loadQuotation(ProgressBar loader, Context activity) {
         AddQuotation opportunityValue = new AddQuotation();
         if (!Prefs.getString(Globals.QuotationListing, "").equalsIgnoreCase("null")) {
             opportunityValue.setU_OPPID(Prefs.getString(Globals.QuotationListing, ""));
@@ -52,7 +53,7 @@ public class QuotationList_ViewModel extends ViewModel {
             opportunityValue.setSalesPersonCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
         }
 
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().OpenQuotationList(opportunityValue);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(activity).OpenQuotationList(opportunityValue);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {
@@ -157,7 +158,7 @@ public class QuotationList_ViewModel extends ViewModel {
         AddQuotation opportunityValue = new AddQuotation();
         opportunityValue.setSalesPersonCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
         Call<QuotationResponse> call;
-        call = NewApiClient.getInstance().getApiService().OrdersList(opportunityValue);
+        call = NewApiClient.getInstance().getApiService(loader.getContext()).OrdersList(opportunityValue);
 
         call.enqueue(new Callback<QuotationResponse>() {
             @Override

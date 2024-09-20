@@ -15,6 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.MainActivity_B2C;
 import com.cinntra.ledure.customUI.CustomMarkerView;
+import com.cinntra.ledure.customUI.CustomMarkerViewReceipt;
 import com.cinntra.ledure.customUI.CustomMarkerViewReceivables;
 import com.cinntra.ledure.customUI.RoundedBarChart;
 import com.cinntra.ledure.fragments.DashboardFragmentFromActivity;
@@ -75,25 +76,24 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         //saleGraphApi(view, container);
         if (position == 0)
-            managebyShubh(view, container, DashboardFragmentFromActivity.Salesentries);
+            managebyShubh(view, container, MainActivity_B2C.Salesentries,MainActivity_B2C.SalesPreviousentries);
         if (position == 1)
-            managebyShubh(view, container, DashboardFragmentFromActivity.Receiptentries);
+            managebyShubhReceipt(view, container, MainActivity_B2C.Receiptentries,MainActivity_B2C.ReceiptPreviousentries);
         if (position == 2)
-            managebyShubhReceivable(view, container, DashboardFragmentFromActivity.Receivableentries);
+            managebyShubhReceivable(view, container, MainActivity_B2C.Receivableentries);
 
 
         return view;
     }
 
-    private void managebyShubh(View view, ViewGroup container, List<BarEntry> entries) {
+    private void managebyShubh(View view, ViewGroup container, List<BarEntry> entries,List<BarEntry>previousEntries) {
 
 
         List<String> xvalues = Arrays.asList("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar");
-        //   List<String> xvalues= Arrays.asList("Jan","Feb","March","April","May","June");
+
 
         BarChart customer_barChart = view.findViewById(R.id.any_chart_view_dash);
 
-
         temp.add("ss");
         temp.add("ss");
         temp.add("ss");
@@ -101,32 +101,11 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         temp.add("ss");
         temp.add("ss");
 
-        /*CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, temp);
 
-
-        customer_barChart.setMarker(markerView);
-
-        customer_barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener()
-         {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                // Display your MarkerView when a value is selected
-                customer_barChart.highlightValue(h);
-                // markerView.content("Value: " + e.getY()); // Customize content as needed
-                markerView.refreshContent(e, h);
-                markerView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected() {
-                // Hide the MarkerView when nothing is selected
-                markerView.setVisibility(View.GONE);
-            }
-        });*/
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(10f);
+        roundedBarChartRenderer.setmRadius(0f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);
@@ -142,58 +121,67 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         BarDataSet dataSet = new BarDataSet(entries, "Values");
-        dataSet.setColor(context.getResources().getColor(R.color.white));
+        dataSet.setColor(context.getResources().getColor(R.color.yellow));
         dataSet.setDrawValues(false);
         dataSets.add(dataSet);
-        dataSet.setHighLightColor(Color.WHITE);
+
+        dataSet.setHighLightColor(Color.WHITE); // Set the color
         dataSet.setHighLightAlpha(100);
+        //todo new thing
+        dataSet.setHighlightEnabled(true);
+
+
+        //todo new code because to show data of two bars
+        BarDataSet dataSet2 = new BarDataSet(previousEntries, "Values2");
+        dataSet2.setColor(context.getResources().getColor(R.color.white));
+        dataSet2.setDrawValues(false);
+        dataSets.add(dataSet2);
+
+        //todo new thing
+        dataSet2.setHighlightEnabled(true);
+
+
 
         BarData data = new BarData(dataSets);
-        data.setBarWidth(0.75f);
+        Log.e("SHUBH>>CHECK", "managebyShubh: " + dataSets.size());
+
+        data.setBarWidth(0.3f);
+
         data.setValueTextColor(context.getResources().getColor(R.color.white));
-        //  data.setValueTextColor(Color.WHITE);
         customer_barChart.setData(data);
-        customer_barChart.setFitBars(false);
 
 
-        // customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xvalues));
+
+        customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xvalues));
+        customer_barChart.getXAxis().setCenterAxisLabels(true);
         customer_barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         customer_barChart.getXAxis().setTextColor(context.getResources().getColor(R.color.white));
-        customer_barChart.getXAxis().setLabelCount(13, false);
+        customer_barChart.getXAxis().setLabelCount(12, false);
         customer_barChart.getXAxis().setDrawGridLines(false);
 
-        customer_barChart.getXAxis().setGranularity(1f);
-        // xvalues.remove(0);
-        //  customer_barChart.getXAxis().setGranularityEnabled(true);
-        customer_barChart.getXAxis().setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                if (value == 0) {
-                    return "Apr";
-                } else {
-                    return xvalues.get((int) value);
-                }
 
-            }
-        });
+        customer_barChart.getXAxis().setGranularity(1f);
+
+
 
 
         YAxis yAxis = customer_barChart.getAxisLeft();
         yAxis.setTextColor(context.getResources().getColor(R.color.white));
         yAxis.setAxisMinimum(0f);
-
         yAxis.setEnabled(true);
         yAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                axis.setLabelCount(3, true);
+//                axis.setLabelCount(3, true);
                 return "" + Globals.convertToLakhAndCroreFromFloat(value);
             }
         });
 
         customer_barChart.setTouchEnabled(true);
         customer_barChart.setDrawBarShadow(false);
-
+        customer_barChart.setPinchZoom(false);
+        //
+        customer_barChart.setScaleEnabled(true);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -207,11 +195,170 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         //remove description label
         customer_barChart.getDescription().setEnabled(false);
+        // below line is to add bar
+        // space to our chart.
+        float barSpace = 0.1f;
+
+        // below line is use to add group
+        // spacing to our bar chart.
+        float groupSpace = 0.2f;
+
+        customer_barChart.groupBars(0, groupSpace, barSpace);
+
+
 
         //add animation
         customer_barChart.animateY(1000);
-        CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, MainActivity_B2C.SalesValueForMarker);
+
+
+
+
+
+        CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, MainActivity_B2C.SalesValueForMarker, MainActivity_B2C.previousSalesValueForMarker);
         customer_barChart.setMarker(markerView);
+
+
+
+        //draw chart
+        customer_barChart.invalidate();
+
+
+        ViewPager viewPager = (ViewPager) container;
+        viewPager.addView(view, 0);
+    }
+
+    private void managebyShubhReceipt(View view, ViewGroup container, List<BarEntry> entries,List<BarEntry>previousEntries) {
+
+
+        List<String> xvalues = Arrays.asList("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar");
+
+
+        BarChart customer_barChart = view.findViewById(R.id.any_chart_view_dash);
+
+        temp.add("ss");
+        temp.add("ss");
+        temp.add("ss");
+        temp.add("ss");
+        temp.add("ss");
+        temp.add("ss");
+
+
+
+
+        RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
+        roundedBarChartRenderer.setmRadius(0f);
+        customer_barChart.setRenderer(roundedBarChartRenderer);
+
+        customer_barChart.setDrawBarShadow(false);
+        customer_barChart.setDrawValueAboveBar(false);
+        customer_barChart.getDescription().setEnabled(false);
+        customer_barChart.setDrawGridBackground(false);
+
+
+        customer_barChart.getAxisRight().setEnabled(false);
+        Legend legend = customer_barChart.getLegend();
+        legend.setEnabled(false);
+
+
+        List<IBarDataSet> dataSets = new ArrayList<>();
+        BarDataSet dataSet = new BarDataSet(entries, "Values");
+        dataSet.setColor(context.getResources().getColor(R.color.yellow));
+        dataSet.setDrawValues(false);
+        dataSets.add(dataSet);
+
+        dataSet.setHighLightColor(Color.WHITE); // Set the color
+        dataSet.setHighLightAlpha(100);
+        //todo new thing
+        dataSet.setHighlightEnabled(true);
+
+
+        //todo new code because to show data of two bars
+        BarDataSet dataSet2 = new BarDataSet(previousEntries, "Values2");
+        dataSet2.setColor(context.getResources().getColor(R.color.white));
+        dataSet2.setDrawValues(false);
+        dataSets.add(dataSet2);
+
+        //todo new thing
+        dataSet2.setHighlightEnabled(true);
+
+
+
+        BarData data = new BarData(dataSets);
+        Log.e("SHUBH>>CHECK", "managebyShubh: " + dataSets.size());
+
+        data.setBarWidth(0.3f);
+
+        data.setValueTextColor(context.getResources().getColor(R.color.white));
+        customer_barChart.setData(data);
+
+
+
+        customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xvalues));
+        customer_barChart.getXAxis().setCenterAxisLabels(true);
+        customer_barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        customer_barChart.getXAxis().setTextColor(context.getResources().getColor(R.color.white));
+        customer_barChart.getXAxis().setLabelCount(12, false);
+        customer_barChart.getXAxis().setDrawGridLines(false);
+
+
+        customer_barChart.getXAxis().setGranularity(1f);
+
+
+
+
+        YAxis yAxis = customer_barChart.getAxisLeft();
+        yAxis.setTextColor(context.getResources().getColor(R.color.white));
+        yAxis.setAxisMinimum(0f);
+        yAxis.setEnabled(true);
+        yAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+//                axis.setLabelCount(3, true);//todo comment due to no need of 3 time differences in y axis
+                return "" + Globals.convertToLakhAndCroreFromFloat(value);
+            }
+        });
+
+        customer_barChart.setTouchEnabled(true);
+        customer_barChart.setDrawBarShadow(false);
+        customer_barChart.setPinchZoom(false);
+        //
+        customer_barChart.setScaleEnabled(true);
+
+        //hide grid lines
+        customer_barChart.getAxisLeft().setDrawGridLines(false);
+
+
+        //remove right y-axis
+        customer_barChart.getAxisRight().setEnabled(false);
+
+        //remove legend
+
+
+        //remove description label
+        customer_barChart.getDescription().setEnabled(false);
+        // below line is to add bar
+        // space to our chart.
+        float barSpace = 0.1f;
+
+        // below line is use to add group
+        // spacing to our bar chart.
+        float groupSpace = 0.2f;
+
+        customer_barChart.groupBars(0, groupSpace, barSpace);
+
+
+
+        //add animation
+        customer_barChart.animateY(1000);
+
+
+
+
+
+        CustomMarkerViewReceipt markerView = new CustomMarkerViewReceipt(context, R.layout.barchart_marker, MainActivity_B2C.ReceiptValueForMarker,MainActivity_B2C.previousReceiptValueForMarker);
+
+        customer_barChart.setMarker(markerView);
+
 
 
         //draw chart
@@ -239,14 +386,14 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         temp.add("ss");
         temp.add("ss");
 
-        CustomMarkerViewReceivables markerView = new CustomMarkerViewReceivables(context, R.layout.barchart_marker, DashboardFragmentFromActivity.ReceiptValueForMarker);
+      /*  CustomMarkerViewReceivables markerView = new CustomMarkerViewReceivables(context, R.layout.barchart_marker, DashboardFragmentFromActivity.ReceiptValueForMarker);
 
 
-        customer_barChart.setMarker(markerView);
+        customer_barChart.setMarker(markerView);*/
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(10f);
+        roundedBarChartRenderer.setmRadius(0f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);
@@ -289,19 +436,22 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         YAxis yAxis = customer_barChart.getAxisLeft();
         yAxis.setTextColor(context.getResources().getColor(R.color.white));
-        yAxis.setAxisMinimum(0f);
+
+//        yAxis.setAxisMinimum(0f);//todo remove due to get negative y axis in graph
         yAxis.setEnabled(true);
+
+        //todo comment byshubh
         yAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                axis.setLabelCount(3, true);
+//                axis.setLabelCount(3, true);
                 return "" + Globals.convertToLakhAndCroreFromFloat(value);
             }
         });
 
         customer_barChart.setTouchEnabled(true);
         customer_barChart.setDrawBarShadow(false);
-
+        customer_barChart.setScaleEnabled(false);//todo stop zoom out chart functionality--
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -318,6 +468,8 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         //add animation
         customer_barChart.animateY(2000);
+        CustomMarkerViewReceivables markerView = new CustomMarkerViewReceivables(context, R.layout.barchart_marker, MainActivity_B2C.ReceivableValueForMarker);
+        customer_barChart.setMarker(markerView);
 
 
         //draw chart
@@ -340,7 +492,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         obj.put("ToDate", "2024-03-31");
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService(context).salesGraph(obj);
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
             public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
@@ -358,7 +510,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
                         // opengraph();
                         Log.e("TestBP==>", "" + Salesentries.size());
                         if (view != null && container != null)
-                            managebyShubh(view, container, Salesentries);
+                            managebyShubh(view, container, Salesentries,new ArrayList<>());
                     }
 
 

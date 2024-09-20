@@ -79,7 +79,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(binding.getRoot());
         lat = getIntent().getStringExtra("lat");
         longitudeTT = getIntent().getStringExtra("long");
-        Log.e("TAG", "onCreate: "+lat+" "+longitudeTT );
+//        Log.e("TAG", "onCreate: "+lat+" "+longitudeTT );
       //  Toast.makeText(this, "" + lat+"  " + longitudeTT, Toast.LENGTH_SHORT).show();
 
 
@@ -297,7 +297,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             br.close();
 
         } catch (Exception e) {
-            Log.d("Exception downl. url", e.toString());
+//            Log.d("Exception downl. url", e.toString());
         } finally {
             iStream.close();
             urlConnection.disconnect();
@@ -318,7 +318,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Fetching the data from web service
                 data = downloadUrl(url[0]);
             } catch (Exception e) {
-                Log.d("Background Task", e.toString());
+//                Log.d("Background Task", e.toString());
             }
             return data;
         }
@@ -344,7 +344,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 
-            Log.d("JSON", jsonData[0]);
+//            Log.d("JSON", jsonData[0]);
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
 

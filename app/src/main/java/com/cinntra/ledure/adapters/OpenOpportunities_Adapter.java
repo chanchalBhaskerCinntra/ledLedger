@@ -215,7 +215,7 @@ public class OpenOpportunities_Adapter extends RecyclerView.Adapter<OpenOpportun
 
     private void callfollowupApi(FollowUpData followUpData) {
 
-        Call<FollowUpResponse> call = NewApiClient.getInstance().getApiService().createfollowUP(followUpData);
+        Call<FollowUpResponse> call = NewApiClient.getInstance().getApiService(context).createfollowUP(followUpData);
         call.enqueue(new Callback<FollowUpResponse>() {
             @Override
             public void onResponse(Call<FollowUpResponse> call, Response<FollowUpResponse> response) {
@@ -359,7 +359,7 @@ public class OpenOpportunities_Adapter extends RecyclerView.Adapter<OpenOpportun
 
    private void updatefavourites(UpdateFavourites in)
        {
-        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService().updateoppFavorite(in);
+        Call<NewOppResponse> call = NewApiClient.getInstance().getApiService(context).updateoppFavorite(in);
         call.enqueue(new Callback<NewOppResponse>() {
             @Override
             public void onResponse(Call<NewOppResponse> call, Response<NewOppResponse> response) {

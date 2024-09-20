@@ -281,7 +281,7 @@ public class ItemOnStockGroupAdapter extends RecyclerView.Adapter<ItemOnStockGro
         hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
 
-        Call<ResSubCatItems> call = NewApiClient.getInstance().getApiService().sub_category_items_dashboard(hde);
+        Call<ResSubCatItems> call = NewApiClient.getInstance().getApiService(context).sub_category_items_dashboard(hde);
         call.enqueue(new Callback<ResSubCatItems>() {
             @Override
             public void onResponse(Call<ResSubCatItems> call, Response<ResSubCatItems> response) {
@@ -353,7 +353,7 @@ public class ItemOnStockGroupAdapter extends RecyclerView.Adapter<ItemOnStockGro
         hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
 
-        Call<ResSubCatItems> call = NewApiClient.getInstance().getApiService().sub_category_items_dashboard(hde);
+        Call<ResSubCatItems> call = NewApiClient.getInstance().getApiService(context).sub_category_items_dashboard(hde);
         call.enqueue(new Callback<ResSubCatItems>() {
             @Override
             public void onResponse(Call<ResSubCatItems> call, Response<ResSubCatItems> response) {

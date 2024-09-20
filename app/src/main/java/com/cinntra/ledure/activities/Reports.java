@@ -297,7 +297,7 @@ public class Reports extends AppCompatActivity {
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(10f);
+        roundedBarChartRenderer.setmRadius(0f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);
@@ -355,13 +355,13 @@ public class Reports extends AppCompatActivity {
 
         YAxis yAxis = customer_barChart.getAxisLeft();
         yAxis.setTextColor(getResources().getColor(R.color.white));
-        yAxis.setAxisMinimum(0f);
+//        yAxis.setAxisMinimum(0f); //todo remove due to get negative y axis in graph
         yAxis.setEnabled(true);
 
         yAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                axis.setLabelCount(3, true);
+//                axis.setLabelCount(3, true);
                 return "" + Globals.convertToLakhAndCroreFromFloat(value);
             }
         });

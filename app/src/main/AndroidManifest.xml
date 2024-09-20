@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cinntra.ledure">
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,13 +15,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:name="com.cinntra.ledure.globals.MyApp"
@@ -34,7 +32,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CinntraSales"
         android:usesCleartextTraffic="true"
+        tools:targetApi="31"
         tools:replace="android:icon">
+        <activity
+            android:name=".checkin.ui.activity.AttendanceBackGroundListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.OtpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ItemListFromSelectingCategoryFromZoneActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ForgotMPINActivity"
             android:exported="false" />
@@ -158,7 +167,11 @@
             android:exported="false"
             android:label=""
             android:screenOrientation="portrait"
-            android:theme="@style/FullScreen" />
+            android:theme="@style/FullScreen" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".activities.Splash"
             android:exported="true"
@@ -465,6 +478,11 @@
         </provider>
 
         <service android:name="com.cinntra.ledure.services.GoogleService" />
+
+
+        <service
+            android:name=".services.LocationService"
+            android:foregroundServiceType="location" />
         <service
             android:name="com.cinntra.ledure.FirebaseMessageReceiver"
             android:exported="false">

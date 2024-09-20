@@ -11,7 +11,12 @@ public class AttachmentModel {
         private String id;
         
         private String File;
-        
+        private String profileImage;
+        private String device_id;
+        private String token;
+        private String email;
+        private String phone;
+
         private String LinkType;
         
         private String Caption;
@@ -27,6 +32,56 @@ public class AttachmentModel {
         private String UpdateTime;
         
         private String Size;
+
+        private NewLoginData employee_detail;
+
+        public String getProfileImage() {
+            return profileImage;
+        }
+
+        public void setProfileImage(String profileImage) {
+            this.profileImage = profileImage;
+        }
+
+        public String getDevice_id() {
+            return device_id;
+        }
+
+        public void setDevice_id(String device_id) {
+            this.device_id = device_id;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public NewLoginData getEmployee_detail() {
+            return employee_detail;
+        }
+
+        public void setEmployee_detail(NewLoginData employee_detail) {
+            this.employee_detail = employee_detail;
+        }
 
         public String getId() {
             return id;

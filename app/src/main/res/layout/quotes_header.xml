@@ -75,15 +75,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/bg_corner_stroke"
+                    android:backgroundTint="@color/white"
                     android:entries="@array/data_type"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
                     android:minWidth="@dimen/size_90"
                     android:padding="@dimen/size_5"
-
                     android:textColor="@color/white"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
+
+                <!-- android:background="@drawable/bg_corner_stroke"-->
 
             </RelativeLayout>
 

@@ -7,12 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.InvoiceTransactionFullInfo;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.model.LedgerCustomerData;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +30,11 @@ public class ParticularCustomerSalesTransactionAdapter extends RecyclerView.Adap
     List<LedgerCustomerData> tempList = null;
 
     public ParticularCustomerSalesTransactionAdapter(Context context1, ArrayList<LedgerCustomerData> branchList, String customerName, String fromWhere) {
-        this.branchList=branchList;
+        this.branchList = branchList;
         this.context = context1;
         this.heading = customerName;
         this.fromWhere = fromWhere;
-        this. tempList = new ArrayList<LedgerCustomerData>();
+        this.tempList = new ArrayList<LedgerCustomerData>();
         this.tempList.addAll(branchList);
 
     }
@@ -49,52 +52,44 @@ public class ParticularCustomerSalesTransactionAdapter extends RecyclerView.Adap
 
         holder.title.setText("" + branchList.get(position).getDocEntry());
 
-        String reverseDate= Globals.convertDateFormat(branchList.get(position).getCreateDate());
-      //  Globals.convertDateFormat(startDate);
+        String reverseDate = Globals.convertDateFormat(branchList.get(position).getCreateDate());
+        //  Globals.convertDateFormat(startDate);
 
 
         holder.date.setText(reverseDate);
 
         holder.status.setVisibility(View.INVISIBLE);
 
-     if(branchList.get(position).getPaymentStatus().equalsIgnoreCase("Partially Paid"))
-      {
-          holder.status.setText(branchList.get(position).getPaymentStatus());
-    holder.status.setTextColor(Color.parseColor("#ffa500"));
-          holder.status.setVisibility(View.VISIBLE);
-       }
-   else if(branchList.get(position).getPaymentStatus().equalsIgnoreCase("Unpaid"))
-       {
-           holder.status.setText(branchList.get(position).getPaymentStatus());
-  holder.status.setTextColor(Color.parseColor("#FF0000"));
-           holder.status.setVisibility(View.VISIBLE);
-      }
-   else if(branchList.get(position).getPaymentStatus().equalsIgnoreCase("Paid"))
-       {
-           holder.status.setText(branchList.get(position).getPaymentStatus());
-   holder.status.setTextColor(Color.parseColor("#00ff00"));
-           holder.status.setVisibility(View.VISIBLE);
-      }
-     else
-     {
-         holder.status.setText("Unpaid");
-     }
+        if (branchList.get(position).getPaymentStatus().equalsIgnoreCase("Partially Paid")) {
+            holder.status.setText(branchList.get(position).getPaymentStatus());
+            holder.status.setTextColor(Color.parseColor("#ffa500"));
+            holder.status.setVisibility(View.VISIBLE);
+        } else if (branchList.get(position).getPaymentStatus().equalsIgnoreCase("Unpaid")) {
+            holder.status.setText(branchList.get(position).getPaymentStatus());
+            holder.status.setTextColor(Color.parseColor("#FF0000"));
+            holder.status.setVisibility(View.VISIBLE);
+        } else if (branchList.get(position).getPaymentStatus().equalsIgnoreCase("Paid")) {
+            holder.status.setText(branchList.get(position).getPaymentStatus());
+            holder.status.setTextColor(Color.parseColor("#00ff00"));
+            holder.status.setVisibility(View.VISIBLE);
+        } else {
+            holder.status.setText("Unpaid");
+        }
 
 
         if (fromWhere.trim().equalsIgnoreCase("Receivable") || fromWhere.trim().equalsIgnoreCase("ReceivableLedger")) {
             holder.unit_price.setText(branchList.get(position).getDifferenceAmount());
-            holder.orderAmount.setText("order amount:"+ context.getResources().getString(R.string.Rs)+" "+Globals.numberToK(branchList.get(position).getOrderAmount()));
+            holder.orderAmount.setText("order amount:" + context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(branchList.get(position).getOrderAmount()));
             holder.orderAmount.setVisibility(View.VISIBLE);
         } else {
-            holder.unit_price.setText(context.getResources().getString(R.string.Rs)+" "+Globals.numberToK(branchList.get(position).getOrderAmount()));
+            holder.unit_price.setText(context.getResources().getString(R.string.Rs) + " " + Globals.numberToK(branchList.get(position).getOrderAmount()));
             holder.orderAmount.setVisibility(View.GONE);
         }
 
     }
 
 
-    public void AllData(List<LedgerCustomerData> tmp)
-    {
+    public void AllData(List<LedgerCustomerData> tmp) {
         tempList.clear();
         tempList.addAll(tmp);
         notifyDataSetChanged();
@@ -130,7 +125,6 @@ public class ParticularCustomerSalesTransactionAdapter extends RecyclerView.Adap
                     /***shubh****/
                     i.putExtra("status", branchList.get(getAdapterPosition()).getPaymentStatus());
                     context.startActivity(i);
-
 
 
                 }

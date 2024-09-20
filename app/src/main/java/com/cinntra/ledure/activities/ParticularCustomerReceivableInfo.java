@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -35,19 +37,24 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.ParticularCustomerTransactionAdapter;
 import com.cinntra.ledure.adapters.Receivable_JE_CreditAdapter;
+import com.cinntra.ledure.customUI.CustomMarkerViewReceivables;
+import com.cinntra.ledure.customUI.RoundedBarChart;
 import com.cinntra.ledure.databinding.BottomSheetDialogOverDueSelectDateBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShareReportBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShowInReceivableBinding;
+import com.cinntra.ledure.fragments.DashboardFragmentFromActivity;
 import com.cinntra.ledure.fragments.WebViewBottomSheetFragment;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MainBaseActivity;
@@ -55,7 +62,19 @@ import com.cinntra.ledure.model.BusinessPartnerData;
 import com.cinntra.ledure.model.LedgerCustomerData;
 import com.cinntra.ledure.model.LedgerCustomerResponse;
 import com.cinntra.ledure.model.Receivable_JE_Credit;
+import com.cinntra.ledure.newapimodel.ResponseReceivableGraph;
 import com.cinntra.ledure.webservices.NewApiClient;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
@@ -66,6 +85,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +94,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ParticularCustomerReceivableInfo extends MainBaseActivity {
@@ -108,6 +129,15 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
     @BindView(R.id.btnRemindNow)
     Button btnRemindNow;
 
+    @BindView(R.id.pending_amount)
+    TextView pending_amount;
+
+    @BindView(R.id.tvSalesCardSmall)
+    TextView tvSalesCardSmall;
+
+    @BindView(R.id.chartInReceivableParticular)
+    BarChart chartInReceivableParticular;
+
 
     String cardCode, cardName;
     /***shubh****/
@@ -130,6 +160,16 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
     LinearLayoutManager layoutManager;
 
     private void shareLedgerData() {
+        //todo pdf
+        if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            url = Globals.receivableParticularpurchase + "Type=Gross&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&DueDaysGroup=" + overdueDaysFilter;
+
+        } else {
+            url = Globals.receivableParticular + "Type=Gross&CardCode=" + cardCode + "&FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&DueDaysGroup=" + overdueDaysFilter;
+
+        }
+        Log.e(TAG, "shareLedgerData: " + url);
+
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getSupportFragmentManager(),
@@ -146,6 +186,13 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.progress_dialog_alert)
+                .setCancelable(false);
+
+
+        alertDialog = builder.create();
+
         layoutManager = new LinearLayoutManager(this);
         receive_pending_layout.setVisibility(View.VISIBLE);
         type_dropdown.setVisibility(View.GONE);
@@ -154,11 +201,20 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
         if (fromWhere.equalsIgnoreCase("Receivable")) {
             startDate = "";
             endDate = "";
+
             //   from_to_date.setText("All");
         } else {
+
             startDate = Prefs.getString(Globals.FROM_DATE, "");
             endDate = Prefs.getString(Globals.TO_DATE, "");
+
             //   from_to_date.setText(startDate + " - " + endDate);
+        }
+
+
+        if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+            tvSalesCardSmall.setText("Purchase");
+            pending_amount.setText("JE/Debit Note");
         }
 
 
@@ -184,9 +240,14 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
         customerRecyclerView = (RecyclerView) findViewById(R.id.customers_recyclerview);
         customerRecyclerView.addOnScrollListener(scrollListener);
 
+        //todo receivable graph
+        chartInReceivableParticular.setVisibility(View.VISIBLE);
+        ReceivableGraphApi();
+
 
         btnRemindNow.setOnClickListener(view -> {
             shareLedgerData();
+
             //  Toast.makeText(this, "UnAble To Share\nThis Section is Under Maintenance", Toast.LENGTH_SHORT).show();
 
             // showBottomSheetDialog();
@@ -251,6 +312,179 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
     String startDate = "";
     String endDate = "";
     MaterialDatePicker<Pair<Long, Long>> materialDatePicker;
+
+    //todo new graph
+    AlertDialog.Builder builder;
+    AlertDialog alertDialog;
+
+    public static List<BarEntry> Receivableentries = new ArrayList<>();
+    public static List<String> ReceivableentriesXaxis = new ArrayList<>();
+    public static List<String> ReceivableentriesYaxis = new ArrayList<>();
+    public static List<String> ReceivableValueForMarker = new ArrayList<>();
+
+    private void ReceivableGraphApi() {
+
+
+        alertDialog.show();
+
+        HashMap obj = new HashMap<String, String>();
+        obj.put("FromDate", Globals.firstDateOfFinancialYear());
+        obj.put("ToDate", Globals.lastDateOfFinancialYear());
+        obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+        obj.put("CardCode", cardCode);
+
+        Call<ResponseReceivableGraph> call;
+
+        if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+            call = NewApiClient.getInstance().getApiService(ParticularCustomerReceivableInfo.this).receivableDueMonthGraph(obj);
+        } else {
+            call = NewApiClient.getInstance().getApiService(ParticularCustomerReceivableInfo.this).receivableDueMonthGraphPurchase(obj);
+        }
+        call.enqueue(new Callback<ResponseReceivableGraph>() {
+            @Override
+            public void onResponse(Call<ResponseReceivableGraph> call, Response<ResponseReceivableGraph> response) {
+                if (response != null) {
+                    if (response.body().status == 200) {
+                        alertDialog.dismiss();
+                        if (response.body() != null && response.body().data.size() > 0) {
+                            Receivableentries.clear();
+                            ReceivableentriesXaxis.clear();
+                            ReceivableentriesYaxis.clear();
+                            ReceivableValueForMarker.clear();
+                            for (int i = 0; i < response.body().data.size(); i++) {
+                                ArrayList<String> daysGroup = new ArrayList<>();
+                           /* if (response.body().data.get(i).getOverDueDaysGroup().equalsIgnoreCase("")) {
+
+                            }*/
+                                ReceivableentriesXaxis.add(response.body().getData().get(i).getOverDueDaysGroup());
+                                ReceivableentriesYaxis.add("" + Globals.numberToK(String.valueOf(Double.valueOf(response.body().getData().get(i).getTotalDue()))));
+                                Receivableentries.add(new BarEntry(i, Float.parseFloat(response.body().getData().get(i).getTotalDue())));
+                                ReceivableValueForMarker.add("" + Globals.convertToLakhAndCroreFromString(response.body().getData().get(i).getTotalDue()));
+
+                            }
+                            managebyShubhReceivable(chartInReceivableParticular, Receivableentries);
+
+                        }
+
+
+                    }
+
+                    // setupChartViewPgaer();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseReceivableGraph> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    private void managebyShubhReceivable(View view, List<BarEntry> entries) {
+
+
+        List<String> xvalues = Arrays.asList(">90", "61-90", "0-30", "31-60");
+        //List<String> xvalues= Arrays.asList("Jan","Feb","March","April","May","June");
+
+        BarChart customer_barChart = view.findViewById(R.id.chartInReceivableParticular);
+
+
+
+
+      /*  CustomMarkerViewReceivables markerView = new CustomMarkerViewReceivables(context, R.layout.barchart_marker, DashboardFragmentFromActivity.ReceiptValueForMarker);
+
+
+        customer_barChart.setMarker(markerView);*/
+
+
+        RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
+        roundedBarChartRenderer.setmRadius(0f);
+        customer_barChart.setRenderer(roundedBarChartRenderer);
+
+        customer_barChart.setDrawBarShadow(false);
+        customer_barChart.setDrawValueAboveBar(false);
+        customer_barChart.getDescription().setEnabled(false);
+        customer_barChart.setDrawGridBackground(false);
+
+
+        customer_barChart.getAxisRight().setEnabled(false);
+        Legend legend = customer_barChart.getLegend();
+        legend.setEnabled(false);
+
+
+        List<IBarDataSet> dataSets = new ArrayList<>();
+        BarDataSet dataSet = new BarDataSet(entries, "Values");
+        dataSet.setColor(getResources().getColor(R.color.white));
+        dataSet.setDrawValues(false);
+        dataSets.add(dataSet);
+
+
+        BarData data = new BarData(dataSets);
+        data.setBarWidth(0.75f);
+        data.setValueTextColor(getResources().getColor(R.color.white));
+        //  data.setValueTextColor(Color.WHITE);
+        customer_barChart.setData(data);
+        customer_barChart.setFitBars(false);
+
+
+        // customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(xvalues));
+        customer_barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        customer_barChart.getXAxis().setTextColor(getResources().getColor(R.color.white));
+        customer_barChart.getXAxis().setLabelCount(13, false);
+        customer_barChart.getXAxis().setDrawGridLines(false);
+
+        customer_barChart.getXAxis().setGranularity(1f);
+
+
+        customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(ReceivableentriesXaxis));
+
+
+        YAxis yAxis = customer_barChart.getAxisLeft();
+        yAxis.setTextColor(getResources().getColor(R.color.white));
+
+//        yAxis.setAxisMinimum(0f);//todo remove due to get negative y axis in graph
+        yAxis.setEnabled(true);
+
+        //todo comment byshubh
+        yAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+//                axis.setLabelCount(3, true);
+                return "" + Globals.convertToLakhAndCroreFromFloat(value);
+            }
+        });
+
+        customer_barChart.setTouchEnabled(true);
+        customer_barChart.setDrawBarShadow(false);
+        customer_barChart.setScaleEnabled(false);//todo stop zoom out chart functionality--
+
+        //hide grid lines
+        customer_barChart.getAxisLeft().setDrawGridLines(false);
+
+
+        //remove right y-axis
+        customer_barChart.getAxisRight().setEnabled(false);
+
+        //remove legend
+
+
+        //remove description label
+        customer_barChart.getDescription().setEnabled(false);
+
+        //add animation
+        customer_barChart.animateY(2000);
+        CustomMarkerViewReceivables markerView = new CustomMarkerViewReceivables(ParticularCustomerReceivableInfo.this, R.layout.barchart_marker, ReceivableValueForMarker);
+        customer_barChart.setMarker(markerView);
+
+
+        //draw chart
+        customer_barChart.invalidate();
+
+
+
+    }
+
 
     private void dateRangeSelector() {
         if (startDatelng == 0.0) {
@@ -391,9 +625,9 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
 
                 Call<LedgerCustomerResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call =NewApiClient.getInstance().getApiService().bp_payable(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceivableInfo.this).bp_payable(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().bp_receivable(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceivableInfo.this).bp_receivable(hde);
                 }
 
                 try {
@@ -478,9 +712,9 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
 
                 Call<LedgerCustomerResponse> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call =NewApiClient.getInstance().getApiService().bp_payable(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceivableInfo.this).bp_payable(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().bp_receivable(hde);
+                    call = NewApiClient.getInstance().getApiService(ParticularCustomerReceivableInfo.this).bp_receivable(hde);
                 }
                 try {
                     Response<LedgerCustomerResponse> response = call.execute();
@@ -919,8 +1153,7 @@ public class ParticularCustomerReceivableInfo extends MainBaseActivity {
                     bottomSheetDialog.dismiss();
                     from_to_date.setText("31-45");
 
-                }
-                else if (i == binding.rblessThan59.getId()) {
+                } else if (i == binding.rblessThan59.getId()) {
                     Log.e(TAG, "onCheckedChanged: " + Globals.getDateForReceivable(-45));
                     startDate = Globals.getTodaysDate();
                     endDate = Globals.getDateForReceivable(-45);

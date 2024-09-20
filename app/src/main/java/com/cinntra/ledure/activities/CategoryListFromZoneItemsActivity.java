@@ -481,9 +481,9 @@ public class CategoryListFromZoneItemsActivity extends AppCompatActivity {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(CategoryListFromZoneItemsActivity.this).getFilterGroupItemStockPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                    call = NewApiClient.getInstance().getApiService(CategoryListFromZoneItemsActivity.this).getFilterGroupItemStock(hde);
                 }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
@@ -562,9 +562,9 @@ public class CategoryListFromZoneItemsActivity extends AppCompatActivity {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(CategoryListFromZoneItemsActivity.this).getFilterGroupItemStockPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                    call = NewApiClient.getInstance().getApiService(CategoryListFromZoneItemsActivity.this).getFilterGroupItemStock(hde);
                 }
 
 
@@ -810,6 +810,33 @@ public class CategoryListFromZoneItemsActivity extends AppCompatActivity {
             }
 
             bottomSheetDialog.dismiss();
+        });
+
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                binding.loader.setVisibility(View.VISIBLE);
+                pageNo = 1;
+                searchTextValue = "";
+                Globals.setUpDateTextView(Globals.convertDateFormat(startDate), Globals.convertDateFormat(endDate), false, "", binding.tvSelectedDate);
+                if (Globals.checkInternet(CategoryListFromZoneItemsActivity.this)) {
+                    if (groupType.equalsIgnoreCase("Items")) {
+                        setRecyclerViewAdapter();
+                        //  callApi("");
+                    } else if (groupType.equalsIgnoreCase("Category")) {
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "");
+                    } else {
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "Zone");
+                    }
+
+                }
+
+                bottomSheetDialog.dismiss();
+            }
         });
         bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
         {

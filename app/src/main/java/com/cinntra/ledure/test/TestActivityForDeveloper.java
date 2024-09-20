@@ -179,7 +179,7 @@ public class TestActivityForDeveloper extends AppCompatActivity {
             bodyCheckInTime.setCheckInRemarks(checkinRemark);
 
 
-            Call<ResponseTripCheckIn> call = NewApiClient.getInstance().getApiService().tripCheckIn(
+            Call<ResponseTripCheckIn> call = NewApiClient.getInstance().getApiService(this).tripCheckIn(
                     imagePart, bptype, bpName, cardCode, salesPersonCode, modeOfTransport, checkInDate, CheckInTime, checkInLat, checkInLong, checkinRemark
             );
 

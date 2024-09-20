@@ -784,7 +784,7 @@ public class PartyActivity extends AppCompatActivity implements View.OnClickList
         hde.put("OrderByName", orderByName);
 
 
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -849,7 +849,7 @@ public class PartyActivity extends AppCompatActivity implements View.OnClickList
         hde.put("SearchText", searchTextValue);
         hde.put("Zones", Zones);
         hde.put("OrderByName", orderByName);
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getAllBusinessPartnerWithPagination(hde);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).getAllBusinessPartnerWithPagination(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

@@ -2,6 +2,7 @@ package com.cinntra.ledure.customUI;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.buffer.BarBuffer;
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider;
@@ -15,7 +16,7 @@ public class RoundedBarChart extends BarChartRenderer {
         super(chart, animator, viewPortHandler);
     }
 
-    private float mRadius=5f;
+    private float mRadius = 2f;
 
     public void setmRadius(float mRadius) {
         this.mRadius = mRadius;
@@ -39,7 +40,13 @@ public class RoundedBarChart extends BarChartRenderer {
         buffer.setBarWidth(mChart.getBarData().getBarWidth());
         buffer.setInverted(mChart.isInverted(dataSet.getAxisDependency()));
 
-        buffer.feed(dataSet);
+        try {
+
+            buffer.feed(dataSet);
+
+        } catch (Exception e) {
+
+        }
 
         trans.pointValuesToPixel(buffer.buffer);
 
@@ -64,8 +71,6 @@ public class RoundedBarChart extends BarChartRenderer {
                                 buffer.buffer[j + 2],
                                 mViewPortHandler.contentBottom(), mShadowPaint);
                 }*/
-
-
 
 
                 // Set the color for the currently drawn value. If the index
@@ -110,16 +115,6 @@ public class RoundedBarChart extends BarChartRenderer {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }

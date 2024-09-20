@@ -76,7 +76,7 @@ public class FileUtils {
     }
 
     private static String getLocalPath(Context context, Uri uri) {
-        if (DEBUG) {
+       /* if (DEBUG) {
             Log.d(TAG + " File -", "Authority: " + uri.getAuthority() +
                     ", Fragment: " + uri.getFragment() +
                     ", Port: " + uri.getPort() +
@@ -84,7 +84,7 @@ public class FileUtils {
                     ", Scheme: " + uri.getScheme() +
                     ", Host: " + uri.getHost() +
                     ", Segments: " + uri.getPathSegments().toString());
-        }
+        }*/
 
         boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 

@@ -24,7 +24,7 @@ public class CustomMarkerViewReceivables extends MarkerView {
     }
 
     // This method will be called every time the MarkerView is redrawn
-    @Override
+/*    @Override
     public void refreshContent(Entry e, Highlight highlight) {
         // You can customize the content based on the Entry object
         if (e instanceof BarEntry) {
@@ -38,17 +38,33 @@ public class CustomMarkerViewReceivables extends MarkerView {
                 tvContent.setText("" + barEntry.getY());
             }
 
-/*
+*//*
             ReceivableentriesYaxis.add(""+ Globals.numberToK(String.valueOf(Double.valueOf(response.body().getData().get(i).getTotalDue()))));
-*/
-         /*   for (int i = 0; i < MainActivity_B2C.SalesValueForMarker.size(); i++) {
+*//*
+         *//*   for (int i = 0; i < MainActivity_B2C.SalesValueForMarker.size(); i++) {
                 tvContent.setText("Value: " + MainActivity_B2C.SalesValueForMarker.get(i));
             }
-*/
+*//*
 
         }
 
         // Call the super method for default implementation
+        super.refreshContent(e, highlight);
+    }*/
+
+    @Override
+    public void refreshContent(Entry e, Highlight highlight) {
+        if (e instanceof BarEntry) {
+            BarEntry barEntry = (BarEntry) e;
+            int index = (int) barEntry.getX();
+
+            if (dayList != null && index >= 0 && index < dayList.size()) {
+                tvContent.setText(dayList.get(index));
+            } else {
+                tvContent.setText(String.format("%.2f", barEntry.getY())); // Ensure proper formatting for all values
+            }
+        }
+
         super.refreshContent(e, highlight);
     }
 

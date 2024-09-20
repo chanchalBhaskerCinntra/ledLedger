@@ -300,7 +300,7 @@ public class HorizontalPicker extends LinearLayout implements HorizontalPickerLi
        {
     Date now = new Date(miliSecond);
     SimpleDateFormat simpleDateformat = new SimpleDateFormat("E"); // the day of the week abbreviated
-    Log.e("D=>",""+simpleDateformat.format(now));
+//    Log.e("D=>",""+simpleDateformat.format(now));
     return simpleDateformat.format(now);
        }
     int miliSecond = (int) (1000*60*60*24);
@@ -347,11 +347,11 @@ public class HorizontalPicker extends LinearLayout implements HorizontalPickerLi
 
               // Printing the day of the week
               // and its Int value
-              Log.e("Day of the Week on",""+ dayOfWeek.name());
+//              Log.e("Day of the Week on",""+ dayOfWeek.name());
 
               String[] weekdays = dfs.getWeekdays();
               for (String weekday : weekdays) {
-               Log.e("weekday = ","" + weekday);
+//               Log.e("weekday = ","" + weekday);
               }
 
 

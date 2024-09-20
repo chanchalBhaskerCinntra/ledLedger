@@ -94,7 +94,7 @@ public class All_Event_Task_Fragment extends Fragment {
         eventValue.setDate(Globals.CurrentSelectedDate);
 
 
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().getcalendardata(eventValue);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getcalendardata(eventValue);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {

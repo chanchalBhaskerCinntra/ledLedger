@@ -8,21 +8,31 @@ import android.os.CountDownTimer;
 import androidx.multidex.MultiDex;
 
 import com.cinntra.ledure.receivers.ConnectivityReceiver;
+import com.cinntra.ledure.services.LocationNotification;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.io.File;
+
 public class MyApp extends Application {
     private FirebaseAnalytics mFirebaseAnalytics;
-    private static MyApp mInstance;
+    public static MyApp mInstance;
     public static CountDownTimer timer;
+
+    private LocationNotification notification;
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
         MultiDex.install(mInstance);
+        notification = new LocationNotification(mInstance);
+        notification.createChannel();
+
+        ApplicationModule.setApplication(this);
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         new Prefs.Builder()
         .setContext(this)
@@ -30,6 +40,13 @@ public class MyApp extends Application {
         .setPrefsName(getPackageName())
         .setUseDefaultSharedPreference(true)
          .build();
+
+        File dexOutputDir = getCodeCacheDir();
+        dexOutputDir.setReadOnly();
+
+
+
+
     }
 
     public static synchronized MyApp getInstance() {

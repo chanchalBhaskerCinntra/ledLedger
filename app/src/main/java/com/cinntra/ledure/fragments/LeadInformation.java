@@ -133,7 +133,7 @@ public class LeadInformation extends Fragment implements View.OnClickListener {
     private void callApi(int id) {
         LeadValue lv = new LeadValue();
         lv.setId(id);
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().particularlead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(getActivity()).particularlead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {

@@ -30,6 +30,15 @@ public class SoldItemResponse implements Serializable {
     private String TotalPrice;
     private String UnitPrice;
     private String NoOfInvoice;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNetTotal() {
         return NetTotal;

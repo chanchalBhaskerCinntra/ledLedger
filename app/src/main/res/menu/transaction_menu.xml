@@ -3,114 +3,98 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.learn2crack.recyclerviewsearch.MainActivity">
-    <group
-        android:checkableBehavior="single">
-
+    <group android:checkableBehavior="single">
 
 
         <item
             android:id="@+id/search"
             android:icon="@drawable/ic_search"
-            android:title="Search"
             android:iconTint="@color/white"
-            app:showAsAction="always"/>
-<!--            app:actionViewClass="androidx.appcompat.widget.SearchView"/>-->
+            android:title="Search"
+            app:showAsAction="always" />
+        <!--            app:actionViewClass="androidx.appcompat.widget.SearchView"/>-->
         <item
             android:id="@+id/calendar"
             android:icon="@drawable/ic_cal_menu"
-            android:title="Calendar"
             android:iconTint="@color/white"
+            android:title="Calendar"
             android:visible="true"
-            app:showAsAction="always"
-            />
-
+            app:showAsAction="always" />
 
 
     </group>
-    <group
-        android:checkableBehavior="single">
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/info_trans"
             android:icon="@drawable/ic_info"
-            android:title="@string/information"
             android:iconTint="@color/white"
-            app:showAsAction="always"
-           />
+            android:title="@string/information"
+            app:showAsAction="always" />
 
         <item
             android:id="@+id/ledger"
-            android:visible="false"
             android:icon="@drawable/ic_ledger"
-            android:title="Calendar"
             android:iconTint="@color/white"
-            app:showAsAction="always"
-            />
+            android:title="Calendar"
+            android:visible="false"
+            app:showAsAction="always" />
 
         <item
             android:id="@+id/share_received"
             android:icon="@drawable/ic_baseline_share_24"
-            android:title="Share"
             android:iconTint="@color/white"
-            app:showAsAction="always"
+            android:title="Share"
             android:visible="false"
-            />
+            app:showAsAction="always" />
         <item
             android:id="@+id/filterAtoZ"
             android:icon="@drawable/ic_filter"
-            android:title="A to Z"
             android:iconTint="@color/white"
+            android:title="A to Z"
             android:visible="false"
-            app:showAsAction="ifRoom|collapseActionView"
-            />
+            app:showAsAction="ifRoom|collapseActionView" />
 
 
         <item
             android:id="@+id/filterZtoA"
             android:icon="@drawable/ic_filter"
-            android:title="Z to A"
             android:iconTint="@color/white"
+            android:title="Z to A"
             android:visible="false"
-            app:showAsAction="ifRoom|collapseActionView"
-            />
+            app:showAsAction="ifRoom|collapseActionView" />
 
         <item
             android:id="@+id/filterAmount"
             android:icon="@drawable/ic_filter"
-            android:title="Amount Desc"
             android:iconTint="@color/white"
+            android:title="Amount Desc"
             android:visible="false"
-            app:showAsAction="ifRoom|collapseActionView"
-            />
+            app:showAsAction="ifRoom|collapseActionView" />
 
         <item
             android:id="@+id/filterAmountAsc"
             android:icon="@drawable/ic_filter"
-            android:title="Amount Asc"
             android:iconTint="@color/white"
+            android:title="Amount Asc"
             android:visible="false"
-            app:showAsAction="ifRoom|collapseActionView"
-            />
+            app:showAsAction="ifRoom|collapseActionView" />
 
         <item
             android:id="@+id/filterDate"
             android:icon="@drawable/ic_filter"
-            android:title="Date"
             android:iconTint="@color/white"
+            android:title="Date"
             android:visible="false"
-            app:showAsAction="ifRoom|collapseActionView"
-            />
+            app:showAsAction="ifRoom|collapseActionView" />
 
 
         <item
             android:id="@+id/clearAllFilter"
             android:icon="@drawable/ic_filter"
-            android:title="Clear all filter"
             android:iconTint="@color/white"
+            android:title="Clear all filter"
             android:visible="true"
-            app:showAsAction="ifRoom|collapseActionView"
-            />
-
-
+            app:showAsAction="ifRoom|collapseActionView" />
 
 
     </group>

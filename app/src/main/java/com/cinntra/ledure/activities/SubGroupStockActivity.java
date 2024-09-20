@@ -286,6 +286,28 @@ public class SubGroupStockActivity extends AppCompatActivity {
 
             bottomSheetDialog.dismiss();
         });
+
+
+
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startDatelng = Globals.lastyearCal().getTimeInMillis();
+                        endDatelng = Globals.thisyearCal().getTimeInMillis();
+                        startDate = Globals.lastYearFirstDate();
+                        endDate = Globals.getCurrentDateInLastFinancialYear();
+                        binding.loader.setVisibility(View.VISIBLE);
+                        pageNo = 1;
+                        callApi("");
+
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+
+
+
+
         bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
         {
             startDate = "";
@@ -419,17 +441,13 @@ public class SubGroupStockActivity extends AppCompatActivity {
                 hde.put("Zone", zoneCode);
                 hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-
-
-
-
                 Call<ResSubCatItems> call;
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().sub_category_items_dashboard_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(SubGroupStockActivity.this).sub_category_items_dashboard_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().sub_category_items_dashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(SubGroupStockActivity.this).sub_category_items_dashboard(hde);
                 }
                 try {
                     Response<ResSubCatItems> response = call.execute();
@@ -496,9 +514,9 @@ public class SubGroupStockActivity extends AppCompatActivity {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().sub_category_items_dashboard_purchase(hde);
+                    call = NewApiClient.getInstance().getApiService(SubGroupStockActivity.this).sub_category_items_dashboard_purchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().sub_category_items_dashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(SubGroupStockActivity.this).sub_category_items_dashboard(hde);
                 }
                 try {
                     Response<ResSubCatItems> response = call.execute();

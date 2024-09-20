@@ -256,7 +256,7 @@ public class ItemsList extends MainBaseActivity implements View.OnClickListener 
         bodyItemList.setCatID(Integer.valueOf(catID));
         bodyItemList.setWarehouseCode(warehouse);
 
-        Call<ItemResponse> call = NewApiClient.getInstance().getApiService().itemAllFilter(bodyItemList);
+        Call<ItemResponse> call = NewApiClient.getInstance().getApiService(this).itemAllFilter(bodyItemList);
         call.enqueue(new Callback<ItemResponse>() {
             @Override
             public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response) {

@@ -257,10 +257,6 @@
                     android:textSize="@dimen/text_size_18" />
 
 
-
-
-
-
             </LinearLayout>
 
             <TextView

@@ -187,7 +187,7 @@ public class Open_Order extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                Log.e("OrderW==>",newText.toString());
+//                Log.e("OrderW==>",newText.toString());
                 if(adapter!=null)
                     adapter.filter(newText);
                 return true;

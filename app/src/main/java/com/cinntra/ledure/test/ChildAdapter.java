@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.activities.ItemDashboardListActivity;
+import com.cinntra.ledure.activities.ItemListFromSelectingCategoryFromZoneActivity;
 import com.cinntra.ledure.activities.Sale_Group_Inovice_Reports;
 import com.cinntra.ledure.activities.Sold_ItemBasesActivity;
 import com.cinntra.ledure.globals.Globals;
@@ -77,12 +78,22 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
             itemView.setOnClickListener(view -> {
 
                 if (fromwhere.equalsIgnoreCase("zonesub")){
-                    Intent intent = new Intent(itemView.getContext(), Sale_Group_Inovice_Reports.class);
+
+                    Intent i = new Intent(itemView.getContext(), ItemListFromSelectingCategoryFromZoneActivity.class);
+                    i.putExtra("fromwhere", fromwhere);
+                    i.putExtra("group", groupFIlter);
+                    i.putExtra("zoneCode", zonCode);
+                    i.putExtra("ItemGroupCode", "" + childItemList.get(getAdapterPosition()).getGroupName());
+                    i.putExtra("ItemGroupName", "" + childItemList.get(getAdapterPosition()).getGroupName());
+                    itemView.getContext().startActivity(i);
+
+
+                  /*  Intent intent = new Intent(itemView.getContext(), Sale_Group_Inovice_Reports.class);
                     intent.putExtra("group", groupFIlter);
                     intent.putExtra("code", zonCode);
                     intent.putExtra("groupname", zonCode);
                     intent.putExtra("stockFormWhere", "zonesub");
-                    itemView.getContext().startActivity(intent);
+                    itemView.getContext().startActivity(intent);*/
 
                 }
                 else if (fromwhere.equalsIgnoreCase("fromSaleCategory")){

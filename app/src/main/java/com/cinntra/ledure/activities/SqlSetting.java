@@ -110,7 +110,7 @@ public class SqlSetting extends AppCompatActivity implements View.OnClickListene
              selectDAtabases();
              }
              else {
-            Log.e("Result=>","Connection is null");
+//            Log.e("Result=>","Connection is null");
 
                  }
                }
@@ -155,7 +155,7 @@ public class SqlSetting extends AppCompatActivity implements View.OnClickListene
             }
             if (connection != null) {
                 try {
-                    Log.e("ConStatus","HANA successful!");
+//                    Log.e("ConStatus","HANA successful!");
                     System.out.println("Connection to HANA successful!");
                     Statement stmt = connection.createStatement();
                     ResultSet resultSet = stmt.executeQuery("Select 'Hello, world' from dummy");
@@ -171,14 +171,14 @@ public class SqlSetting extends AppCompatActivity implements View.OnClickListene
         {
             try {
                // Class.forName("com.sap.db.jdbc.Driver");
-                Log.e("Info==>",""+com.sap.db.jdbc.Driver.getVersionInfo());
+//                Log.e("Info==>",""+com.sap.db.jdbc.Driver.getVersionInfo());
                 Class.forName("com.sap.db.jdbc.Driver");
                 String url  = "jdbc:sap://103.118.16.194:30015/TEST"; //IP Address of HANAsystem followed by Port number
                 String user = "B1ADMIN";
                 String password = "Cinntra#@123";
                 Connection cn = java.sql.DriverManager.getConnection(url, user, password);
-                if (cn != null)
-                 Log.e("ConStatus","HANA successful!");
+               /* if (cn != null)
+                 Log.e("ConStatus","HANA successful!");*/
 
                // ResultSet rs = cn.createStatement().executeQuery("CALL Test.STORED_PROC");
                 // ...Enter the action here
@@ -225,7 +225,7 @@ public class SqlSetting extends AppCompatActivity implements View.OnClickListene
               try {
                   Class.forName(Globals.Classes);
                   connection = DriverManager.getConnection(url, Globals.username,Globals.password);
-                  Log.e("ConStatus","Success");
+//                  Log.e("ConStatus","Success");
 
                   Prefs.putString(Globals.SelectedSqlIP,Globals.IP);
                   Prefs.putString(Globals.SelectedSqlUser,Globals.username);
@@ -233,10 +233,10 @@ public class SqlSetting extends AppCompatActivity implements View.OnClickListene
 
               } catch (ClassNotFoundException e) {
                   e.printStackTrace();
-                  Log.e("ConStatus","Error");
+//                  Log.e("ConStatus","Error");
               } catch (SQLException e) {
                   e.printStackTrace();
-                  Log.e("ConStatus","Failure");
+//                  Log.e("ConStatus","Failure");
               }
 
 

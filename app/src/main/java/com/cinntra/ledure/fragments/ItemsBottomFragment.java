@@ -1,6 +1,7 @@
 package com.cinntra.ledure.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,13 +31,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
+import com.bumptech.glide.Glide;
 import com.cinntra.ledure.R;
+import com.cinntra.ledure.activities.Login;
 import com.cinntra.ledure.activities.MainActivity_B2C;
 import com.cinntra.ledure.adapters.ItemOnStockGroupAdapter;
 import com.cinntra.ledure.adapters.ItemStockAdapter;
 import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.databinding.FragmentItemsBottomBinding;
 import com.cinntra.ledure.globals.Globals;
+import com.cinntra.ledure.globals.SessionManagement;
+import com.cinntra.ledure.model.AttachmentModel;
 import com.cinntra.ledure.model.DataItemDashBoard;
 import com.cinntra.ledure.model.ResponseItemDashboard;
 import com.cinntra.ledure.newapimodel.DataItemFilterDashBoard;
@@ -45,6 +51,7 @@ import com.cinntra.roomdb.ItemsDatabase;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.gson.JsonObject;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.OnMenuItemClickListener;
@@ -58,6 +65,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 
@@ -107,6 +115,8 @@ public class ItemsBottomFragment extends Fragment {
 
         filterByName = Prefs.getString(Globals.PrefsItemATOZ, "");
         filterByAmount = Prefs.getString(Globals.PrefsItemAmount, "");
+        sessionManagement=new SessionManagement(getActivity());
+        callAttachmentAllApi();
 
         //todo set defualt prefs
         Prefs.putBoolean(Globals.ISPURCHASE, false);
@@ -138,7 +148,6 @@ public class ItemsBottomFragment extends Fragment {
         } else {
             Globals.setUpDateTextView(Globals.convertDateFormat(startDate), Globals.convertDateFormat(endDate), false, "", binding.tvSelectedDate);
         }
-
 
         hideToolbarMenu();
         db = ItemsDatabase.getDatabase(requireContext());
@@ -293,6 +302,65 @@ public class ItemsBottomFragment extends Fragment {
             }
         });
 
+    }
+
+    SessionManagement sessionManagement;
+
+    private void callAttachmentAllApi(){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+     /*   jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
+        jsonObject.addProperty("LinkType", "ProfilePic");*/
+//        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(getActivity()).getAllAttachment(jsonObject);
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(getActivity()).getNewAllAttachmentApi(jsonObject);
+        call.enqueue(new Callback<AttachmentModel>() {
+            @Override
+            public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
+                if (response != null) {
+
+                    if (response.code() == 200) {
+                        Log.e(TAG, "onResponse: "+response.body().getMessage() );
+                        if (response.body().getStatus() == 200){
+                            if (response.body().getData().size() > 0) {
+                                String filePath = Globals.ImageURL + response.body().getData().get(0).getProfileImage();
+
+                                if (filePath != null) {
+                          /*      Glide.with(getActivity())
+                                        .load(filePath)
+                                        .into(binding.proImg);*/
+                                } else {
+                                    //  binding.proImg.setImageResource(R.drawable.ic_profileicon);
+                                }
+
+                            }
+                        }
+
+                        else if (response.body().getStatus() == 401) {
+                            Toast.makeText(getActivity(), "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                            Prefs.clear();
+                            Intent intent = new Intent(getActivity(), Login.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                            sessionManagement.ClearSession();
+                        }
+
+                    } else if (response.code() == 201) {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AttachmentModel> call, Throwable t) {
+                Log.e(TAG, "onFailure: "+t.getMessage() );
+            }
+        });
     }
 
     String groupType = "Category";
@@ -516,6 +584,34 @@ public class ItemsBottomFragment extends Fragment {
 
             bottomSheetDialog.dismiss();
         });
+
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                binding.loader.setVisibility(View.VISIBLE);
+                pageNo = 1;
+                searchTextValue = "";
+                Globals.setUpDateTextView(Globals.convertDateFormat(startDate), Globals.convertDateFormat(endDate), false, "", binding.tvSelectedDate);
+                if (Globals.checkInternet(requireContext())) {
+                    if (groupType.equalsIgnoreCase("Items")) {
+                        setRecyclerViewAdapter();
+                        callApi("");
+                    } else if (groupType.equalsIgnoreCase("Category")) {
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "");
+                    } else {
+                        callApiGroupItemStock(searchTextValue, startDate, endDate, groupType, "Zone");
+                    }
+
+                }
+
+                bottomSheetDialog.dismiss();
+            }
+        });
+
         bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";
@@ -597,7 +693,11 @@ public class ItemsBottomFragment extends Fragment {
         binding.toolbarItemDashBoard.back.setVisibility(View.GONE);
 
         //todo sale purchase option is disable according to client
-        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
+        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("21") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("32") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("31") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("-1")) {
             binding.toolbarItemDashBoard.salesAndPurchaseLayout.setVisibility(View.VISIBLE);
         } else {
             binding.toolbarItemDashBoard.salesAndPurchaseLayout.setVisibility(View.INVISIBLE);
@@ -920,9 +1020,9 @@ public class ItemsBottomFragment extends Fragment {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getItemOnDashboardPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getItemOnDashboard(hde);
                 }
 
 
@@ -959,7 +1059,9 @@ public class ItemsBottomFragment extends Fragment {
                                     // setData(response.body().getData().get(0));
 
                                     //setRecyclerViewAdapter();
-                                    adapter.notifyDataSetChanged();
+                                    if (adapter != null){
+                                        adapter.notifyDataSetChanged();
+                                    }
                                     binding.swipeRefreshItems.setRefreshing(false);
 
 
@@ -1060,9 +1162,9 @@ public class ItemsBottomFragment extends Fragment {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboardPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getItemOnDashboardPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getItemOnDashboard(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getItemOnDashboard(hde);
                 }
                 try {
                     Response<ResponseItemDashboard> response = call.execute();
@@ -1189,7 +1291,7 @@ public class ItemsBottomFragment extends Fragment {
     }
 
     ArrayList<DataItemFilterDashBoard> AllItemsGroupStockList = new ArrayList<>();
-    ItemOnStockGroupAdapter stockGroupAdapter;
+    ItemOnStockGroupAdapter stockGroupAdapter = null;
 
     private void callApiGroupItemStock(String searchValue, String startDate, String endDate, String type, String zone) {
         binding.loader.setVisibility(View.VISIBLE);
@@ -1220,9 +1322,9 @@ public class ItemsBottomFragment extends Fragment {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStock(hde);
                 }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
@@ -1240,27 +1342,34 @@ public class ItemsBottomFragment extends Fragment {
                                         AllItemsGroupStockList.addAll(response.body().getData());
                                         //  itemsFilterDatabase.myDataDao().insertAll(AllItemsGroupStockList);
 
+                                        // setData(response.body().getData().get(0));
+                                        try {
+                                            try {
+                                                stockGroupAdapter = new ItemOnStockGroupAdapter(requireContext(), AllItemsGroupStockList, zone, "");
+                                            } catch (Exception e) {
+                                                Log.e(TAG, "runGRoupFIlter: " + e.getMessage());
+                                            }
+                                            stockGroupAdapter.AllData(AllItemsGroupStockList);
+                                            try {
+                                                layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
+                                            } catch (Exception e) {
+                                                Log.e(TAG, "runGroupLINEAR: " + e.getMessage());
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        binding.rvItemDash.setLayoutManager(layoutManager);
+                                        binding.rvItemDash.setAdapter(stockGroupAdapter);
+                                        stockGroupAdapter.notifyDataSetChanged();
+
                                     } else {
+                                        binding.rvItemDash.setVisibility(View.GONE);
                                         binding.noDatafound.setVisibility(View.VISIBLE);
                                     }
 
 
                                     binding.loader.setVisibility(View.GONE);
-                                    // setData(response.body().getData().get(0));
-                                    try {
-                                        stockGroupAdapter = new ItemOnStockGroupAdapter(requireContext(), AllItemsGroupStockList, zone, "");
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "runGRoupFIlter: " + e.getMessage());
-                                    }
-                                    stockGroupAdapter.AllData(AllItemsGroupStockList);
-                                    try {
-                                        layoutManager = new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false);
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "runGroupLINEAR: " + e.getMessage());
-                                    }
-                                    binding.rvItemDash.setLayoutManager(layoutManager);
-                                    binding.rvItemDash.setAdapter(stockGroupAdapter);
-                                    stockGroupAdapter.notifyDataSetChanged();
+
 
                                 }
                             }
@@ -1300,9 +1409,9 @@ public class ItemsBottomFragment extends Fragment {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockPurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStock(hde);
                 }
 
                 try {
@@ -1360,9 +1469,9 @@ public class ItemsBottomFragment extends Fragment {
 
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getFilterItemsZonePurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterItemsZonePurchase(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getFilterItemsZone(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterItemsZone(hde);
                 }
 
 

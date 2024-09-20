@@ -94,8 +94,8 @@ public class MonthlyItemSaleAdapter extends RecyclerView.Adapter<MonthlyItemSale
                     Prefs.putString(Globals.FROM_DATE,start);
                     Prefs.putString(Globals.TO_DATE,end);
 
-                    Log.e("StartDate>",""+start);
-                    Log.e("EndDate=>",""+end);
+//                    Log.e("StartDate>",""+start);
+//                    Log.e("EndDate=>",""+end);
 
                     Intent i = new Intent(context, ItemPurchasedByListOfCustomersActivity.class);
                     //   Intent i=  new Intent(context, InvoiceTransactionFullInfo.class);

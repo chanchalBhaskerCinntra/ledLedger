@@ -291,7 +291,7 @@ public class AddOrderForm_One_Fragment extends Fragment implements View.OnClickL
                 TaxListdialog.dismiss();
             }
         });
-        Call<ItemCategoryResponse> call = NewApiClient.getInstance().getApiService().getAllCategory();
+        Call<ItemCategoryResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getAllCategory();
         call.enqueue(new Callback<ItemCategoryResponse>() {
             @Override
             public void onResponse(Call<ItemCategoryResponse> call, Response<ItemCategoryResponse> response) {

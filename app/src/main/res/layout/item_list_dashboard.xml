@@ -9,17 +9,16 @@
         android:id="@+id/linearDetailsItemsDashboard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_2"
         android:layout_marginStart="@dimen/text_size_16"
         android:layout_marginEnd="@dimen/text_size_16"
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_margin="@dimen/size_2"
         app:layout_constraintBottom_toTopOf="@id/viewItem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
 
 
         <LinearLayout
@@ -31,24 +30,24 @@
 
             <TextView
                 android:id="@+id/tvItemName"
+                style="@style/textviewNormalHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-android:textStyle="bold"
-                style="@style/textviewNormalHeading"
                 android:text="Item Name"
                 android:textColor="@color/black"
-                android:textSize="@dimen/text_size_14" />
+                android:textSize="@dimen/text_size_14"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvtotAlPrice"
+                style="@style/textviewNormalHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                style="@style/textviewNormalHeading"
 
-                android:text="3729"
                 android:drawableTint="@color/grey"
+                android:text="3729"
 
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_12" />
@@ -56,9 +55,9 @@ android:textStyle="bold"
 
             <TextView
                 android:id="@+id/tvStandardPrice"
+                style="@style/textviewNormalHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/textviewNormalHeading"
                 android:layout_alignParentStart="true"
 
                 android:text="Std price: 50"
@@ -74,25 +73,25 @@ android:textStyle="bold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_weight="20"
             android:layout_gravity="top"
+            android:layout_weight="20"
             android:fontFamily="@font/inter_regular"
-            android:text="00 nos"
             android:gravity="end"
+            android:text="00 nos"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_12" />
 
 
     </LinearLayout>
+
     <View
         android:id="@+id/viewItem"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/dividerColor"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

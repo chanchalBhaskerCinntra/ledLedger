@@ -37,6 +37,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.cinntra.ledure.R;
+import com.cinntra.ledure.activities.Login;
 import com.cinntra.ledure.databinding.BottomSheetDialogShareReportBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShowCustomerDataBinding;
 import com.cinntra.ledure.model.Branch;
@@ -58,6 +59,7 @@ import com.cinntra.ledure.model.WareHouseData;
 import com.cinntra.ledure.newapimodel.NewOpportunityRespose;
 import com.cinntra.ledure.receivers.ConnectivityReceiver;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -90,16 +92,26 @@ import es.dmoral.toasty.Toasty;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
 public class Globals {
 
-    public static String cardTypeCCustomer ="cCustomer";
-    public static String cardTypeCSupplier ="cSupplier";
-    public static String payLoadCardType  ="CardType";
+    public static String cardTypeCCustomer = "cCustomer";
+    public static String cardTypeCSupplier = "cSupplier";
+    public static String payLoadCardType = "CardType";
+    public static String isCheckingStart = "_isCheckingStart";
     public static String cardNameGlobal = "";
 
+
+    // Static method to get the current date and time in the desired format
+    public static String getCurrentDateTimeFormatted() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+        Date currentDate = new Date();
+        return dateFormat.format(currentDate);
+    }
     public static String foo(double value) //Got here 6.743240136E7 or something..
     {
         DecimalFormat formatter;
@@ -135,6 +147,7 @@ public class Globals {
 
     //Demo
     public static String SelectedDB = "TEST";
+    public static String OTP = "_Otp";
     public static int QUERY_PAGE_SIZE = 20;
     public static String PAGE_NO_STRING = "PageNo=";
     public static String QUERY_MAX_PAGE_PDF = "&MaxSize=";
@@ -145,7 +158,7 @@ public class Globals {
     //todo SECURITY KEY FOR CAPTCHA
 
     public static String CAPTCHA_SECURITY_KEY = "6LcYlHMpAAAAALVWt8TQsNDNczOS4FL9WzXP-HnH";
-   // public static String CAPTCHA_SITE_KEY = "6LcYlHMpAAAAAPbjfJ51sU3IzcjIu5_Gcjx9s2bA";
+    // public static String CAPTCHA_SITE_KEY = "6LcYlHMpAAAAAPbjfJ51sU3IzcjIu5_Gcjx9s2bA";
     public static String CAPTCHA_SITE_KEY = "6LetdnMpAAAAAKusxdWskGdOan0MwiR7LR5ZZpUt";
 
 
@@ -154,61 +167,64 @@ public class Globals {
     public static String locationcondition = "_locationcondition";
     public static String curntDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-
     public static String BaseURL = "http://103.107.67.94:50001/";  // OFFICE HANA URL
     public static String Acess_Js_BaseURL = "http://103.107.67.94:8000/";   // OFFICE HANA URL
     // public static   String PDFURL      =  "http://103.234.187.197:8002/static/html/";
 
 
     /***********Live******************/
-     /* public static String NewBaseUrl   = "http://103.107.67.160:8001/";            //Live
-      public static String PDFURL         = "http://ledure.bridgexd.com/assets/html/";//Live*/
+    /* public static String NewBaseUrl   = "http://103.107.67.160:8001/";            //Live
+       public static String PDFURL         = "http://ledure.bridgexd.com/assets/html/";//Live*/
 
-    /************Live Development*******************/
-    public static String NewBaseUrl = "http://103.107.67.160:8002/";
+
+    /************ Live Development *******************/
+   /* public static String NewBaseUrl = "http://103.107.67.160:8002/";
     public static String PDFURL = "http://ledure.bridgexd.com/assets/newhtml/";
-    public static String ImageURL = "http://103.107.67.160:8002";
 
-    /************TestTestingONLY FOR PAYMENT_DUE*******************/
-   /* public static String NewBaseUrl = "http://103.107.67.160:8003/";
+    public static String ImageURL = "http://103.107.67.160:8002";*/
+
+    /************ Test Testing ONLY FOR PAYMENT_DUE *******************/
+
+/*    public static String NewBaseUrl = "http://103.107.67.160:8003/";
     public static String PDFURL = "http://103.107.67.160:8003/assets/html/";
     public static String ImageURL = "http://103.107.67.160:8003";*/
 
-    /*   *//***testing for vishal ****//*
-    public static String NewBaseUrl = "http://192.168.29.112:8000/";
-*/
 
+    /************ Test Development *******************/
 
-    /************Test Development*******************/
-    /*public static String NewBaseUrl = "http://103.234.187.197:8002/";  //Dev
-    public static String PDFURL = "http://103.234.187.197:4202/assets/html/"; //dev*/
-
-
-
+    public static String NewBaseUrl = "http://103.107.67.160:8005/";
+    public static String PDFURL = "http://103.234.187.197:4309/assets/newhtml/";
+    public static String ImageURL = "http://103.107.67.160:8005";
     public static String pdfGlobalUrl = "http://103.234.187.197:4214/";
-    public static String attachmentBaseUrl = "http://103.107.67.160:8001/";
+    public static String attachmentBaseUrl = "http://103.107.67.160:8005/";
     public static String LedgerUrl = "" + PDFURL + "Saleledger.html?";
-    public static String invoiceUrl = "" + PDFURL + "CompanyInvoice.html?";
     public static String creditNoteUrl = "" + PDFURL + "ar_credit_note.html?";
     public static String Ap_creditNoteUrl = "" + PDFURL + "ap_debit_note.html?";
     public static String creditNoteUrl_Service = "" + PDFURL + "ar_credit_note_service.html?";
     public static String debitNoteUrl = "" + PDFURL + "ar_debit_note.html?";
+
+    public static String invoiceUrl = "" + PDFURL + "CompanyInvoice.html?";
+
     public static String apInvoiceUrl = "" + PDFURL + "ap_Invoice.html?";
     public static String customerPdfUrl = "" + PDFURL + "Customerledger.html?";
 
     public static String journalVoucher = "" + PDFURL + "journalvoucher.html?id=";
     public static String allCustomerPdfUrl = "" + PDFURL + "PartList.html?SalesPersonCode=";
     public static String allCreditNote = "" + PDFURL + "Credit_Note.html?";
+
+    public static String allDebitNote = "" + PDFURL + "Debit_Note.html?";
     public static String perticularCreditNote = "" + PDFURL + "PerticularCredit.html?";
-    public static String perticularPurchaseCreditNote = "" + PDFURL + "purchaseinvoices.html?";
+
     public static String receiptAllPdfUl = "" + PDFURL + "ReceiptReportSharing.html?Type=Gross&";
     public static String overAllReceivable = "" + PDFURL + "OverAllReceivable.html?Type=Gross&";
     public static String overAllLedger = "" + PDFURL + "OverAllLedger.html?";
     public static String overAllPaymentCollectionOverDue = "" + PDFURL + "PaymentcollectionAll.html?";
     public static String perticularBpPaymentCollection = "" + PDFURL + "PaymentcollectionOne.html?";
+    public static String perticularBpPaymentCollectionPurchase = "" + PDFURL + "purchase/PaymentcollectionOne.html?";
     public static String particularBpRceipt = "" + PDFURL + "PerticularBPReceipt.html?Type=Gross&";
     public static String saleReportsPdf = "" + PDFURL + "SalesReportSharing.html?";
     public static String saleGroupReportsPdf = "" + PDFURL + "filter_sale.html?";
+    public static String itemInPartySectionPdf = "" + PDFURL + "ListItem1.html?";
     public static String GroupStockReportsPdf = "" + PDFURL + "stockgroup.html?";
     public static String ItemStockReportsPdf = "" + PDFURL + "itemstock.html?";
 
@@ -354,6 +370,69 @@ public class Globals {
     public static final String KEY_Total_Receivable = "myList_Total_Receivable_";
     public static final String KEY_Sale_Diff = "_Sale_Diff";
     public static final String KEY_Sale_Pending = "_SaleLedger";
+
+
+    public static void logoutScreen(Context context) {
+        Intent mainIntent = new Intent(context, Login.class);
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.getApplicationContext().startActivity(mainIntent);
+        ((Activity) context).finish();
+    }
+
+
+
+    public static void showAlertDialog(
+            Context context,
+            String title,
+            String message,
+            String positiveButtonText,
+            String negativeButtonText,
+            int iconImg,
+            Runnable onDelete,
+            Runnable onCancel
+    ) {
+        new AlertDialog.Builder(context)
+                .setMessage(message)
+                .setTitle(title)
+                .setIcon(iconImg)
+                .setPositiveButton(positiveButtonText, (dialogInterface, i) -> {
+                    onDelete.run();
+                    dialogInterface.dismiss();
+                })
+                .setNegativeButton(negativeButtonText, (dialogInterface, i) -> {
+                    onCancel.run();
+                    dialogInterface.dismiss();
+                })
+                .create()
+                .show();
+    }
+
+
+  /*  public static void errorMessage(Context context, String message) {
+
+        MotionTo.createColorToast((Activity) context, "Error", message, MotionToastStyle.ERROR,
+                MotionToast.GRAVITY_BOTTOM,
+                MotionToast.LONG_DURATION,
+                ResourcesCompat.getFont(context, www.sanju.motiontoast.R.font.helvetica_regular)
+        );
+    }
+
+    public static void successMessage(Context context, String message) {
+        MotionToast.createColorToast((Activity) context, "Success", message, MotionToastStyle.SUCCESS,
+                MotionToast.GRAVITY_BOTTOM,
+                MotionToast.LONG_DURATION,
+                ResourcesCompat.getFont(context, www.sanju.motiontoast.R.font.helvetica_regular)
+        );
+    }
+
+
+    public static void warningMessage(Context context, String message) {
+        MotionToast.createColorToast((Activity) context, "Warning", message, MotionToastStyle.WARNING,
+                MotionToast.GRAVITY_BOTTOM,
+                MotionToast.LONG_DURATION,
+                ResourcesCompat.getFont(context, www.sanju.motiontoast.R.font.helvetica_regular)
+        );
+    }*/
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     public static int getDeviceWidth(Context context) {
@@ -1027,13 +1106,28 @@ public class Globals {
 
     public static String numberToK(String number) {
 
-
         if (number == null || number.equalsIgnoreCase("null"))
             number = "00";
         else if (number.isEmpty())
             number = "00";
         // DecimalFormat df = new DecimalFormat("0.00");
         DecimalFormat df = new DecimalFormat("0");
+        double amount = Double.parseDouble(df.format(Double.parseDouble(number)));
+        NumberFormat format = NumberFormat.getInstance(new Locale("en", "IN"));
+        String formattedNumber = format.format(amount);
+
+        return formattedNumber;
+    }
+
+    public static String numberTokOnlyForStd(String number) {
+
+
+        if (number == null || number.equalsIgnoreCase("null"))
+            number = "00";
+        else if (number.isEmpty())
+            number = "00";
+         DecimalFormat df = new DecimalFormat("0.00");
+//        DecimalFormat df = new DecimalFormat("0");
         double amount = Double.parseDouble(df.format(Double.parseDouble(number)));
         NumberFormat format = NumberFormat.getInstance(new Locale("en", "IN"));
         String formattedNumber = format.format(amount);
@@ -1076,9 +1170,9 @@ public class Globals {
         }
     }
 
-    public static String convertToLakhAndCroreFromString(String input) {
+  /*  public static String convertToLakhAndCroreFromString(String input) {
         double result = convertStringToDouble(input);
-/*        String formattedNumber = "";
+*//*        String formattedNumber = "";
         if (result >= 1_00_00_000) {
 
             formattedNumber = (result / 1_00_00_000) + " Cr";
@@ -1088,20 +1182,20 @@ public class Globals {
             formattedNumber = "" + result;
         }
 
-        return formattedNumber;*/
+        return formattedNumber;*//*
 
         DecimalFormat indianFormat = new DecimalFormat("#.##");
 
         // Format the number with Cr and Lakh
         String formattedNumber;
 
-      /*  if (result >= 1_00_00_000) {
+      *//*  if (result >= 1_00_00_000) {
             formattedNumber = indianFormat.format(result / 1_00_00_000) + " Cr";
         } else if (result >= 1_00_000) {
             formattedNumber = indianFormat.format(result / 1_00_000) + " Lakh";
         } else {
             formattedNumber = indianFormat.format(result);
-        }*/  //todo comment by demand--
+        }*//*  //todo comment by demand--
 //        formattedNumber = indianFormat.format(result / 1_00_000) + " Lakh"; //todo comment on 31/01/2024
 
 
@@ -1120,7 +1214,42 @@ public class Globals {
 
         return formattedNumber;
 
+    }*/
+
+
+    public static String convertToLakhAndCroreFromString(String input) {
+        double result = convertStringToDouble(input);
+
+        // Check if the result is negative
+        boolean isNegative = result < 0;
+        if (isNegative) {
+            result = Math.abs(result); // Work with the absolute value for formatting
+        }
+
+        String formattedNumber;
+        if (result >= 10000000) { // If value is in crores
+            double crore = result / 10000000;
+            formattedNumber = String.format("%.2f Cr", crore);
+        } else if (result >= 100000) { // If value is in lakhs
+            double lakh = result / 100000;
+            formattedNumber = String.format("%.2f Lakh", lakh);
+        } else if (result >= 1000) { // If value is in thousands
+            double thousand = result / 1000;
+            formattedNumber = String.format("%.2f K", thousand);
+        } else { // For values less than 1 lakh
+            formattedNumber = String.format("%.0f", result);
+        }
+
+        if (isNegative) {
+            formattedNumber = "-" + formattedNumber; // Add the negative sign back
+        }
+
+        return formattedNumber;
     }
+
+
+
+
 
     public static String convertToLakhAndCroreFromFloat(float input) {
         //    double result = convertStringToDouble(input);
@@ -1147,7 +1276,9 @@ public class Globals {
             formattedNumber = indianFormat.format(result / 1_00_000) + " Lakh";
         } else {
             formattedNumber = indianFormat.format(result);
-        }*/  //todo comment by demand--
+        }*/
+
+        //todo comment by demand--
 //        formattedNumber = indianFormat.format(result / 1_00_000) + " Lakh"; //todo comment on 31/01/2024
 
 
@@ -1565,27 +1696,7 @@ public class Globals {
 
 
     public static String lastYearFirstDate() {
-//        // Get the current date
-//        // Get the current date
-//        Calendar calendar = Calendar.getInstance();
-//
-//// Set the calendar to the first day of the previous year
-//        calendar.add(Calendar.YEAR, -1);
-//        calendar.set(Calendar.MONTH, Calendar.JANUARY);
-//        calendar.set(Calendar.DAY_OF_MONTH, 1);
-//
-//// Get the first day of the previous year
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-//        String firstDayOfLastYear = dateFormat.format(calendar.getTime());
-//
-//// Set the calendar to the last day of the previous year
-//        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-//        calendar.set(Calendar.DAY_OF_MONTH, 31);
-//
-//// Get the last day of the previous year
-//        String lastDayOfLastYear = dateFormat.format(calendar.getTime());
-//
-//        return firstDayOfLastYear;
+
 
 
         Calendar calendar = Calendar.getInstance();
@@ -1614,6 +1725,33 @@ public class Globals {
         String formattedEndDate = dateFormat.format(calendar.getTime());
         // return "2023-03-31";
         return startDate;
+    }
+
+
+    public static String getCurrentDateInLastFinancialYear() {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        int previousYear = currentYear - 1;
+
+        // Check if the current date is in the current financial year (starting April 1st)
+        if (currentMonth >= Calendar.APRIL) {
+            // If it's April or later, the previous financial year started in the previous year
+            calendar.set(Calendar.YEAR, previousYear);
+        } else {
+            // If it's before April, the previous financial year started two years ago
+            calendar.set(Calendar.YEAR, previousYear - 1);
+        }
+
+        // Set the date to today's month and day but for the last financial year
+        calendar.set(Calendar.MONTH, currentMonth);
+        calendar.set(Calendar.DAY_OF_MONTH, currentDay);
+
+        // Format the date as "yyyy-MM-dd"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(calendar.getTime());
     }
 
 
@@ -1781,8 +1919,7 @@ public class Globals {
         File file = new File(stringFile);
         Uri apkURI = FileProvider.getUriForFile(
                 context,
-                activity
-                        .getPackageName() + ".FileProvider", file);
+                activity.getPackageName() + ".FileProvider", file);
 
 
         if (!file.exists()) {
@@ -2080,5 +2217,53 @@ public class Globals {
 
 
     }
+
+
+    public static String allCustomerPdfUrlPurchase = "" + PDFURL + "PartList.html?SalesPersonCode=";
+
+    public static String perticularPurchaseCreditNote = "" + PDFURL + "purchaseinvoices.html?";
+
+    //todo pdf
+    public static String receiptAllPdfUlPurchase = "" + PDFURL + "purchase/ReceiptReportSharing.html?Type=Gross&";
+
+    //todo pdf
+    public static String overAllReceivablePurchase = "" + PDFURL + "purchase/OverAllReceivable.html?Type=Gross&";
+
+    //todo pdf
+    public static String overAllLedgerPurchase = "" + PDFURL + "purchase/OverAllLedger.html?";
+
+    //todo pdf
+    public static String overAllPaymentCollectionOverDuePurchase = "" + PDFURL + "purchase/PaymentcollectionAll.html?";
+
+    //todo pdf
+    public static String perticularBpPaymentCollectionPurchse = "" + PDFURL + "purchase/PaymentcollectionOne.html?";
+
+    //todo pdf
+    public static String particularBpRceiptPurchase = "" + PDFURL + "purchase/PerticularBPReceipt.html?Type=Gross&";
+
+    //todo pdf
+    public static String saleReportsPurchasePdf = "" + PDFURL + "purchase/SalesReportSharing.html?";
+
+    //todo pdf
+    public static String saleGroupReportsPurchasePdf = "" + PDFURL + "purchase/filter_sale.html?";
+
+    //todo pdf
+    public static String GroupStockReportsPurchasePdf = "" + PDFURL + "purchase/stockgroup.html?";
+
+    //todo pdf
+    public static String particularBpPurchase = "" + PDFURL + "purchase/PerticularBPSharing.html?";
+
+    //todo pdf
+    public static String itemParticularBpPurchase = "" + PDFURL + "purchase/ItemPerticularBPSharing.html?";
+
+    //todo pdf
+    public static String orderOnePdfUrPurchase = "" + PDFURL + "purchase/PendingOrder.html?";
+
+    //todo pdf
+    public static String receiptVoucherPurchasePdf = "" + PDFURL + "purchase/ReceiptVoucher.html?";
+
+    //todo pdf
+    public static String receivableParticularpurchase = "" + PDFURL + "ReceivablePerticular.html?";
+
 
 }

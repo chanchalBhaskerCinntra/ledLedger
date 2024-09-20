@@ -38,7 +38,7 @@ public class ReceivableLocalDbCustomerAdapter extends RecyclerView.Adapter <Rece
         this.fromWhere = fromWhere;
         this.tempList  = new ArrayList<ReceivableCustomerData>();
         this.tempList.addAll(branchList);
-        Log.e(TAG, "ReceivableCustomerAdapter: "+branchList.size());
+//        Log.e(TAG, "ReceivableCustomerAdapter: "+branchList.size());
         //Log.e(TAG, "ReceivableCustomerAdapter: "+branchList.get(0).getCardName());
 
     }

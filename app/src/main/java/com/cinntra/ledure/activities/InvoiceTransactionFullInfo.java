@@ -1,7 +1,10 @@
 package com.cinntra.ledure.activities;
 
+import static com.cinntra.ledure.globals.Globals.PAGE_NO_STRING;
+
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -27,10 +30,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cinntra.ledure.R;
 import com.cinntra.ledure.adapters.CustomersItemsAdapter;
+import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.databinding.BottomSheetDialogShareReportBinding;
 import com.cinntra.ledure.fragments.WebViewBottomSheetFragment;
 import com.cinntra.ledure.globals.Globals;
@@ -39,6 +44,8 @@ import com.cinntra.ledure.model.InvoiceNewData;
 import com.cinntra.ledure.model.InvoiceResponse;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.webviewtopdf.PdfView;
 
@@ -47,6 +54,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -163,9 +171,12 @@ public class InvoiceTransactionFullInfo extends MainBaseActivity {
             case R.id.calendar:
                 Globals.selectDat(this);
                 break;
+
         }
         return true;
     }
+
+
 
     private void setData(InvoiceNewData invoiceNewData) {
         try {
@@ -193,7 +204,7 @@ public class InvoiceTransactionFullInfo extends MainBaseActivity {
         CustomersItemsAdapter adapter = new CustomersItemsAdapter(this, invoiceNewData.getDocumentLines());
         item_recyclerview.setAdapter(adapter);
 
-        if (Prefs.getString(Globals.Sale_Purchse_Diff, "").equalsIgnoreCase("ttAPInvoice")) {
+        if (Prefs.getString(Globals.Sale_Purchse_Diff, "").equalsIgnoreCase("ttAPInvoice") || Prefs.getBoolean(Globals.ISPURCHASE, false)) {
             url = Globals.apInvoiceUrl + "id=" + id;
             headingDateMemo.setText("Invoice Date");
             btnShareInVoice.setText("Share Invoice");
@@ -254,13 +265,13 @@ public class InvoiceTransactionFullInfo extends MainBaseActivity {
                 hde.put("id", invoiceID);
 
                 if (Prefs.getString(Globals.Sale_Purchse_Diff, "").equalsIgnoreCase("ttAPInvoice")) {
-                    call = NewApiClient.getInstance().getApiService().purchase_invoice_One(hde);
+                    call = NewApiClient.getInstance().getApiService(InvoiceTransactionFullInfo.this).purchase_invoice_One(hde);
                 } else {
                     if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                        call = NewApiClient.getInstance().getApiService().purchase_invoice_One(hde);
+                        call = NewApiClient.getInstance().getApiService(InvoiceTransactionFullInfo.this).purchase_invoice_One(hde);
 
                     } else {
-                        call = NewApiClient.getInstance().getApiService().invoice_One(hde);
+                        call = NewApiClient.getInstance().getApiService(InvoiceTransactionFullInfo.this).invoice_One(hde);
                     }
 
 

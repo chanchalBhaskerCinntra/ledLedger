@@ -210,7 +210,7 @@ public class AddQuotationForm_Fianl_Fragment extends Fragment {
         BusinessPartnerData contactPersonData = new BusinessPartnerData();
         contactPersonData.setCardCode(Globals.opportunityData.get(0).getCardCode());
         loader.setVisibility(View.VISIBLE);
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().particularcustomerdetails(contactPersonData);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).particularcustomerdetails(contactPersonData);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -398,7 +398,7 @@ public class AddQuotationForm_Fianl_Fragment extends Fragment {
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(getActivity()).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {

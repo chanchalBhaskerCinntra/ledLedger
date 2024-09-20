@@ -100,7 +100,7 @@ public class BusinessPartnerContact extends Fragment {
         ContactPersonData contactPersonData = new ContactPersonData();
         contactPersonData.setCardCode(id);
 
-        Call<ContactPerson> call = NewApiClient.getInstance().getApiService().contactemplist(contactPersonData);
+        Call<ContactPerson> call = NewApiClient.getInstance().getApiService(getActivity()).contactemplist(contactPersonData);
         call.enqueue(new Callback<ContactPerson>() {
             @Override
             public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {

@@ -41,92 +41,77 @@ public class APIsClient {
     private Dispatcher mDispatcher;
 
 
-    public APIsClient() {}
+    public APIsClient() {
+    }
 
-    public static APIsClient getInstance()
-     {
-    return ourInstance;
-     }
+    public static APIsClient getInstance() {
+        return ourInstance;
+    }
 
-    public Retrofit.Builder getBuilder()
-      {
-    if (mRetrofitBuilder == null)
-               {
+    public Retrofit.Builder getBuilder() {
+        if (mRetrofitBuilder == null) {
 
 
-
-           OkHttpClient httpClient = new OkHttpClient.Builder()
-             .addInterceptor(provideOfflineCacheInterceptor())
-             .addNetworkInterceptor(provideCacheInterceptor())
-             .cache(provideCache()).build();
+            OkHttpClient httpClient = new OkHttpClient.Builder()
+                 //   .addInterceptor(provideOfflineCacheInterceptor())
+                   // .addNetworkInterceptor(provideCacheInterceptor())
+                    .cache(provideCache()).build();
 
             mRetrofitBuilder = new Retrofit.Builder()
-              .baseUrl(Globals.BaseURL).client(httpClient)
-              .addConverterFactory(GsonConverterFactory.create());
-
-
+                    .baseUrl(Globals.BaseURL).client(httpClient)
+                    .addConverterFactory(GsonConverterFactory.create());
 
 
         }
-    return mRetrofitBuilder;
-      }
+        return mRetrofitBuilder;
+    }
 
 
-
-
-    public ApiServices getApiService()
-      {
-       if (apiServices == null)
-        {
-    HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-    interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-       CookieHandler cookieHandler = new CookieManager();
+    public ApiServices getApiService() {
+        if (apiServices == null) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            CookieHandler cookieHandler = new CookieManager();
             CookieManager cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-   httpClient.cookieJar(new JavaNetCookieJar(cookieManager));
+            httpClient.cookieJar(new JavaNetCookieJar(cookieManager));
           /*  File httpCacheDirectory = new File(MyApp.getInstance().getApplicationContext().getCacheDir(), "offlineCache");
              //10 MB
             Cache cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
 */
 
-            httpClient.addInterceptor(new Interceptor()
-                {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
+            httpClient.addInterceptor(new Interceptor() {
+                @Override
+                public okhttp3.Response intercept(Chain chain) throws IOException {
 
-            Request originalRequest = chain.request();
-                final Request.Builder builder;
-            if(Globals.APILog.equalsIgnoreCase("APILog")){
-                 builder = originalRequest.newBuilder()
-                 .header("content-type","application/json").cacheControl(CacheControl.FORCE_NETWORK);
-                Globals.APILog = "Not";
-            }
-                else {
-                builder = originalRequest.newBuilder()
-                        //.removeHeader("Cache-Control")
-                       .addHeader("Authorization", "Bearer " + Prefs.getString(Globals.SessionID, ""))
-                        .header("content-type","application/json").cacheControl(CacheControl.FORCE_NETWORK);
+                    Request originalRequest = chain.request();
+                    final Request.Builder builder;
+                    if (Globals.APILog.equalsIgnoreCase("APILog")) {
+                        builder = originalRequest.newBuilder()
+                                .header("content-type", "application/json").cacheControl(CacheControl.FORCE_NETWORK);
+                        Globals.APILog = "Not";
+                    } else {
+                        builder = originalRequest.newBuilder()
+                                //.removeHeader("Cache-Control")
+                                .addHeader("Authorization", "Bearer " + Prefs.getString(Globals.SessionID, ""))
+                                .header("content-type", "application/json").cacheControl(CacheControl.FORCE_NETWORK);
 
-            }
+                    }
 
 
-             Request newRequest = builder.build();
-             //.header("Authorization", Prefs.getString(Globals.TOKEN,""));
-             return chain.proceed(newRequest);
+                    Request newRequest = builder.build();
+                    //.header("Authorization", Prefs.getString(Globals.TOKEN,""));
+                    return chain.proceed(newRequest);
 
                 }
             });
 
-            httpClient.addInterceptor(interceptor);
+         //   httpClient.addInterceptor(interceptor);
             httpClient.readTimeout(60, TimeUnit.SECONDS);
             httpClient.connectTimeout(60, TimeUnit.SECONDS);
             httpClient.writeTimeout(60, TimeUnit.SECONDS);
-            if (SHOW_LOGS)
-            httpClient.addInterceptor(new LoggingInterceptor());
-
-
-
-
+          /*  if (SHOW_LOGS)
+                httpClient.addInterceptor(new LoggingInterceptor());*/
 
 
             OkHttpClient client = httpClient.build();
@@ -152,21 +137,20 @@ public class APIsClient {
 
             apiServices = retrofit.create(ApiServices.class);
         }
-     return apiServices;
-       }
-    public ApiServices getApiServiceSimple()
-      {
-    if (apiServices == null)
-         {
+        return apiServices;
+    }
+
+    public ApiServices getApiServiceSimple() {
+        if (apiServices == null) {
 
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            httpClient.addInterceptor(interceptor);
+           // httpClient.addInterceptor(interceptor);
             httpClient.readTimeout(TIME_OUT, TimeUnit.SECONDS);
             httpClient.connectTimeout(TIME_OUT, TimeUnit.SECONDS);
-            if (SHOW_LOGS)
-                httpClient.addInterceptor(new LoggingInterceptor());
+       /*     if (SHOW_LOGS)
+                httpClient.addInterceptor(new LoggingInterceptor());*/
 
             OkHttpClient client = httpClient.build();
 
@@ -176,12 +160,11 @@ public class APIsClient {
 
             apiServices = retrofit.create(ApiServices.class);
         }
-    return apiServices;
-      }
-    public ApiServices getApiServiceWithCacheAbility()
-      {
-     httpClientForCache.addInterceptor(new Interceptor()
-       {
+        return apiServices;
+    }
+
+    public ApiServices getApiServiceWithCacheAbility() {
+        httpClientForCache.addInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
 
@@ -197,39 +180,37 @@ public class APIsClient {
             }
         });
 
-     OkHttpClient client = httpClientForCache.build();
-     Retrofit retrofit = getBuilder().client(client).build();
-     return retrofit.create(ApiServices.class);
-        }
+        OkHttpClient client = httpClientForCache.build();
+        Retrofit retrofit = getBuilder().client(client).build();
+        return retrofit.create(ApiServices.class);
+    }
 
-    public Dispatcher getAPIsDispatcher()
-     {
+    public Dispatcher getAPIsDispatcher() {
         return mDispatcher;
-      }
+    }
 
     class LoggingInterceptor implements Interceptor {
-    @Override
-    public okhttp3.Response intercept(Chain chain) throws IOException
-     {
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
 
 
             Request request = chain.request();
 
             long t1 = System.nanoTime();
 
-            Log.d("AVIS_NW", String.format("Sending request %s on %s%n%s",
-                    request.url(), chain.connection(), request.headers()));
+            /*Log.d("AVIS_NW", String.format("Sending request %s on %s%n%s",
+                    request.url(), chain.connection(), request.headers()));*/
 
             Response response = chain.proceed(request);
 
             long t2 = System.nanoTime();
-            Log.d("AVIS_NW", String.format("Received response for %s in %.1fms%n%s",
-                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+           /* Log.d("AVIS_NW", String.format("Received response for %s in %.1fms%n%s",
+                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));*/
 
 
             final String responseString = new String(response.body().bytes());
 
-            Log.d("AVIS_NW", "Response: " + responseString);
+//            Log.d("AVIS_NW", "Response: " + responseString);
 
             return response.newBuilder()
                     .body(ResponseBody.create(response.body().contentType(), responseString))
@@ -237,23 +218,24 @@ public class APIsClient {
         }
     }
 
-           /************* Offline Work Manager ****************/
+    /************* Offline Work Manager ****************/
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_PRAGMA = "Cinntra";
 
     private Context mContext;
+
     private Cache provideCache() {
-               Cache cache = null;
+        Cache cache = null;
 
-               try {
-                   cache = new Cache(new File(mContext.getCacheDir(), "http-cache"),
-                           10 * 1024 * 1024); // 10 MB
-               } catch (Exception e) {
-                   Log.e(TAG, "Could not create Cache!");
-               }
+        try {
+            cache = new Cache(new File(mContext.getCacheDir(), "http-cache"),
+                    10 * 1024 * 1024); // 10 MB
+        } catch (Exception e) {
+//                   Log.e(TAG, "Could not create Cache!");
+        }
 
-               return cache;
-           }
+        return cache;
+    }
 
     private Interceptor provideCacheInterceptor() {
         return chain -> {
@@ -300,22 +282,18 @@ public class APIsClient {
         };
     }
 
-    public boolean isConnected()
-      {
+    public boolean isConnected() {
         try {
             android.net.ConnectivityManager e = (android.net.ConnectivityManager) mContext.getSystemService(
                     Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = e.getActiveNetworkInfo();
             return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         } catch (Exception e) {
-            Log.w(TAG, e.toString());
+//            Log.w(TAG, e.toString());
         }
 
         return false;
     }
-
-
-
 
 
 }

@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,6 +130,12 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
     @BindView(R.id._amount)
     TextView _amount;
 
+    @BindView(R.id.slaes_amount)
+    TextView slaes_amount;
+
+    @BindView(R.id.pending_amount)
+    TextView pending_amount;
+
     TextView salesvalue;
     TextView from_to_date;
     Spinner type_dropdown;
@@ -200,8 +207,8 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             AllitemsList = new ArrayList<>();
         else if (AllitemsList.size() > 0)
             loader.setVisibility(View.GONE);
-        adapter = new LedgerAdapter(getActivity(), AllitemsList);
 
+        adapter = new LedgerAdapter(getActivity(), AllitemsList);
         layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         customerRecyclerView.setLayoutManager(layoutManager);
         customerRecyclerView.setAdapter(adapter);
@@ -258,6 +265,10 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
         type_dropdown = (Spinner) getActivity().findViewById(R.id.type_dropdown);
         type_group = (Spinner) getActivity().findViewById(R.id.groupby_dropdown);
 
+        if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+            slaes_amount.setText("Purchase");
+            pending_amount.setText("Return/Debit Note");
+        }
 
         db = SaleLedgerDatabase.getDatabase(getActivity());
         ledgerGroupDatabase = LedgerGroupDatabase.getDatabase(getActivity());
@@ -321,18 +332,37 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
 
         if (Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("admin") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Director") || Prefs.getString(Globals.Role, "").trim().equalsIgnoreCase("Accounts")) {
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_dropdown, // Replace with your item array resource
-                    R.layout.spinner_textview_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            type_group.setAdapter(spinnerArrayAdapter);
+
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_dropdownPurchase,
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                type_group.setAdapter(spinnerArrayAdapter);
+            }else {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_dropdown,
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                type_group.setAdapter(spinnerArrayAdapter);
+            }
+
         } else {
 
-            ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
-                    R.array.ledger_for_sale, // Replace with your item array resource
-                    R.layout.spinner_textview_dashboard);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            type_group.setAdapter(spinnerArrayAdapter);
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_for_sale_purchase, // Replace with your item array resource
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                type_group.setAdapter(spinnerArrayAdapter);
+            }else {
+                ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
+                        R.array.ledger_for_sale, // Replace with your item array resource
+                        R.layout.spinner_textview_dashboard);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                type_group.setAdapter(spinnerArrayAdapter);
+            }
+
         }
 
 
@@ -653,7 +683,24 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
         } else if (groupType.equalsIgnoreCase("Customer")) {
-            all_customer.setText(getActivity().getResources().getString(R.string.customer));
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                all_customer.setText(getActivity().getResources().getString(R.string.vendors));
+            }else {
+                all_customer.setText(getActivity().getResources().getString(R.string.customer));
+            }
+
+            loader.setVisibility(View.VISIBLE);
+            callledgerOneApi(reportType, startDate, endDate, "", "");
+            callDashboardCounter();
+            url = Globals.saleReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        } else if (groupType.equalsIgnoreCase("Vendor")) {
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                all_customer.setText(getActivity().getResources().getString(R.string.vendors));
+            }else {
+                all_customer.setText(getActivity().getResources().getString(R.string.customer));
+            }
+
             loader.setVisibility(View.VISIBLE);
             callledgerOneApi(reportType, startDate, endDate, "", "");
             callDashboardCounter();
@@ -702,7 +749,11 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
         } else if (groupType.equalsIgnoreCase("Customer")) {
             //  pageNo=db.myDataDao().getAll().size()/Globals.QUERY_PAGE_SIZE;
             loader.setVisibility(View.VISIBLE);
-            all_customer.setText(getActivity().getResources().getString(R.string.all_customers));
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                all_customer.setText(getActivity().getResources().getString(R.string.all_vendors));
+            }else {
+                all_customer.setText(getActivity().getResources().getString(R.string.all_customers));
+            }
             Log.e("typegroup==>>", "onCreateView: ledger");
             setSaleAdapter();
             callledgerOneApi(reportType, startDate, endDate, "", "");
@@ -751,6 +802,21 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             url = Globals.ItemStockReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
 
 
+        }else {
+            loader.setVisibility(View.VISIBLE);
+
+            if (Prefs.getBoolean(Globals.ISPURCHASE, true)) {
+                all_customer.setText(getActivity().getResources().getString(R.string.all_vendors));
+            }else {
+                all_customer.setText(getActivity().getResources().getString(R.string.all_customers));
+            }
+
+            Log.e("typegroup==>>", "onCreateView: ledger");
+            setSaleAdapter();
+            callledgerOneApi(reportType, startDate, endDate, "", "");
+            callDashboardCounter();
+            url = Globals.saleReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
         }
 
 
@@ -796,12 +862,12 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
                 Call<CustomerBusinessRes> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getledgerlistPurchasePost(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getledgerlistPurchasePost(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getledgerlistPost(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getledgerlistPost(hde);
                 }
 
-//                Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getledgerlistPost(hde);
+//                Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).getledgerlistPost(hde);
                 try {
                     Response<CustomerBusinessRes> response = call.execute();
                     if (response.isSuccessful()) {
@@ -889,7 +955,7 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             obj.put("PageNo", "");
             obj.put("MaxSize", "");
             obj.put("DueDaysGroup", "");
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForPurchaseLedger(obj);
         } else {
             obj.put("Filter", groupType);
             obj.put("Code", groupCode);
@@ -897,10 +963,10 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             obj.put("FromDate", startDate);
             obj.put("ToDate", endDate);
             obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-            call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         }
 
-//        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+//        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(getActivity()).getDashBoardCounterForLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -968,12 +1034,12 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
                 Call<CustomerBusinessRes> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getledgerlistPurchasePost(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getledgerlistPurchasePost(hde);
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getledgerlistPost(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getledgerlistPost(hde);
                 }
 
-//                Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().getledgerlistPost(hde);
+//                Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).getledgerlistPost(hde);
                 try {
                     Response<CustomerBusinessRes> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1031,12 +1097,12 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
                 Call<ResponseLedgerGroup> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getLedgerGroupPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerGroupPurchase(hde);
 
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getLedgerGroupSales(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerGroupSales(hde);
                 }
-//                Call<ResponseLedgerGroup> call = NewApiClient.getInstance().getApiService().getLedgerGroupSales(hde);
+//                Call<ResponseLedgerGroup> call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerGroupSales(hde);
                 try {
                     Response<ResponseLedgerGroup> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1126,13 +1192,13 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 Call<ResponseZoneGroup> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getLedgerZoneGroupPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerZoneGroupPurchase(hde);
 
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getLedgerZoneGroupSales(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerZoneGroupSales(hde);
                 }
 
-//                Call<ResponseZoneGroup> call = NewApiClient.getInstance().getApiService().getLedgerZoneGroupSales(hde);
+//                Call<ResponseZoneGroup> call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerZoneGroupSales(hde);
                 try {
                     Response<ResponseZoneGroup> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1217,12 +1283,12 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
                 Call<ResponseZoneGroup> call;
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getLedgerZoneGroupPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerZoneGroupPurchase(hde);
 
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getLedgerZoneGroupSales(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerZoneGroupSales(hde);
                 }
-//                Call<ResponseZoneGroup> call = NewApiClient.getInstance().getApiService().getLedgerZoneGroupSales(hde);
+//                Call<ResponseZoneGroup> call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerZoneGroupSales(hde);
                 try {
                     Response<ResponseZoneGroup> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1306,12 +1372,12 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 Call<ResponseLedgerGroup> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-                    call = NewApiClient.getInstance().getApiService().getLedgerGroupPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerGroupPurchase(hde);
 
                 } else {
-                    call = NewApiClient.getInstance().getApiService().getLedgerGroupSales(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerGroupSales(hde);
                 }
-//                Call<ResponseLedgerGroup> call = NewApiClient.getInstance().getApiService().getLedgerGroupSales(hde);
+//                Call<ResponseLedgerGroup> call = NewApiClient.getInstance().getApiService(getActivity()).getLedgerGroupSales(hde);
                 try {
                     Response<ResponseLedgerGroup> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1488,7 +1554,7 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 hde.put("ToDate", endDate);
                 hde.put("PageNo", String.valueOf(pageNo));
                 hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-                Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().payment_collection_invoiceBases(hde);
+                Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(getActivity()).payment_collection_invoiceBases(hde);
                 try {
                     Response<CustomerBusinessRes> response = call.execute();
                     if (response.isSuccessful()) {
@@ -1819,20 +1885,52 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
         String title;
         if (groupType.equalsIgnoreCase("Group") || groupFIlter.equalsIgnoreCase("Group")) {
 
-            url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
-            Log.e("SALESREPORTSHARINGDRO", "onCreateView: " + url);
-            // binding.headingBottomSheetShareReport.setText(R.string.share_group_list);
             title = getString(R.string.share_group_list);
+
+            //todo pdf
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                url = Globals.saleGroupReportsPurchasePdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            } else {
+                url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            }
+
+            Log.e("SALESREPORTSHARINGDRO", "onCreateView: " + url);
+
+//            url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+            // binding.headingBottomSheetShareReport.setText(R.string.share_group_list);
+
         } else if (groupType.equalsIgnoreCase("Zone")) {
 
-            url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+            title = getString(R.string.share_group_list);
+            //todo pdf
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                url = Globals.saleGroupReportsPurchasePdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            } else {
+                url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            }
+
+//            url = Globals.saleGroupReportsPdf + "Type=" + reportType + "&Filter=" + groupType + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
             Log.e("SALESREPORTSHARINGDRO", "onCreateView: " + url);
             // binding.headingBottomSheetShareReport.setText(R.string.share_zone_list);
-            title = getString(R.string.share_group_list);
+
 
         } else if (groupType.equalsIgnoreCase("Stock Group")) { //Item Stock Group
             title = getActivity().getResources().getString(R.string.grp_stock);
-            url = Globals.GroupStockReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + Globals.QUERY_SALEPERSON_CODE_PDF + salePersonCode;
+
+            //todo pdf
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                url = Globals.GroupStockReportsPurchasePdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + Globals.QUERY_SALEPERSON_CODE_PDF + salePersonCode;
+
+            } else {
+                url = Globals.GroupStockReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + Globals.QUERY_SALEPERSON_CODE_PDF + salePersonCode;
+
+            }
+
+//            url = Globals.GroupStockReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + Globals.QUERY_SALEPERSON_CODE_PDF + salePersonCode;
 
 
         } else if (groupType.equalsIgnoreCase("Item Stock")) { //Item Stock
@@ -1842,10 +1940,20 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
 
         } else {
+            title = getString(R.string.share_customer_list);
+            //todo pdf
+            if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+                url = Globals.saleReportsPurchasePdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            } else {
+                url = Globals.saleReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE + "&OrderByName=" + orderBYName + "&OrderByAmt=" + orderBYAmt + "&SalesPersonCode=" + Prefs.getString(Globals.SalesEmployeeCode, "");
+
+            }
+
             Log.e("typedropdown==>>", "onCreateView:ledger ");
 
-            url = Globals.saleReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
-            title = getString(R.string.share_customer_list);
+//            url = Globals.saleReportsPdf + "Type=" + reportType + "&Filter=" + "&FromDate=" + startDate + "&ToDate=" + endDate + "&Code=" + groupCode + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
         }
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
@@ -2014,6 +2122,39 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
+
+        binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              //  Toast.makeText(context, "SHOW", Toast.LENGTH_SHORT).show();
+                loader.setVisibility(View.VISIBLE);
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                from_to_date.setText(startDateReverseFormat + " - " + endDateReverseFormat);
+
+                groupTypeManager_from_Calender();
+
+                from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+                bottomSheetDialog.dismiss();
+            }
+        });
+/*        binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(view -> {
+            loader.setVisibility(View.VISIBLE);
+            startDatelng = Globals.lastyearCal().getTimeInMillis();
+            endDatelng = Globals.thisyearCal().getTimeInMillis();
+            startDate = Globals.lastYearFirstDate();
+            endDate = Globals.getTodaysDatervrsfrmt();
+            from_to_date.setText(startDateReverseFormat + " - " + endDateReverseFormat);
+
+            groupTypeManager_from_Calender();
+
+            from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+            bottomSheetDialog.dismiss();
+        });*/
+
+
         binding.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             loader.setVisibility(View.VISIBLE);
             startDate = "";
@@ -2084,7 +2225,7 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
 
-                Call<ResponseItemInSalesCard> call = NewApiClient.getInstance().getApiService().getItemInSaleCard(hde);
+                Call<ResponseItemInSalesCard> call = NewApiClient.getInstance().getApiService(getActivity()).getItemInSaleCard(hde);
                 try {
                     Response<ResponseItemInSalesCard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -2163,9 +2304,9 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 Call<ResponseItemFilterDashboard> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockPurchase(hde);
                 }else {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStock(hde);
                 }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();
@@ -2241,7 +2382,7 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 hde.put("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
                 hde.put(Globals.payLoadOrderByName, orderBYName);
                 hde.put(Globals.payLoadOrderByAMt, orderBYAmt);
-                Call<ResponseItemInSalesCard> call = NewApiClient.getInstance().getApiService().getItemInSaleCard(hde);
+                Call<ResponseItemInSalesCard> call = NewApiClient.getInstance().getApiService(getActivity()).getItemInSaleCard(hde);
                 try {
                     Response<ResponseItemInSalesCard> response = call.execute();
                     if (response.isSuccessful()) {
@@ -2295,9 +2436,9 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
                 Call<ResponseItemFilterDashboard> call;
 
                 if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockPurchase(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockPurchase(hde);
                 }else {
-                    call = NewApiClient.getInstance().getApiService().getFilterGroupItemStock(hde);
+                    call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStock(hde);
                 }
                 try {
                     Response<ResponseItemFilterDashboard> response = call.execute();

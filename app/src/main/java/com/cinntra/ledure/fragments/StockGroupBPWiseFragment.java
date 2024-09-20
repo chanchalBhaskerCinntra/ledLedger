@@ -26,6 +26,7 @@ import com.cinntra.ledure.activities.LedgerCutomerDetails;
 import com.cinntra.ledure.adapters.StockGroupBPWiseAdapter;
 import com.cinntra.ledure.databinding.BottomSheetDialogSelectDateBinding;
 import com.cinntra.ledure.globals.Globals;
+import com.cinntra.ledure.globals.SearchViewUtils;
 import com.cinntra.ledure.interfaces.FragmentClickListener;
 import com.cinntra.ledure.newapimodel.DataItemFilterDashBoard;
 import com.cinntra.ledure.newapimodel.ResponseItemFilterDashboard;
@@ -60,6 +61,12 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
     @BindView(R.id.dateText)
     EditText dateSelected;
 
+    @BindView(R.id.searchLay)
+    RelativeLayout searchLay;
+
+    @BindView(R.id.searchView)
+    SearchView searchView;
+
 
     RelativeLayout relativeCalView;
 
@@ -74,7 +81,6 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
     public static String endDateListener = Globals.lastDateOfFinancialYear();
 
 
-    private SearchView searchView;
     // private Invoices_Adapter adapter;
     int currentpage = 0;
     boolean recallApi = true;
@@ -125,6 +131,8 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
         }
     }
 
+    String searchTextValue = "";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -156,6 +164,49 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
                 } else
                     swipeRefreshLayout.setRefreshing(false);
 
+            }
+        });
+
+
+        //todo search items--
+
+        searchLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchView.setIconifiedByDefault(true);
+                searchView.setFocusable(true);
+                searchView.setIconified(false);
+                searchView.requestFocusFromTouch();
+            }
+        });
+
+
+        SearchViewUtils.setupSearchView(searchView, 900, new SearchViewUtils.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.e("QUERY>>>>>>>", "Chanchal: " + query);
+                searchView.clearFocus();
+                searchTextValue = query;
+
+                loader.setVisibility(View.VISIBLE);
+                searchView.setQueryHint("Search Items");
+
+                pageNo = 1;
+
+                customerOnePageLedger(cardCode, startDateListener, endDateListener);
+                return false;
+            }
+
+            @Override
+            public void onQueryTextChange(String newText) {
+                searchView.clearFocus();
+                searchTextValue = newText;
+                loader.setVisibility(View.VISIBLE);
+                searchView.setQueryHint("Search Items");
+
+                pageNo = 1;
+
+                customerOnePageLedger(cardCode, startDateListener, endDateListener);
             }
         });
 
@@ -221,7 +272,7 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("CardCode", customerCode);
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-        hde.put("SearchText", "");
+        hde.put("SearchText", searchTextValue);
         hde.put("FromDate", fromDate);//startDate
         hde.put("ToDate", toDate);//endDate
 
@@ -231,9 +282,9 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
 
         Call<ResponseItemFilterDashboard> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWisePurchase(hde);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockBpWisePurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWise(hde);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockBpWise(hde);
         }
 
 
@@ -277,7 +328,7 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
         hde.put("PageNo", String.valueOf(pageNo));
         hde.put("CardCode", customerCode);
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
-        hde.put("SearchText", "");
+        hde.put("SearchText", searchTextValue);
         hde.put("FromDate", startDateListener);
         hde.put("ToDate", endDateListener);
 
@@ -286,9 +337,9 @@ public class StockGroupBPWiseFragment extends Fragment implements LedgerCutomerD
         hde.put(Globals.payLoadOrderByAMt, "");
         Call<ResponseItemFilterDashboard> call;
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
-            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWisePurchase(hde);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockBpWisePurchase(hde);
         } else {
-            call = NewApiClient.getInstance().getApiService().getFilterGroupItemStockBpWise(hde);
+            call = NewApiClient.getInstance().getApiService(getActivity()).getFilterGroupItemStockBpWise(hde);
         }
         call.enqueue(new Callback<ResponseItemFilterDashboard>() {
             @Override

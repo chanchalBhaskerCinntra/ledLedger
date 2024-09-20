@@ -17,6 +17,17 @@ public class DashboardCounterData implements Serializable {
     @SerializedName("TotalPendingSales")
     String TotalPendingSales;
 
+    @SerializedName("TotalSalesWithoutCreditNote")
+    String TotalSalesWithoutCreditNote;
+
+    public String getTotalSalesWithoutCreditNote() {
+        return TotalSalesWithoutCreditNote;
+    }
+
+    public void setTotalSalesWithoutCreditNote(String totalSalesWithoutCreditNote) {
+        TotalSalesWithoutCreditNote = totalSalesWithoutCreditNote;
+    }
+
     public String getTotalSales() {
         return totalSales;
     }

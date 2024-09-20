@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -32,12 +33,16 @@ import com.cinntra.ledure.activities.MainActivity_B2C;
 import com.cinntra.ledure.activities.Opportunities_Pipeline_Activity;
 import com.cinntra.ledure.activities.OrderActivity;
 import com.cinntra.ledure.activities.PartyActivity;
+import com.cinntra.ledure.activities.ProfileActivity;
 import com.cinntra.ledure.activities.PurchaseActivity;
 import com.cinntra.ledure.activities.QuotationActivity;
 import com.cinntra.ledure.activities.Reports;
 import com.cinntra.ledure.activities.Sale_Inovice_Reports;
+import com.cinntra.ledure.activities.Splash;
+import com.cinntra.ledure.checkin.ui.activity.AttendanceBackGroundListActivity;
 import com.cinntra.ledure.fragments.PartyFragment;
 import com.cinntra.ledure.globals.Globals;
+import com.cinntra.ledure.globals.SessionManagement;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
@@ -49,6 +54,7 @@ public class BottomsheetRecyclerviewAdapter extends RecyclerView.Adapter<Bottoms
 
     ArrayList<Integer> iconlist;
     ArrayList<String> namelist;
+
 
     public BottomsheetRecyclerviewAdapter(Context context, ArrayList<Integer> iconlist, ArrayList<String> namelist) {
         this.context = context;
@@ -145,8 +151,29 @@ public class BottomsheetRecyclerviewAdapter extends RecyclerView.Adapter<Bottoms
                     case 13:
                         context.startActivity(new Intent(context, CalenderActivity.class));
                         break;
-                   /* case 14:
-                        context.startActivity(new Intent(context, CalenderActivity.class));
+                    case 14:
+                        Globals.showAlertDialog(
+                                holder.itemView.getContext(),
+                                "Are you sure?",
+                                "This will raise a request to delete your account.",
+                                "ok",
+                                "cancel",
+                                R.drawable.ic_baseline_delete_24, // Replace with your icon resource
+                                () -> {
+                                  //  Toast.makeText(holder.itemView.getContext(), "Item deleted", Toast.LENGTH_SHORT).show();
+                                    Prefs.clear();
+                                    Intent intent = new Intent(holder.itemView.getContext(), Splash.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    holder.itemView.getContext().startActivity(intent);
+                                },
+                                () -> {
+
+                                }
+                        );
+                        break;
+
+                 /*   case 15:
+                        context.startActivity(new Intent(context, AttendanceBackGroundListActivity.class));
                         break;*/
 
 

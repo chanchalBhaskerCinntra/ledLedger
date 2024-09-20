@@ -76,6 +76,7 @@ import com.cinntra.ledure.fragments.PartyFragment;
 import com.cinntra.ledure.fragments.PurchaseFragment;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MainBaseActivity;
+import com.cinntra.ledure.globals.SessionManagement;
 import com.cinntra.ledure.model.AttachmentModel;
 import com.cinntra.ledure.model.BusinessPartnerData;
 import com.cinntra.ledure.model.ContactPerson;
@@ -244,6 +245,7 @@ public class PurchaseActivity extends AppCompatActivity {
 // Set the adapter for the Spinner
         binding.contentData.dateSelector.setAdapter(dateSpinnerAdapter);
 
+        sessionManagement = new SessionManagement(this);
         callPaymentDueCounter();
         callAllDueCounter();
 
@@ -486,7 +488,7 @@ public class PurchaseActivity extends AppCompatActivity {
         obj.put("PageNo","");
         obj.put("MaxSize","");
         obj.put("DueDaysGroup","");
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getDashBoardCounterForPurchaseLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -541,7 +543,7 @@ public class PurchaseActivity extends AppCompatActivity {
         obj.put("DueDaysGroup","");
 
 
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getDashBoardCounterForPurchaseLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -590,7 +592,7 @@ public class PurchaseActivity extends AppCompatActivity {
         LeadFilter lv = new LeadFilter();
         lv.setAssignedTo(Prefs.getString(Globals.MyID, ""));
         lv.setLeadType("All");
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().getAllLead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getAllLead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {
@@ -655,7 +657,7 @@ public class PurchaseActivity extends AppCompatActivity {
         LeadFilter lv = new LeadFilter();
         lv.setAssignedTo(Prefs.getString(Globals.MyID, ""));
         lv.setLeadType("All");
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().getAllLead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getAllLead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {
@@ -758,7 +760,7 @@ public class PurchaseActivity extends AppCompatActivity {
         mapData.setType(locationtype);
         mapData.setEmp_Id(Prefs.getString(Globals.MyID, "1"));
         mapData.setEmp_Name(Prefs.getString(Globals.Employee_Name, ""));
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).sendMaplatlong(mapData);
 
         call.enqueue(new Callback<MapResponse>() {
             @Override
@@ -813,7 +815,7 @@ public class PurchaseActivity extends AppCompatActivity {
         mapData.setType(locationtype);
         mapData.setEmp_Id(Prefs.getString(Globals.MyID, "1"));
         mapData.setEmp_Name(Prefs.getString(Globals.Employee_Name, ""));
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).sendMaplatlong(mapData);
 
         call.enqueue(new Callback<MapResponse>() {
             @Override
@@ -1038,7 +1040,7 @@ public class PurchaseActivity extends AppCompatActivity {
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", "-1");
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getPaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -1076,7 +1078,7 @@ public class PurchaseActivity extends AppCompatActivity {
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", "7");
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getPaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -1110,11 +1112,16 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
 
+    SessionManagement sessionManagement;
+
+
     private void callAttachmentAllApi(){
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
-        jsonObject.addProperty("LinkType", "ProfilePic");
-        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService().getAllAttachment(jsonObject);
+        jsonObject.addProperty("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+     /*   jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
+        jsonObject.addProperty("LinkType", "ProfilePic");*/
+//        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getAllAttachment(jsonObject);
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getNewAllAttachmentApi(jsonObject);
         call.enqueue(new Callback<AttachmentModel>() {
             @Override
             public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
@@ -1123,17 +1130,30 @@ public class PurchaseActivity extends AppCompatActivity {
                     if (response.code() == 200) {
                         Log.e(TAG, "onResponse: "+response.body().getMessage() );
 
-                        if (response.body().getData().size() > 0) {
-                            String filePath = Globals.ImageURL + response.body().getData().get(0).getFile();
+                        if (response.body().getStatus() == 200){
+                            if (response.body().getData().size() > 0) {
+                                String filePath = Globals.ImageURL + response.body().getData().get(0).getProfileImage();
 
-                            if (filePath != null) {
-                                Glide.with(PurchaseActivity.this)
-                                        .load(filePath)
-                                        .into(binding.proImg);
-                            } else {
-                                binding.proImg.setImageResource(R.drawable.ic_profileicon);
+                                if (filePath != null) {
+                                    Glide.with(PurchaseActivity.this)
+                                            .load(filePath)
+                                            .into(binding.proImg);
+                                } else {
+                                    binding.proImg.setImageResource(R.drawable.ic_profileicon);
+                                }
+
                             }
+                        }
 
+
+                        else if (response.body().getStatus() == 401) {
+                            Toast.makeText(PurchaseActivity.this, "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                            Prefs.clear();
+                            Intent intent = new Intent(PurchaseActivity.this, Login.class);
+                            startActivity(intent);
+                            finish();
+                            sessionManagement.ClearSession();
                         }
 
                     } else if (response.code() == 201) {
@@ -2082,7 +2102,7 @@ public class PurchaseActivity extends AppCompatActivity {
                                 RequestBody bptype, RequestBody bpFullName,
                                 RequestBody cardCode, RequestBody salesPersonCode, RequestBody modeOfTransport,
                                 RequestBody checkInDate, RequestBody CheckInTime, RequestBody checkInLat, RequestBody checkInLong, RequestBody checkinRemark) {
-        Call<ResponseTripCheckIn> call = NewApiClient.getInstance().getApiService().tripCheckIn(
+        Call<ResponseTripCheckIn> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).tripCheckIn(
                 imagePart, bptype, bpFullName, cardCode, salesPersonCode, modeOfTransport, checkInDate, CheckInTime, checkInLat, checkInLong, checkinRemark
         );
 
@@ -2150,7 +2170,7 @@ public class PurchaseActivity extends AppCompatActivity {
                                  RequestBody totaldistanceAuto, RequestBody totalDistanceManual,
                                  RequestBody totalExpenses, RequestBody salesPersonCode, RequestBody id,
                                  RequestBody checkOutDate, RequestBody CheckOutTime, RequestBody checkOutLat, RequestBody checkOutLong, RequestBody checkOutRemark) {
-        Call<ResponseTripCheckOut> call = NewApiClient.getInstance().getApiService().tripCheckOut(
+        Call<ResponseTripCheckOut> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).tripCheckOut(
                 imagePart, totaldistanceAuto, totalDistanceManual, totalExpenses, salesPersonCode, id, checkOutDate, CheckOutTime, checkOutLat, checkOutLong, checkOutRemark
         );
 
@@ -2195,7 +2215,7 @@ public class PurchaseActivity extends AppCompatActivity {
                         RequestBody remark = RequestBody.create(MediaType.parse("multipart/form-data"), checkOutExpenseDialogBinding.commentValue.getText().toString());
 
                         Call<ExpenseResponse> callExp = NewApiClient.getInstance()
-                                .getApiService().expense_create_multipart(imagePart, id, tripName, typeOfExpense,
+                                .getApiService(PurchaseActivity.this).expense_create_multipart(imagePart, id, tripName, typeOfExpense,
                                         expenseFrom, expenseTo, cost, createDate, createTime, createBy, updateDate, updateTime, remark
                                         , employeeId, startlat, startlong, endLat, endLong, travelDistance, id);
                         callExp.enqueue(new Callback<ExpenseResponse>() {
@@ -2581,7 +2601,7 @@ public class PurchaseActivity extends AppCompatActivity {
         ContactPersonData contactPersonData = new ContactPersonData();
         contactPersonData.setCardCode(cardCode);
         binding.contentData.loader.loader.setVisibility(View.VISIBLE);
-        Call<ContactPerson> call = NewApiClient.getInstance().getApiService().contactemplist(contactPersonData);
+        Call<ContactPerson> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).contactemplist(contactPersonData);
         call.enqueue(new Callback<ContactPerson>() {
             @Override
             public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {
@@ -2811,7 +2831,7 @@ public class PurchaseActivity extends AppCompatActivity {
                     expense.setCreatedBy(Prefs.getString(Globals.SalesEmployeeCode, ""));
                     expense.setEmployeeId(Prefs.getString(Globals.EmployeeID, ""));
 
-                    Call<ExpenseResponse> callExp = NewApiClient.getInstance().getApiService().expense_create(expense);
+                    Call<ExpenseResponse> callExp = NewApiClient.getInstance().getApiService(PurchaseActivity.this).expense_create(expense);
                     callExp.enqueue(new Callback<ExpenseResponse>() {
                         @Override
                         public void onResponse(Call<ExpenseResponse> call, Response<ExpenseResponse> response) {
@@ -3078,7 +3098,7 @@ public class PurchaseActivity extends AppCompatActivity {
 
         SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
         salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<CounterResponse> call = NewApiClient.getInstance().getApiService().dashboardcounter(salesEmployeeItem);
+        Call<CounterResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).dashboardcounter(salesEmployeeItem);
         call.enqueue(new Callback<CounterResponse>() {
             @Override
             public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {
@@ -3097,7 +3117,7 @@ public class PurchaseActivity extends AppCompatActivity {
 
 
     private void callCountryApi() {
-        Call<CountryResponse> call = NewApiClient.getInstance().getApiService().getCountryList();
+        Call<CountryResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getCountryList();
         call.enqueue(new Callback<CountryResponse>() {
             @Override
             public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
@@ -3127,8 +3147,8 @@ public class PurchaseActivity extends AppCompatActivity {
         SalesEmployeeItem si = new SalesEmployeeItem();
         Log.e("TAG", "callrecentactivityapi: " + Prefs.getString(Globals.EmployeeID, ""));
         si.setEmp(Prefs.getString(Globals.EmployeeID, ""));
-        // Call<EventResponse> call = NewApiClient.getInstance().getApiService().getcalendardata(si);
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().getrecentactivity(si);
+        // Call<EventResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getcalendardata(si);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).getrecentactivity(si);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
@@ -3165,7 +3185,7 @@ public class PurchaseActivity extends AppCompatActivity {
     private void callrecent_5_order() {
         HashMap<String, String> hde = new HashMap<>();
         hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().top5order(hde);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).top5order(hde);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {
@@ -3415,7 +3435,7 @@ Depends on the position number on the X axis, we need to display the label, Here
         mapData.setResourceId("");
         mapData.setContactPerson("");
         mapData.setSourceType("");
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).sendMaplatlong(mapData);
         call.enqueue(new Callback<MapResponse>() {
             @Override
             public void onResponse(Call<MapResponse> call, Response<MapResponse> response) {
@@ -3559,7 +3579,7 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("ToDate", "2024-03-31");
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).salesGraph(obj);
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
             public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
@@ -3597,7 +3617,7 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("ToDate", "2024-03-31");
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService().receiptGraph(obj);
+        Call<SalesGraphResponse> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).receiptGraph(obj);
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
             public void onResponse(Call<SalesGraphResponse> call, Response<SalesGraphResponse> response) {
@@ -3642,7 +3662,7 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("ToDate", Globals.lastDateOfFinancialYear());
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
-        Call<ResponseReceivableGraph> call = NewApiClient.getInstance().getApiService().receivableDueMonthGraph(obj);
+        Call<ResponseReceivableGraph> call = NewApiClient.getInstance().getApiService(PurchaseActivity.this).receivableDueMonthGraph(obj);
         call.enqueue(new Callback<ResponseReceivableGraph>() {
             @Override
             public void onResponse(Call<ResponseReceivableGraph> call, Response<ResponseReceivableGraph> response) {

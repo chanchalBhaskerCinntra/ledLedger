@@ -12,9 +12,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -40,6 +42,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -50,6 +53,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -87,6 +91,7 @@ import com.cinntra.ledure.fragments.PartyFragment;
 import com.cinntra.ledure.fragments.PurchaseFragment;
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MainBaseActivity;
+import com.cinntra.ledure.globals.SessionManagement;
 import com.cinntra.ledure.model.AttachmentModel;
 import com.cinntra.ledure.model.BusinessPartnerData;
 import com.cinntra.ledure.model.ContactPerson;
@@ -117,8 +122,10 @@ import com.cinntra.ledure.newapimodel.LeadResponse;
 import com.cinntra.ledure.newapimodel.LeadValue;
 import com.cinntra.ledure.newapimodel.ResponsePayMentDueCounter;
 import com.cinntra.ledure.newapimodel.ResponseReceivableGraph;
+import com.cinntra.ledure.spinner.SpinnerLocal;
 import com.cinntra.ledure.viewModel.CustomerViewModel;
 import com.cinntra.ledure.viewpager.GraphPagerAdapter;
+import com.cinntra.ledure.viewpager.GraphPagerPurchaseAdapter;
 import com.cinntra.ledure.webservices.NewApiClient;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -143,6 +150,7 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -159,7 +167,9 @@ import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -169,6 +179,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
@@ -222,10 +234,13 @@ public class MainActivity_B2C extends AppCompatActivity {
 
     // GraphViewPagerAdapter fakeLiveMatchAdapter;
     GraphPagerAdapter graphPagerAdapter;
+    GraphPagerPurchaseAdapter graphPagerPurchaseAdapter;
     public static View dateSPinner;
     ArrayAdapter<CharSequence> dateSpinnerAdapter;
 
     String dataTypeValue = "";
+
+    private List<SpinnerLocal> employeeList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -253,6 +268,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         binding.lineartopToolbar.setVisibility(View.GONE);
         // Create an ArrayAdapter using a custom layout for the dropdown items
 
+        sessionManagement = new SessionManagement(MainActivity_B2C.this);
 
         builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.progress_dialog_alert)
@@ -273,6 +289,42 @@ public class MainActivity_B2C extends AppCompatActivity {
 
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.typeDropdown.setAdapter(spinnerArrayAdapter);
+
+
+        //todo set graph spinner logic---
+        // Initialize your list of objects
+        employeeList = new ArrayList<>();
+        employeeList.add(new SpinnerLocal("John Doe", "E001"));
+        employeeList.add(new SpinnerLocal("Jane Smith", "E002"));
+        employeeList.add(new SpinnerLocal("Sam Wilson", "E003"));
+
+        // Set up the ArrayAdapter with the list of objects
+        ArrayAdapter<SpinnerLocal> adapter = new ArrayAdapter<>(
+                this,
+                R.layout.spinner_white_textview,
+                employeeList
+        );
+
+        // Set the dropdown layout for the spinner
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Attach the adapter to the spinner
+        binding.contentData.spinnerGraphYearSelection.setAdapter(adapter);
+
+        // Handle item selection event
+        binding.contentData.spinnerGraphYearSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Get the selected Employee object
+                SpinnerLocal selectedEmployee = (SpinnerLocal) parent.getItemAtPosition(position);
+                //  Toast.makeText(MainActivity_B2C.this, "Selected: " + selectedEmployee.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // No action
+            }
+        });
 
 
         dataTypeValue = binding.typeDropdown.getSelectedItem().toString();
@@ -304,8 +356,14 @@ public class MainActivity_B2C extends AppCompatActivity {
             callAllPurchaseDueCounter();
             callPurchasePaymentDueCounter();
         }
-//todo sale purchase option is disable according to client
-        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28")) {
+
+
+        //todo sale purchase option is disable according to client
+        if (Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("28") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("21") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("32") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("31") ||
+                Prefs.getString(Globals.SalesEmployeeCode, "").equalsIgnoreCase("-1")) {
             binding.typeDropdown.setVisibility(View.VISIBLE);
         } else {
             binding.typeDropdown.setVisibility(View.INVISIBLE);
@@ -323,14 +381,16 @@ public class MainActivity_B2C extends AppCompatActivity {
                     binding.contentData.salesIncludeDashboardLayout.salesIncludeDashboard.setVisibility(View.GONE);
                     binding.contentData.purchaseIncludeDashboardLayout.purchaseIncludeDashboard.setVisibility(View.VISIBLE);
                     Prefs.putBoolean(Globals.ISPURCHASE, true);
+                    saleGraphApi();
                     callDashboardPurchaseCounter();
                     callDashboardPurchaseCounter_Receiable();
 
                     callAllPurchaseDueCounter();
                     callPurchasePaymentDueCounter();
 
-                    saleGraphApi();
+
                 } else {
+                    saleGraphApi();
                     binding.contentData.salesIncludeDashboardLayout.salesIncludeDashboard.setVisibility(View.VISIBLE);
                     binding.contentData.purchaseIncludeDashboardLayout.purchaseIncludeDashboard.setVisibility(View.GONE);
                     Prefs.putBoolean(Globals.ISPURCHASE, false);
@@ -340,7 +400,7 @@ public class MainActivity_B2C extends AppCompatActivity {
                     callPaymentDueCounter();
                     callAllDueCounter();
 
-                    saleGraphApi();
+
                 }
             }
 
@@ -351,10 +411,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         });
 
 
-        callAttachmentAllApi();
-
-
-        saleGraphApi();
+//        saleGraphApi();
 
 
         binding.tvClientName.setText("Welcome " + Prefs.getString(Globals.SalesEmployeeName, ""));
@@ -415,7 +472,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         });
 
 
-        dashboardcounter();
+//        dashboardcounter();
 
         callCountryApi();
 
@@ -692,11 +749,11 @@ public class MainActivity_B2C extends AppCompatActivity {
         HashMap obj = new HashMap<String, String>();
         obj.put("Filter", "");
         obj.put("Code", "");
-        obj.put("Type", "Gross");
+        obj.put("Type", "Gross"); //Net
         obj.put("FromDate", startDate);
         obj.put("ToDate", endDate);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(this).getDashBoardCounterForLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -739,11 +796,11 @@ public class MainActivity_B2C extends AppCompatActivity {
         HashMap<String, String> obj = new HashMap<String, String>();
         obj.put("Filter", "");
         obj.put("Code", "");
-        obj.put("Type", "Gross");
+        obj.put("Type", "Gross"); //Net
         obj.put("FromDate", startDate);
         obj.put("ToDate", endDate);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(this).getDashBoardCounterForLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -790,7 +847,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         HashMap obj = new HashMap<String, String>();
         obj.put("Filter", "");
         obj.put("Code", "");
-        obj.put("Type", "Gross");
+        obj.put("Type", "Gross"); //Net
         obj.put("FromDate", startDate);
         obj.put("ToDate", endDate);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
@@ -800,7 +857,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         obj.put("PageNo", "");
         obj.put("MaxSize", "");
         obj.put("DueDaysGroup", "");
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(this).getDashBoardCounterForPurchaseLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
@@ -843,7 +900,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         HashMap<String, String> obj = new HashMap<String, String>();
         obj.put("Filter", "");
         obj.put("Code", "");
-        obj.put("Type", "Gross");
+        obj.put("Type", "Gross"); //Net
         obj.put("FromDate", startDate);
         obj.put("ToDate", endDate);
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
@@ -855,14 +912,13 @@ public class MainActivity_B2C extends AppCompatActivity {
         obj.put("DueDaysGroup", "");
 
 
-        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService().getDashBoardCounterForPurchaseLedger(obj);
+        Call<DashboardCounterResponse> call = NewApiClient.getInstance().getApiService(this).getDashBoardCounterForPurchaseLedger(obj);
         call.enqueue(new Callback<DashboardCounterResponse>() {
             @Override
             public void onResponse(Call<DashboardCounterResponse> call, Response<DashboardCounterResponse> response) {
                 if (response.code() == 200) {
                     alertDialog.dismiss();
                     setCounter(response.body().getData().get(0));
-
 
                     //  lead_spiner.setAdapter(leadAdapter);
                     //  leadAdapter.notifyDataSetChanged();
@@ -896,11 +952,11 @@ public class MainActivity_B2C extends AppCompatActivity {
 
     private void setCounter(DashboardCounterData data) {
         if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
-            binding.contentData.salesIncludeDashboardLayout.totalAmnt.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSales())));
+            binding.contentData.salesIncludeDashboardLayout.totalAmnt.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSalesWithoutCreditNote())));
             binding.contentData.salesIncludeDashboardLayout.receivedAmountValue.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalReceivePayment())));
             binding.contentData.salesIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalPendingSales())));
         } else {
-            binding.contentData.purchaseIncludeDashboardLayout.totalAmnt.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSales())));
+            binding.contentData.purchaseIncludeDashboardLayout.totalAmnt.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalSalesWithoutCreditNote())));
             binding.contentData.purchaseIncludeDashboardLayout.receivedAmountValue.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalReceivePayment())));
             binding.contentData.purchaseIncludeDashboardLayout.totalPendings.setText(getResources().getString(R.string.Rs) + " " + Globals.numberToK(String.valueOf(data.getTotalPendingSales())));
         }
@@ -912,7 +968,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         LeadFilter lv = new LeadFilter();
         lv.setAssignedTo(Prefs.getString(Globals.MyID, ""));
         lv.setLeadType("All");
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().getAllLead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(this).getAllLead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {
@@ -977,7 +1033,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         LeadFilter lv = new LeadFilter();
         lv.setAssignedTo(Prefs.getString(Globals.MyID, ""));
         lv.setLeadType("All");
-        Call<LeadResponse> call = NewApiClient.getInstance().getApiService().getAllLead(lv);
+        Call<LeadResponse> call = NewApiClient.getInstance().getApiService(this).getAllLead(lv);
         call.enqueue(new Callback<LeadResponse>() {
             @Override
             public void onResponse(Call<LeadResponse> call, Response<LeadResponse> response) {
@@ -1080,7 +1136,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         mapData.setType(locationtype);
         mapData.setEmp_Id(Prefs.getString(Globals.MyID, "1"));
         mapData.setEmp_Name(Prefs.getString(Globals.Employee_Name, ""));
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).sendMaplatlong(mapData);
 
         call.enqueue(new Callback<MapResponse>() {
             @Override
@@ -1135,7 +1191,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         mapData.setType(locationtype);
         mapData.setEmp_Id(Prefs.getString(Globals.MyID, "1"));
         mapData.setEmp_Name(Prefs.getString(Globals.Employee_Name, ""));
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).sendMaplatlong(mapData);
 
         call.enqueue(new Callback<MapResponse>() {
             @Override
@@ -1386,6 +1442,34 @@ public class MainActivity_B2C extends AppCompatActivity {
 
             bottomSheetDialog.dismiss();
         });
+
+        //todo on visibility
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setVisibility(View.VISIBLE);
+
+        bindingDate.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(view ->
+        {
+            startDatelng = Globals.lastyearCal().getTimeInMillis();
+            endDatelng = Globals.thisyearCal().getTimeInMillis();
+            startDate = Globals.lastYearFirstDate();
+            endDate = Globals.getCurrentDateInLastFinancialYear();
+
+
+            binding.contentData.tvDateText.setText("" + Globals.convertDateFormatInReadableFormat(startDate) + " to "
+                    + Globals.convertDateFormatInReadableFormat(endDate));
+            if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
+                callDashboardCounter();
+                callDashboardCounter_Receiable();
+                callPaymentDueCounter();
+                callAllDueCounter();
+            } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+                callDashboardPurchaseCounter();
+                callDashboardPurchaseCounter_Receiable();
+                callAllPurchaseDueCounter();
+                callPurchasePaymentDueCounter();
+            }
+
+            bottomSheetDialog.dismiss();
+        });
         bindingDate.tvAllBottomSheetSelectDate.setOnClickListener(view ->
         {
             startDate = "";
@@ -1464,7 +1548,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", "-1");
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(this).getPaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -1511,7 +1595,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", "7");
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(this).getPaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -1559,7 +1643,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", "-1");
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(this).getPurchasePaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -1606,7 +1690,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         jsonObject.addProperty("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         jsonObject.addProperty("DueDaysGroup", "7");
 
-        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService().getPurchasePaymentDueCounter(jsonObject);
+        Call<ResponsePayMentDueCounter> call = NewApiClient.getInstance().getApiService(this).getPurchasePaymentDueCounter(jsonObject);
         call.enqueue(new Callback<ResponsePayMentDueCounter>() {
             @Override
             public void onResponse(Call<ResponsePayMentDueCounter> call, Response<ResponsePayMentDueCounter> response) {
@@ -1650,12 +1734,21 @@ public class MainActivity_B2C extends AppCompatActivity {
 
 
     private static final String TAG = "MainActivity_B2C";
+    private static final int REQUEST_CODE_PERMISSIONS = 2;
+    private static int REQUEST_ID_MULTIPLE_PERMISSIONS = 7;
+    private static int RESULT_LOAD_IMAGE = 101;
+    private static int PICTURE_FROM_CAMERA = 1;
+    String attachID = "";
+
+    SessionManagement sessionManagement;
 
     private void callAttachmentAllApi() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
-        jsonObject.addProperty("LinkType", "ProfilePic");
-        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService().getAllAttachment(jsonObject);
+        jsonObject.addProperty("SalesEmployeeCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
+     /*   jsonObject.addProperty("LinkID", Prefs.getString(Globals.MyID, ""));
+        jsonObject.addProperty("LinkType", "ProfilePic");*/
+//        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).getAllAttachment(jsonObject);
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).getNewAllAttachmentApi(jsonObject);
         call.enqueue(new Callback<AttachmentModel>() {
             @Override
             public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
@@ -1664,16 +1757,41 @@ public class MainActivity_B2C extends AppCompatActivity {
                     if (response.code() == 200) {
                         Log.e(TAG, "onResponse: " + response.body().getMessage());
 
-                        if (response.body().getData().size() > 0) {
-                            String filePath = Globals.ImageURL + response.body().getData().get(0).getFile();
+                        if (response.body().getStatus() == 200) {
+                            if (response.body().getData().size() > 0) {
+                                attachID = response.body().getData().get(0).getId();
+                                String filePath = Globals.ImageURL + response.body().getData().get(0).getProfileImage();
 
-                            if (filePath != null) {
-                                Glide.with(MainActivity_B2C.this)
-                                        .load(filePath)
-                                        .into(binding.proImg);
+                                if (response.body().getData().get(0).getProfileImage().isEmpty()) {
+                                    getPictureDialog();
+                                   /* if (checkAndRequestPermissions()) {
+                                    } else {
+                                        ActivityCompat.requestPermissions(MainActivity_B2C.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
+                                    }*/
+                                } else {
+                                    if (filePath != null || !filePath.isEmpty()) {
+                                        Glide.with(MainActivity_B2C.this)
+                                                .load(filePath)
+                                                .into(binding.proImg);
+                                    }
+                                }
+
+
                             } else {
-                                binding.proImg.setImageResource(R.drawable.ic_profileicon);
+                                Toast.makeText(MainActivity_B2C.this, response.message(), Toast.LENGTH_SHORT).show();
+
                             }
+
+                        } else if (response.body().getStatus() == 401) {
+                            Toast.makeText(MainActivity_B2C.this, "Session Expired, Please Login Again", Toast.LENGTH_SHORT).show();
+
+                            Prefs.clear();
+                            Intent intent = new Intent(MainActivity_B2C.this, Login.class);
+                            startActivity(intent);
+                            finish();
+                            sessionManagement.ClearSession();
+                        } else {
+                            Toast.makeText(MainActivity_B2C.this, response.message(), Toast.LENGTH_SHORT).show();
 
                         }
 
@@ -1693,6 +1811,256 @@ public class MainActivity_B2C extends AppCompatActivity {
                 Log.e(TAG, "onFailure: " + t.getMessage());
             }
         });
+    }
+
+
+    public void getPictureDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.getWindow().setWindowAnimations(R.style.AnimationsForDailog);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.upload_profile_picture_layout);
+        dialog.getWindow().getAttributes().width = ActionBar.LayoutParams.FILL_PARENT;
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        TextView cancel = dialog.findViewById(R.id.canceldialog);
+        ImageView gallery = dialog.findViewById(R.id.gallerySelect);
+        ImageView camera = dialog.findViewById(R.id.cameraSelect);
+
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkAndRequestPermissions()) {
+                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    i.setType("image/*");
+                    startActivityForResult(i, RESULT_LOAD_IMAGE);
+                    dialog.dismiss();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity_B2C.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
+                }
+
+            }
+        });
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkAndRequestPermissions()) {
+                    captureImageFromCamera();
+
+                    dialog.dismiss();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity_B2C.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSIONS);
+                }
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (picturePath.isEmpty()) {
+                    Toast.makeText(MainActivity_B2C.this, "Kindly choose image! ", Toast.LENGTH_SHORT).show();
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        });
+    }
+
+
+    //todo code for camera picture click---
+    private void captureImageFromCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(takePictureIntent, PICTURE_FROM_CAMERA);
+    }
+
+
+    private void callUploadImage() {
+        File imageFile = new File(picturePath);
+
+
+        Log.e("filePath>>>>>", "onCreate: " + picturePath);
+        Log.e("fileNAme>>>>>", "onCreate: " + imageFile.getName());
+        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
+        MultipartBody.Part File = MultipartBody.Part.createFormData("Image", imageFile.getName(), requestBody);
+
+        RequestBody SalesEmployeeCode = RequestBody.create(MediaType.parse("multipart/form-data"), Prefs.getString(Globals.SalesEmployeeCode, ""));
+
+       /* RequestBody id = RequestBody.create(MediaType.parse("multipart/form-data"), attachID);
+        RequestBody LinkType = RequestBody.create(MediaType.parse("multipart/form-data"), "ProfilePic");
+        RequestBody LinkID = RequestBody.create(MediaType.parse("multipart/form-data"), Prefs.getString(Globals.MyID, ""));
+        RequestBody Caption = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+        RequestBody CreateDate = RequestBody.create(MediaType.parse("multipart/form-data"), Globals.getTodaysDatervrsfrmt());
+        RequestBody CreateTime = RequestBody.create(MediaType.parse("multipart/form-data"), Globals.getTCurrentTime());
+        RequestBody UpdateDate = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+        RequestBody UpdateTime = RequestBody.create(MediaType.parse("multipart/form-data"), "");
+
+
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).uploadProfileAttachment(File, id, LinkType, LinkID, Caption, CreateDate, CreateTime, UpdateDate, UpdateTime);*/
+
+        Call<AttachmentModel> call = NewApiClient.getInstance().getApiService(this).uploadNewProfileAttachment(File, SalesEmployeeCode);
+        call.enqueue(new Callback<AttachmentModel>() {
+            @Override
+            public void onResponse(Call<AttachmentModel> call, Response<AttachmentModel> response) {
+                if (response != null) {
+
+                    if (response.body().getStatus() == 200) {
+                        Toast.makeText(MainActivity_B2C.this, "Successful", Toast.LENGTH_SHORT).show();
+
+                        callAttachmentAllApi();
+                    } else if (response.code() == 201) {
+                        Toast.makeText(MainActivity_B2C.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(MainActivity_B2C.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AttachmentModel> call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    private Random random = new Random();
+
+    private File saveBitmap(Bitmap bmp) {
+        File extStorageDirectory = this.getCacheDir();
+        OutputStream outStream = null;
+        int num = random.nextInt(90) + 10;
+        Log.e("extStorageDirectory---", extStorageDirectory.toString());
+        File file = new File(extStorageDirectory, "temp" + num + ".png");
+
+        if (file.exists()) {
+            file.delete();
+            file = new File(extStorageDirectory, "temp" + num + ".png");
+        }
+
+        try {
+            outStream = new FileOutputStream(file);
+            if (outStream != null) {
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+                outStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        Log.e("file---", file.toString());
+        return file;
+    }
+
+
+    private boolean checkAndRequestPermissions() {
+        int camera = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        );
+        int write = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        );
+        int read = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+        );
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+        if (write != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (camera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (read != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+        if (!listPermissionsNeeded.isEmpty() && camera != 0) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[0]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private static final int LOCATION_PERMISSION_CODE = 100;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("in fragment on request", "Permission callback called-------");
+
+        if (requestCode == LOCATION_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getCurrentLocation();
+        }
+
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            Map<String, Integer> perms = new HashMap<>();
+            // Initialize the map with both permissions
+            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+            // Fill with actual results from user
+            if (grantResults.length > 0) {
+                for (int i = 0; i < permissions.length; i++) {
+                    perms.put(permissions[i], grantResults[i]);
+                }
+
+                // Check for both permissions
+                if (perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("in fragment on request", "CAMERA & WRITE_EXTERNAL_STORAGE READ_EXTERNAL_STORAGE permission granted");
+                    // Process the normal flow
+                    // Else any one or both the permissions are not granted
+                } else {
+                    Log.d("in fragment on request", "Some permissions are not granted ask again");
+
+                    // Permission is denied (this is the first time when "never ask again" is not checked),
+                    // so ask again explaining the usage of permission.
+                    // shouldShowRequestPermissionRationale will return true
+                    // Show the dialog or Snackbar saying it's necessary and try again, otherwise proceed with setup.
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+                            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        showDialogOK("Camera and Storage Permission required for this app", (dialog, which) -> {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    checkAndRequestPermissions();
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // Do nothing or handle accordingly
+                                    break;
+                            }
+                        });
+                    } else {
+                        Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG).show();
+                        // Proceed with logic by disabling the related features or quit the app.
+                        // You might want to show a dialog to the user here to inform them about the necessity of these permissions.
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+                .show();
     }
 
 
@@ -1745,6 +2113,8 @@ public class MainActivity_B2C extends AppCompatActivity {
         binding.contentData.viewPagerChart.setAdapter(graphPagerAdapter);
         binding.contentData.tabLayout.setupWithViewPager(binding.contentData.viewPagerChart, true);
 
+        
+
         if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
             binding.contentData.tabLayout.getTabAt(0).setText("Sales");
             binding.contentData.tabLayout.getTabAt(1).setText("Receipt");
@@ -1757,12 +2127,15 @@ public class MainActivity_B2C extends AppCompatActivity {
                 public void onTabSelected(TabLayout.Tab tab) {
                     if (tab.getPosition() == 0) {
                         binding.contentData.topHeadingGraph.setText("Sales");
+                        binding.contentData.linearGraphRepresentator.setVisibility(View.VISIBLE);
 //                    binding.contentData.tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
                     } else if (tab.getPosition() == 1) {
                         binding.contentData.topHeadingGraph.setText("Receipt");
+                        binding.contentData.linearGraphRepresentator.setVisibility(View.VISIBLE);
 //                    binding.contentData.tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
                     } else if (tab.getPosition() == 2) {
                         binding.contentData.topHeadingGraph.setText("Receivables\n From Billing Date");
+                        binding.contentData.linearGraphRepresentator.setVisibility(View.GONE);
 //                    binding.contentData.tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
                     }
@@ -1778,7 +2151,10 @@ public class MainActivity_B2C extends AppCompatActivity {
 
                 }
             });
-        } else if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase")) {
+        } else { // if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Purchase"))
+            graphPagerPurchaseAdapter = new GraphPagerPurchaseAdapter(this);
+            binding.contentData.viewPagerChart.setAdapter(graphPagerPurchaseAdapter);
+            binding.contentData.tabLayout.setupWithViewPager(binding.contentData.viewPagerChart, true);
             binding.contentData.tabLayout.getTabAt(0).setText("Purchase");
             binding.contentData.tabLayout.getTabAt(1).setText("Payment");
             binding.contentData.tabLayout.getTabAt(2).setText("Payable");
@@ -1788,10 +2164,13 @@ public class MainActivity_B2C extends AppCompatActivity {
                 public void onTabSelected(TabLayout.Tab tab) {
                     if (tab.getPosition() == 0) {
                         binding.contentData.topHeadingGraph.setText("Purchase");
+                        binding.contentData.linearGraphRepresentator.setVisibility(View.VISIBLE);
                     } else if (tab.getPosition() == 1) {
                         binding.contentData.topHeadingGraph.setText("Payment");
+                        binding.contentData.linearGraphRepresentator.setVisibility(View.VISIBLE);
                     } else if (tab.getPosition() == 2) {
                         binding.contentData.topHeadingGraph.setText("Payable");
+                        binding.contentData.linearGraphRepresentator.setVisibility(View.GONE);
                     }
                 }
 
@@ -2657,7 +3036,7 @@ public class MainActivity_B2C extends AppCompatActivity {
                                 RequestBody bptype, RequestBody bpFullName,
                                 RequestBody cardCode, RequestBody salesPersonCode, RequestBody modeOfTransport,
                                 RequestBody checkInDate, RequestBody CheckInTime, RequestBody checkInLat, RequestBody checkInLong, RequestBody checkinRemark) {
-        Call<ResponseTripCheckIn> call = NewApiClient.getInstance().getApiService().tripCheckIn(
+        Call<ResponseTripCheckIn> call = NewApiClient.getInstance().getApiService(this).tripCheckIn(
                 imagePart, bptype, bpFullName, cardCode, salesPersonCode, modeOfTransport, checkInDate, CheckInTime, checkInLat, checkInLong, checkinRemark
         );
 
@@ -2725,7 +3104,7 @@ public class MainActivity_B2C extends AppCompatActivity {
                                  RequestBody totaldistanceAuto, RequestBody totalDistanceManual,
                                  RequestBody totalExpenses, RequestBody salesPersonCode, RequestBody id,
                                  RequestBody checkOutDate, RequestBody CheckOutTime, RequestBody checkOutLat, RequestBody checkOutLong, RequestBody checkOutRemark) {
-        Call<ResponseTripCheckOut> call = NewApiClient.getInstance().getApiService().tripCheckOut(
+        Call<ResponseTripCheckOut> call = NewApiClient.getInstance().getApiService(this).tripCheckOut(
                 imagePart, totaldistanceAuto, totalDistanceManual, totalExpenses, salesPersonCode, id, checkOutDate, CheckOutTime, checkOutLat, checkOutLong, checkOutRemark
         );
 
@@ -2770,7 +3149,7 @@ public class MainActivity_B2C extends AppCompatActivity {
                         RequestBody remark = RequestBody.create(MediaType.parse("multipart/form-data"), checkOutExpenseDialogBinding.commentValue.getText().toString());
 
                         Call<ExpenseResponse> callExp = NewApiClient.getInstance()
-                                .getApiService().expense_create_multipart(imagePart, id, tripName, typeOfExpense,
+                                .getApiService(MainActivity_B2C.this).expense_create_multipart(imagePart, id, tripName, typeOfExpense,
                                         expenseFrom, expenseTo, cost, createDate, createTime, createBy, updateDate, updateTime, remark
                                         , employeeId, startlat, startlong, endLat, endLong, travelDistance, id);
                         callExp.enqueue(new Callback<ExpenseResponse>() {
@@ -3156,7 +3535,7 @@ public class MainActivity_B2C extends AppCompatActivity {
         ContactPersonData contactPersonData = new ContactPersonData();
         contactPersonData.setCardCode(cardCode);
         binding.contentData.loader.loader.setVisibility(View.VISIBLE);
-        Call<ContactPerson> call = NewApiClient.getInstance().getApiService().contactemplist(contactPersonData);
+        Call<ContactPerson> call = NewApiClient.getInstance().getApiService(this).contactemplist(contactPersonData);
         call.enqueue(new Callback<ContactPerson>() {
             @Override
             public void onResponse(Call<ContactPerson> call, Response<ContactPerson> response) {
@@ -3386,7 +3765,7 @@ public class MainActivity_B2C extends AppCompatActivity {
                     expense.setCreatedBy(Prefs.getString(Globals.SalesEmployeeCode, ""));
                     expense.setEmployeeId(Prefs.getString(Globals.EmployeeID, ""));
 
-                    Call<ExpenseResponse> callExp = NewApiClient.getInstance().getApiService().expense_create(expense);
+                    Call<ExpenseResponse> callExp = NewApiClient.getInstance().getApiService(MainActivity_B2C.this).expense_create(expense);
                     callExp.enqueue(new Callback<ExpenseResponse>() {
                         @Override
                         public void onResponse(Call<ExpenseResponse> call, Response<ExpenseResponse> response) {
@@ -3647,7 +4026,7 @@ public class MainActivity_B2C extends AppCompatActivity {
 
         SalesEmployeeItem salesEmployeeItem = new SalesEmployeeItem();
         salesEmployeeItem.setSalesEmployeeCode(Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<CounterResponse> call = NewApiClient.getInstance().getApiService().dashboardcounter(salesEmployeeItem);
+        Call<CounterResponse> call = NewApiClient.getInstance().getApiService(this).dashboardcounter(salesEmployeeItem);
         call.enqueue(new Callback<CounterResponse>() {
             @Override
             public void onResponse(Call<CounterResponse> call, Response<CounterResponse> response) {
@@ -3666,7 +4045,7 @@ public class MainActivity_B2C extends AppCompatActivity {
 
 
     private void callCountryApi() {
-        Call<CountryResponse> call = NewApiClient.getInstance().getApiService().getCountryList();
+        Call<CountryResponse> call = NewApiClient.getInstance().getApiService(this).getCountryList();
         call.enqueue(new Callback<CountryResponse>() {
             @Override
             public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
@@ -3696,8 +4075,8 @@ public class MainActivity_B2C extends AppCompatActivity {
         SalesEmployeeItem si = new SalesEmployeeItem();
         Log.e("TAG", "callrecentactivityapi: " + Prefs.getString(Globals.EmployeeID, ""));
         si.setEmp(Prefs.getString(Globals.EmployeeID, ""));
-        // Call<EventResponse> call = NewApiClient.getInstance().getApiService().getcalendardata(si);
-        Call<EventResponse> call = NewApiClient.getInstance().getApiService().getrecentactivity(si);
+        // Call<EventResponse> call = NewApiClient.getInstance().getApiService(this).getcalendardata(si);
+        Call<EventResponse> call = NewApiClient.getInstance().getApiService(this).getrecentactivity(si);
         call.enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
@@ -3742,7 +4121,7 @@ public class MainActivity_B2C extends AppCompatActivity {
     private void callrecent_5_order() {
         HashMap<String, String> hde = new HashMap<>();
         hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService().top5order(hde);
+        Call<QuotationResponse> call = NewApiClient.getInstance().getApiService(this).top5order(hde);
         call.enqueue(new Callback<QuotationResponse>() {
             @Override
             public void onResponse(Call<QuotationResponse> call, Response<QuotationResponse> response) {
@@ -3901,24 +4280,6 @@ Depends on the position number on the X axis, we need to display the label, Here
     }
 
 
-    private static final int LOCATION_PERMISSION_CODE = 100;
-
-
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            @NonNull String[] permissions,
-            @NonNull int[] grantResults
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_CODE && grantResults.length > 0 &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            getCurrentLocation();
-        }
-    }
-
-
     private void getCurrentLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -3998,7 +4359,7 @@ Depends on the position number on the X axis, we need to display the label, Here
         mapData.setResourceId("");
         mapData.setContactPerson("");
         mapData.setSourceType("");
-        Call<MapResponse> call = NewApiClient.getInstance().getApiService().sendMaplatlong(mapData);
+        Call<MapResponse> call = NewApiClient.getInstance().getApiService(this).sendMaplatlong(mapData);
         call.enqueue(new Callback<MapResponse>() {
             @Override
             public void onResponse(Call<MapResponse> call, Response<MapResponse> response) {
@@ -4022,6 +4383,9 @@ Depends on the position number on the X axis, we need to display the label, Here
         });
     }
 
+
+    private File file;
+    private Uri fileUri;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -4057,6 +4421,51 @@ Depends on the position number on the X axis, we need to display the label, Here
             checkOutExpenseDialogBinding.etAttachmentsNameOut.setText(attachmentcheckOut);
 
 
+        } else if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            try {
+                Bundle extras = data.getExtras();
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+                    Log.e("picturePath", picturePath);
+
+//                    pageBinding.nameIcon.setImageURI(Uri.parse(picturePath));
+
+
+                    callUploadImage();
+                }
+
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+        } else if (requestCode == PICTURE_FROM_CAMERA && resultCode == RESULT_OK && data != null) {
+            try {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                file = saveBitmap(photo);
+                picturePath = file.getPath();
+                fileUri = Uri.fromFile(file);
+                Log.e("fileUri---", fileUri.toString());
+                Log.e("picturePath---", picturePath.toString());
+
+//                pageBinding.nameIcon.setImageBitmap(photo);
+
+
+                callUploadImage();
+
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Globals.showMessage(MainActivity_B2C.this, "No Image Found");
         }
     }
 
@@ -4125,11 +4534,20 @@ Depends on the position number on the X axis, we need to display the label, Here
 
     /*********************** Graphs APIs**************************/
     public static List<BarEntry> Salesentries = new ArrayList<>();
+    public static List<BarEntry> SalesPreviousentries = new ArrayList<>();
     public static List<BarEntry> Receiptentries = new ArrayList<>();
+    //todo receiptpreviosu value marker
+    public static List<BarEntry> ReceiptPreviousentries = new ArrayList<>();
+
+
     public static List<BarEntry> Receivableentries = new ArrayList<>();
     public static List<String> ReceivableentriesXaxis = new ArrayList<>();
     public static List<String> ReceivableentriesYaxis = new ArrayList<>();
+
     public static List<String> SalesValueForMarker = new ArrayList<>();
+    //todo new key for previosu Sales
+    public static List<String> previousSalesValueForMarker = new ArrayList<>();
+    public static List<String> previousReceiptValueForMarker = new ArrayList<>();
     public static List<String> ReceivableValueForMarker = new ArrayList<>();
     public static List<String> ReceiptValueForMarker = new ArrayList<>();
 
@@ -4138,14 +4556,14 @@ Depends on the position number on the X axis, we need to display the label, Here
     private void saleGraphApi() {
 
         HashMap obj = new HashMap<String, String>();
-        obj.put("FromDate", "2023-04-01");
-        obj.put("ToDate", "2024-03-31");
+        obj.put("FromDate", Globals.firstDateOfFinancialYear());
+        obj.put("ToDate", Globals.lastDateOfFinancialYear());
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
         Call<SalesGraphResponse> call;
         if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
-            call = NewApiClient.getInstance().getApiService().salesGraph(obj);
+            call = NewApiClient.getInstance().getApiService(this).salesGraph(obj);
         } else {
-            call = NewApiClient.getInstance().getApiService().purchaseGraph(obj);
+            call = NewApiClient.getInstance().getApiService(this).purchaseGraph(obj);
         }
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
@@ -4154,11 +4572,18 @@ Depends on the position number on the X axis, we need to display the label, Here
                     if (response.body().status == 200) {
                         if (response.body() != null && response.body().data.size() > 0)
                             Salesentries.clear();
+                        SalesPreviousentries.clear();
                         SalesValueForMarker.clear();
+                        previousSalesValueForMarker.clear();
+
+                        //todo calling attachment api after alertDialog dissmiss
+                        callAttachmentAllApi();
 
                         for (int i = 0; i < response.body().data.size(); i++) {
                             Salesentries.add(new BarEntry(i, Float.parseFloat(response.body().data.get(i).getMonthlySales())));
+                            SalesPreviousentries.add(new BarEntry(i, Float.parseFloat(response.body().data.get(i).getLastMonthlySales())));
                             SalesValueForMarker.add(Globals.convertToLakhAndCroreFromString(response.body().data.get(i).getMonthlySales()));
+                            previousSalesValueForMarker.add(Globals.convertToLakhAndCroreFromString(response.body().data.get(i).getLastMonthlySales()));
                         }
                         // opengraph();
 
@@ -4180,15 +4605,15 @@ Depends on the position number on the X axis, we need to display the label, Here
     private void ReceiptGraphApi() {
 
         HashMap obj = new HashMap<String, String>();
-        obj.put("FromDate", "2023-04-01");
-        obj.put("ToDate", "2024-03-31");
+        obj.put("FromDate", Globals.firstDateOfFinancialYear());
+        obj.put("ToDate", Globals.lastDateOfFinancialYear());
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
         Call<SalesGraphResponse> call;
         if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
-            call = NewApiClient.getInstance().getApiService().receiptGraph(obj);
+            call = NewApiClient.getInstance().getApiService(this).receiptGraph(obj);
         } else {
-            call = NewApiClient.getInstance().getApiService().receiptGraphPurchase(obj);
+            call = NewApiClient.getInstance().getApiService(this).receiptGraphPurchase(obj);
         }
         call.enqueue(new Callback<SalesGraphResponse>() {
             @Override
@@ -4197,11 +4622,17 @@ Depends on the position number on the X axis, we need to display the label, Here
                     if (response.body().status == 200) {
                         if (response.body() != null && response.body().data.size() > 0)
                             Receiptentries.clear();
+                        ReceiptPreviousentries.clear();
                         ReceiptValueForMarker.clear();
+                        previousReceiptValueForMarker.clear();
 
                         for (int i = 0; i < response.body().data.size(); i++) {
+
                             Receiptentries.add(new BarEntry(i, Float.parseFloat(response.body().data.get(i).getMonthlySales())));
+                            ReceiptPreviousentries.add(new BarEntry(i, Float.parseFloat(response.body().data.get(i).getLastMonthlySales())));
                             ReceiptValueForMarker.add(Globals.convertToLakhAndCroreFromString(response.body().data.get(i).getMonthlySales()));
+                            previousReceiptValueForMarker.add(Globals.convertToLakhAndCroreFromString(response.body().data.get(i).getLastMonthlySales()));
+
                         }
                         // opengraph();
 
@@ -4238,17 +4669,18 @@ Depends on the position number on the X axis, we need to display the label, Here
         obj.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
 
         Call<ResponseReceivableGraph> call;
+
         if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("Sales")) {
-            call = NewApiClient.getInstance().getApiService().receivableDueMonthGraph(obj);
+            call = NewApiClient.getInstance().getApiService(this).receivableDueMonthGraph(obj);
         } else {
-            call = NewApiClient.getInstance().getApiService().receivableDueMonthGraphPurchase(obj);
+            call = NewApiClient.getInstance().getApiService(this).receivableDueMonthGraphPurchase(obj);
         }
         call.enqueue(new Callback<ResponseReceivableGraph>() {
             @Override
             public void onResponse(Call<ResponseReceivableGraph> call, Response<ResponseReceivableGraph> response) {
                 if (response != null) {
                     if (response.body().status == 200) {
-                        alertDialog.hide();
+                        alertDialog.dismiss();
                         if (response.body() != null && response.body().data.size() > 0)
                             Receivableentries.clear();
                         ReceivableentriesXaxis.clear();

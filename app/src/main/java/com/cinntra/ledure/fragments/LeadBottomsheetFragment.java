@@ -164,7 +164,7 @@ public class LeadBottomsheetFragment extends BottomSheetDialogFragment implement
             context.startActivity(sendIntent);
 
         } catch(Exception e) {
-            Log.e(TAG, "ERROR_OPEN_MESSANGER"+e.toString());
+//            Log.e(TAG, "ERROR_OPEN_MESSANGER"+e.toString());
         }
     }
 }

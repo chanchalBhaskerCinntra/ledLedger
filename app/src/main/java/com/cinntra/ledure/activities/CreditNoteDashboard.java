@@ -417,6 +417,30 @@ public class CreditNoteDashboard extends AppCompatActivity {
             // from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
             bottomSheetDialog.dismiss();
         });
+
+        bindingBottom.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatelng = Globals.lastyearCal().getTimeInMillis();
+                endDatelng = Globals.thisyearCal().getTimeInMillis();
+                startDate = Globals.lastYearFirstDate();
+                endDate = Globals.getCurrentDateInLastFinancialYear();
+                pageNo = 1;
+                //  from_to_date.setText(startDate + " - " + endDate);
+                Log.e("Today==>", "startDate=>" + startDate + "  endDate=>" + endDate);
+                binding.loader.loader.setVisibility(View.VISIBLE);
+                TotalCreditNotesOnePage(startDate, endDate);
+                //   callDashboardCounter();
+                // callledgerOneapi(reportType, startDate, endDate);
+                //   url = Globals.receiptAllPdfUl + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+                // Log.e("receiptAllPdfUl", "onCreateView: " + url);
+                // from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+                bottomSheetDialog.dismiss();
+
+            }
+        });
+
+
         bindingBottom.tvAllBottomSheetSelectDate.setOnClickListener(view -> {
             startDate = "";
             endDate = "";
@@ -485,6 +509,13 @@ public class CreditNoteDashboard extends AppCompatActivity {
         binding.toolbarCreditNoteDashBoard.ivSharePdf.setVisibility(View.VISIBLE);
         binding.toolbarCreditNoteDashBoard.newQuatos.setVisibility(View.GONE);
         binding.toolbarCreditNoteDashBoard.headTitle.setText(getResources().getString(R.string.credit_notes));
+
+        //todo toolbar
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+            binding.toolbarCreditNoteDashBoard.headTitle.setText(getResources().getString(R.string.debit_note));
+        }else {
+            binding.toolbarCreditNoteDashBoard.headTitle.setText(getResources().getString(R.string.credit_notes));
+        }
     }
 
 
@@ -549,7 +580,15 @@ public class CreditNoteDashboard extends AppCompatActivity {
         Prefs.putString(Globals.FROM_DATE, fromDate);
         Prefs.putString(Globals.TO_DATE, toDate);
 
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().credit_note_dashboard(hde);
+        Call<CustomerBusinessRes> call;
+
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+            call = NewApiClient.getInstance().getApiService(this).credit_note_dashboard_purchase(hde);
+        }else {
+            call = NewApiClient.getInstance().getApiService(this).credit_note_dashboard(hde);
+        }
+
+//        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).credit_note_dashboard(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -601,7 +640,16 @@ public class CreditNoteDashboard extends AppCompatActivity {
         hde.put("Filter", groupType);
         hde.put("MaxSize", String.valueOf(Globals.QUERY_PAGE_SIZE));
         hde.put("SalesPersonCode", Prefs.getString(Globals.SalesEmployeeCode, ""));
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().credit_note_dashboard(hde);
+
+        Call<CustomerBusinessRes> call;
+
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+            call = NewApiClient.getInstance().getApiService(this).credit_note_dashboard_purchase(hde);
+        }else {
+            call = NewApiClient.getInstance().getApiService(this).credit_note_dashboard(hde);
+        }
+
+//        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).credit_note_dashboard(hde);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {
@@ -627,10 +675,22 @@ public class CreditNoteDashboard extends AppCompatActivity {
 
     /*************** Bhupi *********************/ // Calling one BottomSheet for Ledger Sharing
     private void shareLedgerData() {
-        String title = getString(R.string.credit_notes);
+//        String title = getString(R.string.credit_notes);
+
+        String title="";
+        if (Prefs.getBoolean(Globals.ISPURCHASE,false)){
+
+            title = getString(R.string.debit_note);
+            url = Globals.allDebitNote + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        }else {
+            title = getString(R.string.credit_notes);
+            url = Globals.allCreditNote + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+
+        }
 
         // url = Globals.particularBpSales + "Type="+reportType+"&CardCode=" + cardCode + "&FromDate="+startDate+"&ToDate="+endDate+"&"+PAGE_NO_STRING+""+pageNo+Globals.QUERY_MAX_PAGE_PDF+Globals.QUERY_PAGE_SIZE;
-        url = Globals.allCreditNote + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
+//        url = Globals.allCreditNote + "FromDate=" + startDate + "&ToDate=" + endDate + "&" + PAGE_NO_STRING + "" + pageNo + Globals.QUERY_MAX_PAGE_PDF + Globals.QUERY_PAGE_SIZE;
         WebViewBottomSheetFragment addPhotoBottomDialogFragment =
                 WebViewBottomSheetFragment.newInstance(dialogWeb, url, title);
         addPhotoBottomDialogFragment.show(getSupportFragmentManager(),

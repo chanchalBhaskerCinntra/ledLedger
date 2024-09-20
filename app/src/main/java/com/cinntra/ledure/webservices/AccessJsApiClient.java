@@ -212,19 +212,19 @@ public class AccessJsApiClient {
 
             long t1 = System.nanoTime();
 
-            Log.d("AVIS_NW", String.format("Sending request %s on %s%n%s",
-                    request.url(), chain.connection(), request.headers()));
+//            Log.d("AVIS_NW", String.format("Sending request %s on %s%n%s",
+//                    request.url(), chain.connection(), request.headers()));
 
             Response response = chain.proceed(request);
 
             long t2 = System.nanoTime();
-            Log.d("AVIS_NW", String.format("Received response for %s in %.1fms%n%s",
-                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+//            Log.d("AVIS_NW", String.format("Received response for %s in %.1fms%n%s",
+//                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
 
             final String responseString = new String(response.body().bytes());
 
-            Log.d("AVIS_NW", "Response: " + responseString);
+//            Log.d("AVIS_NW", "Response: " + responseString);
 
             return response.newBuilder()
                     .body(ResponseBody.create(response.body().contentType(), responseString))
@@ -244,7 +244,7 @@ public class AccessJsApiClient {
                    cache = new Cache(new File(mContext.getCacheDir(), "http-cache"),
                            10 * 1024 * 1024); // 10 MB
                } catch (Exception e) {
-                   Log.e(TAG, "Could not create Cache!");
+//                   Log.e(TAG, "Could not create Cache!");
                }
 
                return cache;
@@ -303,7 +303,7 @@ public class AccessJsApiClient {
             NetworkInfo activeNetwork = e.getActiveNetworkInfo();
             return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         } catch (Exception e) {
-            Log.w(TAG, e.toString());
+//            Log.w(TAG, e.toString());
         }
 
         return false;

@@ -1,5 +1,7 @@
 package com.cinntra.ledure.adapters;
 
+import static com.cinntra.ledure.globals.Globals.numberToK;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -51,8 +53,9 @@ public class SoldItem_Adapter extends RecyclerView.Adapter<SoldItem_Adapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.title.setText(AllItemList.get(position).getItemName());
-        holder.last_sold_date.setText("Total Price : " + AllItemList.get(position).getTotalPrice());
+        holder.title.setText(AllItemList.get(position).getItemCode() + " " + AllItemList.get(position).getItemName());
+      //  holder.last_sold_date.setText("Total Price : " + AllItemList.get(position).getTotalPrice());
+        holder.last_sold_date.setText("Total Price: "+context.getResources().getString(R.string.Rs) + " " + numberToK(String.valueOf(AllItemList.get(position).getTotalPrice())));
         holder.quantity.setText("Total Quantity : " + AllItemList.get(position).getTotalQty());
         holder.unit_price.setVisibility(View.INVISIBLE);
         holder.unit_price.setText("Unit Price : " + AllItemList.get(position).getUnitPirce());

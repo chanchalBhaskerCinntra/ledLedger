@@ -670,7 +670,7 @@ public class AddBPCustomer extends MainBaseActivity implements View.OnClickListe
 
         StateData stateData = new StateData();
         stateData.setCountry(countryCode);
-        Call<StateRespose> call = NewApiClient.getInstance().getApiService().getStateList(stateData);
+        Call<StateRespose> call = NewApiClient.getInstance().getApiService(this).getStateList(stateData);
         call.enqueue(new Callback<StateRespose>() {
             @Override
             public void onResponse(Call<StateRespose> call, Response<StateRespose> response) {
@@ -873,7 +873,7 @@ public class AddBPCustomer extends MainBaseActivity implements View.OnClickListe
     private void createBP(AddBusinessPartnerData in)
          {
 
-        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService().addnewCustomer(in);
+        Call<CustomerBusinessRes> call = NewApiClient.getInstance().getApiService(this).addnewCustomer(in);
         call.enqueue(new Callback<CustomerBusinessRes>() {
             @Override
             public void onResponse(Call<CustomerBusinessRes> call, Response<CustomerBusinessRes> response) {

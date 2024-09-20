@@ -8,6 +8,9 @@ public class GraphModel implements Serializable {
 
     @SerializedName("MonthlySales")
     String MonthlySales;
+
+    @SerializedName("last_MonthlySales")
+    String lastMonthlySales;
     @SerializedName("FinanYr")
     String FinanYr;
    @SerializedName("Month")
@@ -15,6 +18,14 @@ public class GraphModel implements Serializable {
 
     @SerializedName("Year")
     String Year;
+
+    public String getLastMonthlySales() {
+        return lastMonthlySales;
+    }
+
+    public void setLastMonthlySales(String lastMonthlySales) {
+        this.lastMonthlySales = lastMonthlySales;
+    }
 
     public String getMonthlySales() {
         return MonthlySales;
