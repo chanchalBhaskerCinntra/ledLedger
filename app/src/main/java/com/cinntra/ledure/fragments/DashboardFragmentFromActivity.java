@@ -284,6 +284,11 @@ public class DashboardFragmentFromActivity extends Fragment {
         alertDialog = builder.create();
 
 
+        //todo setting textview for previosu and final year chart
+        binding.contentData.tvCurrentYearHeading.setText(Globals.getCurrentFinancialYear());
+        binding.contentData.tvPreviousYearHeading.setText(Globals.getPreviousFinancialYear());
+
+
         //todo set sales and purchase drop down value---
         ArrayAdapter spinnerArrayAdapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.data_type, // Replace with your item array resource

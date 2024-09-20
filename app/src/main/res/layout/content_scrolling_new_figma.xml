@@ -121,16 +121,17 @@
                         android:layout_width="12dp"
                         android:layout_height="12dp"
                         android:layout_gravity="center"
+                        android:backgroundTint="@color/white"
                         android:background="@drawable/yellow_circle" />
 
                     <!-- First TextView -->
                     <TextView
-
+                        android:id="@+id/tvCurrentYearHeading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/size_2"
                         android:layout_marginEnd="@dimen/size_2"
-                        android:text="Current"
+
                         android:textColor="@color/white" />
 
                     <!-- Third ImageView with white circle -->
@@ -140,16 +141,17 @@
                         android:layout_height="12dp"
                         android:layout_gravity="center"
                         android:layout_marginStart="4dp"
+                        android:backgroundTint="@color/grey"
                         android:background="@drawable/white_circle" />
 
                     <!-- Second TextView -->
                     <TextView
-
+                        android:id="@+id/tvPreviousYearHeading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/size_2"
                         android:layout_marginEnd="@dimen/size_2"
-                        android:text="Previous"
+
                         android:textColor="@color/white" />
 
                 </LinearLayout>

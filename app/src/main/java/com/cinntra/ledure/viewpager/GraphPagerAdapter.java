@@ -129,7 +129,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         BarDataSet dataSet = new BarDataSet(entries, "Values");
-        dataSet.setColor(context.getResources().getColor(R.color.yellow));
+        dataSet.setColor(context.getResources().getColor(R.color.white));
         dataSet.setDrawValues(false);
         dataSets.add(dataSet);
 
@@ -141,7 +141,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
         //todo new code because to show data of two bars
         BarDataSet dataSet2 = new BarDataSet(previousEntries, "Values2");
-        dataSet2.setColor(context.getResources().getColor(R.color.white));
+        dataSet2.setColor(context.getResources().getColor(R.color.grey));
         dataSet2.setDrawValues(false);
         dataSets.add(dataSet2);
 
@@ -164,7 +164,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         customer_barChart.getXAxis().setCenterAxisLabels(true);
         customer_barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         customer_barChart.getXAxis().setTextColor(context.getResources().getColor(R.color.white));
-        customer_barChart.getXAxis().setLabelCount(13, false);
+        customer_barChart.getXAxis().setLabelCount(12, false);
         customer_barChart.getXAxis().setDrawGridLines(false);
         customer_barChart.getXAxis().setGranularity(1f);
 
@@ -446,7 +446,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         BarDataSet dataSet = new BarDataSet(entries, "Values");
-        dataSet.setColor(context.getResources().getColor(R.color.yellow));
+        dataSet.setColor(context.getResources().getColor(R.color.white));
         dataSet.setDrawValues(false);
         dataSets.add(dataSet);
 
@@ -458,7 +458,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
         //todo new code because to show data of two bars
         BarDataSet dataSet2 = new BarDataSet(previousEntries, "Values2");
-        dataSet2.setColor(context.getResources().getColor(R.color.white));
+        dataSet2.setColor(context.getResources().getColor(R.color.grey));
         dataSet2.setDrawValues(false);
         dataSets.add(dataSet2);
 

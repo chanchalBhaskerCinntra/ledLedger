@@ -121,7 +121,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         BarDataSet dataSet = new BarDataSet(entries, "Values");
-        dataSet.setColor(context.getResources().getColor(R.color.yellow));
+        dataSet.setColor(context.getResources().getColor(R.color.white));
         dataSet.setDrawValues(false);
         dataSets.add(dataSet);
 
@@ -133,7 +133,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         //todo new code because to show data of two bars
         BarDataSet dataSet2 = new BarDataSet(previousEntries, "Values2");
-        dataSet2.setColor(context.getResources().getColor(R.color.white));
+        dataSet2.setColor(context.getResources().getColor(R.color.grey));
         dataSet2.setDrawValues(false);
         dataSets.add(dataSet2);
 
@@ -262,7 +262,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         BarDataSet dataSet = new BarDataSet(entries, "Values");
-        dataSet.setColor(context.getResources().getColor(R.color.yellow));
+        dataSet.setColor(context.getResources().getColor(R.color.white));
         dataSet.setDrawValues(false);
         dataSets.add(dataSet);
 
@@ -274,7 +274,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         //todo new code because to show data of two bars
         BarDataSet dataSet2 = new BarDataSet(previousEntries, "Values2");
-        dataSet2.setColor(context.getResources().getColor(R.color.white));
+        dataSet2.setColor(context.getResources().getColor(R.color.grey));
         dataSet2.setDrawValues(false);
         dataSets.add(dataSet2);
 

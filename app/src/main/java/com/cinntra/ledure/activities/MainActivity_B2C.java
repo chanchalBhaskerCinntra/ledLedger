@@ -277,6 +277,11 @@ public class MainActivity_B2C extends AppCompatActivity {
 
         alertDialog = builder.create();
 
+
+        //todo setting textview for previosu and final year chart
+        binding.contentData.tvCurrentYearHeading.setText(Globals.getCurrentFinancialYear());
+        binding.contentData.tvPreviousYearHeading.setText(Globals.getPreviousFinancialYear());
+
         dateSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.date_selector, // Replace with your item array resource
                 R.layout.spinner_textview_dashboard);

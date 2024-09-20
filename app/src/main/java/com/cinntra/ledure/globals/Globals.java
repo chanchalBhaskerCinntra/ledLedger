@@ -372,6 +372,41 @@ public class Globals {
     public static final String KEY_Sale_Pending = "_SaleLedger";
 
 
+
+
+    public static String getCurrentFinancialYear() {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+        int startYear, endYear;
+
+        if (today.getMonthValue() >= 4) { // Financial year starts in April
+            startYear = currentYear;
+            endYear = currentYear + 1;
+        } else {
+            startYear = currentYear - 1;
+            endYear = currentYear;
+        }
+
+        return startYear + "-" + String.format("%02d", endYear % 100); // Format as "YYYY-YY"
+    }
+
+    public static String getPreviousFinancialYear() {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+        int startYear, endYear;
+
+        if (today.getMonthValue() >= 4) { // Financial year starts in April
+            startYear = currentYear - 1;
+            endYear = currentYear;
+        } else {
+            startYear = currentYear - 2;
+            endYear = currentYear - 1;
+        }
+
+        return startYear + "-" + String.format("%02d", endYear % 100); // Format as "YYYY-YY"
+    }
+
+
     public static void logoutScreen(Context context) {
         Intent mainIntent = new Intent(context, Login.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
