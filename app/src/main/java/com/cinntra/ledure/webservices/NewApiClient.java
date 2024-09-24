@@ -75,7 +75,7 @@ public class NewApiClient {
 
         if (apiServices == null) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
+           // interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
             CookieHandler cookieHandler = new CookieManager();
             CookieManager cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);

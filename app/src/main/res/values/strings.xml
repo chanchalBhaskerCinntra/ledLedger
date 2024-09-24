@@ -1035,7 +1035,7 @@
     <string name="report">Report</string>
     <string name="location_sharing">Location Sharing</string>
     <!-- <string name="version_app">Version: 1.0.25 20240703 (Live) </string>-->
-    <string name="version_app">Version: 1.0.0  (TEST) </string>
+    <string name="version_app">Version: 1.0.0  (BETA-TEST) </string>
     <string name="debit_note">Debit Note</string>
 
 

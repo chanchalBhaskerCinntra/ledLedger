@@ -113,7 +113,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(0f);
+        roundedBarChartRenderer.setmRadius(8f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);
@@ -430,7 +430,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(0f);
+        roundedBarChartRenderer.setmRadius(8f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);
@@ -597,7 +597,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
 
         RoundedBarChart roundedBarChartRenderer = new RoundedBarChart(customer_barChart, customer_barChart.getAnimator(), customer_barChart.getViewPortHandler());
-        roundedBarChartRenderer.setmRadius(0f);
+        roundedBarChartRenderer.setmRadius(8f);
         customer_barChart.setRenderer(roundedBarChartRenderer);
 
         customer_barChart.setDrawBarShadow(false);

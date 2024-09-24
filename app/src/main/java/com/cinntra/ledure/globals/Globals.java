@@ -178,10 +178,10 @@ public class Globals {
 
 
     /************ Live Development *******************/
-   /* public static String NewBaseUrl = "http://103.107.67.160:8002/";
+    public static String NewBaseUrl = "http://103.107.67.160:8002/";
     public static String PDFURL = "http://ledure.bridgexd.com/assets/newhtml/";
 
-    public static String ImageURL = "http://103.107.67.160:8002";*/
+    public static String ImageURL = "http://103.107.67.160:8002";
 
     /************ Test Testing ONLY FOR PAYMENT_DUE *******************/
 
@@ -192,9 +192,9 @@ public class Globals {
 
     /************ Test Development *******************/
 
-    public static String NewBaseUrl = "http://103.107.67.160:8005/";
+    /*public static String NewBaseUrl = "http://103.107.67.160:8005/";
     public static String PDFURL = "http://103.234.187.197:4309/assets/newhtml/";
-    public static String ImageURL = "http://103.107.67.160:8005";
+    public static String ImageURL = "http://103.107.67.160:8005";*/
     public static String pdfGlobalUrl = "http://103.234.187.197:4214/";
     public static String attachmentBaseUrl = "http://103.107.67.160:8005/";
     public static String LedgerUrl = "" + PDFURL + "Saleledger.html?";
