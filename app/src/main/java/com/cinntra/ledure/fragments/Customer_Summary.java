@@ -126,6 +126,11 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
     LinearLayout saleLay;
     @BindView(R.id.linearPendingSaleOrder)
     LinearLayout linearPendingSaleOrder;
+    @BindView(R.id.linearAdvancePayment)
+    LinearLayout linearAdvancePayment;
+
+    @BindView(R.id.tvAdvancePayment)
+    TextView tvAdvancePayment;
 
     @BindView(R.id.tvAvgPaymentDays)
     TextView tvAvgPaymentDays;
@@ -268,15 +273,17 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         receivableLay.setOnClickListener(this);
         purchaseLay.setOnClickListener(this);
         payableLay.setOnClickListener(this);
+
+
         purchase_receiptLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=  new Intent(requireActivity(), ParticularCustomerReceiptInfo.class);
-                i.putExtra("FromWhere","ReceiptLedger");
-                i.putExtra("cardCode",cardCode);
-                i.putExtra("cardName",cardName);
-                i.putExtra("startDate","");
-                i.putExtra("endDate","");
+                Intent i = new Intent(requireActivity(), ParticularCustomerReceiptInfo.class);
+                i.putExtra("FromWhere", "ReceiptLedger");
+                i.putExtra("cardCode", cardCode);
+                i.putExtra("cardName", cardName);
+                i.putExtra("startDate", "");
+                i.putExtra("endDate", "");
 
                 requireActivity().startActivity(i);
             }
@@ -452,12 +459,12 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
 
         if (res.getLastSalesDate().equalsIgnoreCase("None") || res.getLastSalesDate().isEmpty()) {
             last_sale_date.setText("None");
-        }else {
+        } else {
             last_sale_date.setText(Globals.convertDateFormat(res.getLastSalesDate()));
         }
         if (res.getLastRecipetDate().equalsIgnoreCase("None") || res.getLastRecipetDate().isEmpty()) {
             last_receipt_date.setText("None");
-        }else {
+        } else {
             last_receipt_date.setText(Globals.convertDateFormat(res.getLastRecipetDate()));
         }
 
@@ -472,10 +479,16 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         receivable_amount.setText("₹ " + Globals.numberToK(String.valueOf(ress)));
 
         //todo payable amount
-        double payable=Double.valueOf(res.getTotalPayable()) + Double.valueOf(res.getTotalJECreditNotepay());
+        double payable = Double.valueOf(res.getTotalPayable()) + Double.valueOf(res.getTotalJECreditNotepay());
         payable_amount.setText("₹ " + Globals.numberToK(String.valueOf(payable)));
 
 
+        if (!Prefs.getBoolean(Globals.ISPURCHASE, false)) {
+            linearAdvancePayment.setVisibility(View.GONE);
+        } else {
+            linearAdvancePayment.setVisibility(View.VISIBLE);
+            tvAdvancePayment.setText("₹ " + Globals.numberToK(String.valueOf(res.getAdvance())));
+        }
 
       /*  //todo for purchase
         if (Prefs.getBoolean(Globals.ISPURCHASE, false)) {
@@ -484,8 +497,6 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
             double ress = Double.valueOf(res.getTotalReceivable()) + Double.valueOf(res.getTotalJECreditNote());
             receivable_amount.setText("₹ " + Globals.numberToK(String.valueOf(ress)));
         }*/
-
-
 
 
         tvAvgPaymentDays.setText("" + res.getAvgPayDays());
@@ -551,8 +562,6 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         MonthGroupSalesList obj_over60_pay = new MonthGroupSalesList();
 
 
-
-
         if (res.getOverList() == null || res.getOverList().size() == 0) {
             obj_over.setMonth(">0 Days");
             //obj_over.setDocTotal("0.0");
@@ -604,9 +613,6 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
         }
 
 
-
-
-
         MonthGroupSalesList obj_under = new MonthGroupSalesList();
         if (res.getUnderList() == null || res.getUnderList().size() == 0) {
             obj_under.setMonth("Not Due");
@@ -616,7 +622,7 @@ public class Customer_Summary extends Fragment implements View.OnClickListener, 
             obj_under.setDocTotal(setOverDue(res.getUnderList()));
         }
         over_under.add(obj_under);
-       // over_under_pay.add()
+        // over_under_pay.add()
 
         receivableAdapter = new ReceivableLedgerAdapter(getActivity(), over_under, res.getCardCode(), res.getCardName());
         receivable_recyclerview.setAdapter(receivableAdapter);

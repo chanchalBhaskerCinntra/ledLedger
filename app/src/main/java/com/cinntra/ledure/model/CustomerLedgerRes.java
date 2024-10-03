@@ -89,6 +89,10 @@ public class CustomerLedgerRes implements Serializable
     @SerializedName("TotalJECreditNote")
     @Expose
     String TotalJECreditNote;
+
+    @SerializedName("Advance")
+    @Expose
+    String Advance;
     @SerializedName("SalesList")
     @Expose
     private List<SalesList> SalesList = null;
@@ -128,6 +132,14 @@ public class CustomerLedgerRes implements Serializable
     @Expose
     private List<UnderList> OverListpay = null;
 
+
+    public String getAdvance() {
+        return Advance;
+    }
+
+    public void setAdvance(String advance) {
+        Advance = advance;
+    }
 
     /**
      * No args constructor for use in serialization
