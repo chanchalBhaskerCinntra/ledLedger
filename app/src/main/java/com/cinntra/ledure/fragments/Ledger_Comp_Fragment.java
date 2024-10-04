@@ -2123,6 +2123,9 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
             bottomSheetDialog.dismiss();
         });
 
+        //todo show visibility
+        binding.tvLastYearTillDateBottomSheetSelectDate.setVisibility(View.VISIBLE);
+
         binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -2136,7 +2139,7 @@ public class Ledger_Comp_Fragment extends Fragment implements Toolbar.OnMenuItem
 
                 groupTypeManager_from_Calender();
 
-                from_to_date.setText(binding.tvLastYearBottomSheetSelectDate.getText().toString());
+                from_to_date.setText(binding.tvLastYearTillDateBottomSheetSelectDate.getText().toString());
                 bottomSheetDialog.dismiss();
             }
         });

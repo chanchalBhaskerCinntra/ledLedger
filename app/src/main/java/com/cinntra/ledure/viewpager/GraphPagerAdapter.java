@@ -131,7 +131,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         BarDataSet dataSet = new BarDataSet(entries, "Values");
         dataSet.setColor(context.getResources().getColor(R.color.white));
         dataSet.setDrawValues(false);
-        dataSets.add(dataSet);
+
 
         dataSet.setHighLightColor(Color.WHITE); // Set the color
         dataSet.setHighLightAlpha(100);
@@ -144,6 +144,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         dataSet2.setColor(context.getResources().getColor(R.color.grey));
         dataSet2.setDrawValues(false);
         dataSets.add(dataSet2);
+        dataSets.add(dataSet);
 
         //todo new thing
         dataSet2.setHighlightEnabled(true);
@@ -448,7 +449,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         BarDataSet dataSet = new BarDataSet(entries, "Values");
         dataSet.setColor(context.getResources().getColor(R.color.white));
         dataSet.setDrawValues(false);
-        dataSets.add(dataSet);
+
 
         dataSet.setHighLightColor(Color.WHITE); // Set the color
         dataSet.setHighLightAlpha(100);
@@ -461,6 +462,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         dataSet2.setColor(context.getResources().getColor(R.color.grey));
         dataSet2.setDrawValues(false);
         dataSets.add(dataSet2);
+        dataSets.add(dataSet);
 
         //todo new thing
         dataSet2.setHighlightEnabled(true);

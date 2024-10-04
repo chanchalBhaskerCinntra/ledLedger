@@ -1908,6 +1908,10 @@ public class Ledger_CompGroup_Fragment extends Fragment implements Toolbar.OnMen
             bottomSheetDialog.dismiss();
         });
 
+
+        //todo show visibility
+        binding.tvLastYearTillDateBottomSheetSelectDate.setVisibility(View.VISIBLE);
+
         binding.tvLastYearTillDateBottomSheetSelectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

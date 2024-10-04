@@ -115,14 +115,34 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tab_layout">
 
+                    <!-- Third ImageView with white circle -->
+                    <ImageView
+
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        android:background="@drawable/white_circle"
+                        android:backgroundTint="@color/grey" />
+
+                    <!-- Second TextView -->
+                    <TextView
+                        android:id="@+id/tvPreviousYearHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_2"
+                        android:layout_marginEnd="@dimen/size_2"
+
+                        android:textColor="@color/white" />
+
                     <!-- First ImageView with yellow circle -->
                     <ImageView
                         android:id="@+id/imageView1"
                         android:layout_width="12dp"
                         android:layout_height="12dp"
                         android:layout_gravity="center"
-                        android:backgroundTint="@color/white"
-                        android:background="@drawable/yellow_circle" />
+                        android:background="@drawable/yellow_circle"
+                        android:backgroundTint="@color/white" />
 
                     <!-- First TextView -->
                     <TextView
@@ -134,25 +154,7 @@
 
                         android:textColor="@color/white" />
 
-                    <!-- Third ImageView with white circle -->
-                    <ImageView
 
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="4dp"
-                        android:backgroundTint="@color/grey"
-                        android:background="@drawable/white_circle" />
-
-                    <!-- Second TextView -->
-                    <TextView
-                        android:id="@+id/tvPreviousYearHeading"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/size_2"
-                        android:layout_marginEnd="@dimen/size_2"
-
-                        android:textColor="@color/white" />
 
                 </LinearLayout>
 
@@ -205,7 +207,7 @@
 
             <LinearLayout
                 android:id="@+id/linearDate"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="8dp"
@@ -225,6 +227,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:background="@drawable/bg_stroke_grey"
                     android:orientation="horizontal"
                     android:padding="7dp">
@@ -243,11 +246,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="80"
-
                         android:gravity="center"
-
                         android:text="@string/dashboard_date_text"
                         android:textColor="@color/textcolor_date_dashboard"
+                        android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="@id/linearMonthlySPinnerTop"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@id/linearMonthlySPinnerTop" />
