@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -121,6 +122,7 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
 
             @Override
             public void success(String path) {
+                Log.e(TAG, "success: " );
                 progressDialog.dismiss();
                 gmailShare(fileName);
                 //PdfView.openPdfFile(Pdf_Test.this,getString(R.string.app_name),"Do you want to open the pdf file?"+fileName,path);
@@ -129,21 +131,24 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
             @Override
             public void failure() {
                 progressDialog.dismiss();
+                Log.e(TAG, "failure: ");
 
             }
         });
     }
 
+    private static final String TAG = "WebViewBottomSheetFragm";
 
     /***shubh****/
     private void gmailShare(String fName) {
-
+        Log.e(TAG, "gmailShare: ");
         String stringFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/hana/" + "/" + fName;
         File file = new File(stringFile);
         Uri apkURI = FileProvider.getUriForFile(requireContext(), requireActivity().getPackageName() + ".FileProvider", file);
 
 
         if (!file.exists()) {
+
             Toast.makeText(requireContext(), "File Not exist", Toast.LENGTH_SHORT).show();
 
         }
@@ -193,7 +198,7 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
 
 
     /***shubh****/
-    private void whatsappShare(String fName) {
+/*    private void whatsappShare(String fName) {
         String stringFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/hana/" + "/" + fName;
         File file = new File(stringFile);
         Uri apkURI = null;
@@ -226,6 +231,99 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
         }
 
 
+    }*/
+
+
+    //todo new function by shubh
+    private void lab_pdf(final WebView webView, final String f_name) {
+        // Define the path to store the PDF
+        final String path = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS + "/hana/";
+        final File f = new File(path);
+
+        // Ensure the directory exists
+        if (!f.exists()) {
+            f.mkdirs(); // Create directory if not exists
+        }
+
+        final String fileName = f_name;
+        final ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Please wait, generating PDF...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        // Perform the PDF conversion in a background thread
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // Create PDF
+                    WebViewToPdfConverter.createWebPrintJob(requireActivity(), webView, f, fileName, new WebViewToPdfConverter.Callback() {
+                        @Override
+                        public void success(String path) {
+                            // Dismiss progress dialog on success
+                            requireActivity().runOnUiThread(() -> {
+                                progressDialog.dismiss();
+                                whatsappShare(fileName); // Call WhatsApp sharing after successful PDF generation
+                            });
+                        }
+
+                        @Override
+                        public void failure() {
+                            // Handle failure case
+                            requireActivity().runOnUiThread(() -> {
+                                progressDialog.dismiss();
+                                Toast.makeText(requireContext(), "Failed to generate PDF", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                } catch (Exception e) {
+                    requireActivity().runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(requireContext(), "An error occurred: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void whatsappShare(String fName) {
+        // Define the path for the generated PDF file
+        String stringFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/hana/" + fName;
+        File file = new File(stringFile);
+
+        if (!file.exists()) {
+            Toast.makeText(requireContext(), "File does not exist", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Uri apkURI;
+        try {
+            // Use FileProvider to securely access the file
+            apkURI = FileProvider.getUriForFile(requireContext(), getActivity().getPackageName() + ".FileProvider", file);
+        } catch (Exception e) {
+            Log.e("whatsapp", "Error getting file URI: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        // Prepare the intent to share the PDF via WhatsApp
+        try {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("application/pdf");
+            share.putExtra(Intent.EXTRA_STREAM, apkURI);
+            share.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // Check if WhatsApp or WhatsApp Business is installed and set the package accordingly
+            if (isAppInstalled("com.whatsapp")) {
+                share.setPackage("com.whatsapp");
+            } else if (isAppInstalled("com.whatsapp.w4b")) {
+                share.setPackage("com.whatsapp.w4b");
+            }
+
+            startActivity(share);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(requireContext(), "WhatsApp is not installed on your phone.", Toast.LENGTH_LONG).show();
+        }
     }
 
     /***shubh****/
@@ -251,7 +349,7 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     /***shubh****/
-    private void lab_pdf(WebView webView, String f_name) {
+/*    private void lab_pdf(WebView webView, String f_name) {
 
         String path = Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS + "/hana/";
         File f = new File(path);
@@ -293,7 +391,7 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
 
             }
         });
-    }
+    }*/
 
 
     /***shubh****/
@@ -313,7 +411,8 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
             webView.clearCache(true);
         }
 
-        webView.getSettings().setLoadsImagesAutomatically(true);
+       // webView.getSettings().setLoadsImagesAutomatically(true);
+        webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         // webView.getSettings().setAppCacheEnabled(false);
@@ -329,6 +428,26 @@ public class WebViewBottomSheetFragment extends BottomSheetDialogFragment {
         whatsapp.setEnabled(false);
         gmail.setEnabled(false);
         other.setEnabled(false);
+
+
+
+
+        //todo by shubh
+        /*webView.clearCache(true);
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setAllowFileAccessFromFileURLs(true);
+            settings.setAllowUniversalAccessFromFileURLs(true);
+        }
+
+        settings.setSupportZoom(false);
+        settings.setBuiltInZoomControls(false);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(false);
+        settings.setAllowFileAccess(true);*/
 
 
         webView.setWebViewClient(new WebViewClient() {
