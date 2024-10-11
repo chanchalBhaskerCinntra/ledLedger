@@ -75,7 +75,7 @@ public class NewApiClient {
 
         if (apiServices == null) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
+          //  interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
             CookieHandler cookieHandler = new CookieManager();
             CookieManager cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -125,14 +125,14 @@ public class NewApiClient {
                 }
             });
 
-            httpClient.addInterceptor(interceptor); //FOR PLAY STORE
+         //   httpClient.addInterceptor(interceptor); //FOR PLAY STORE
             httpClient.readTimeout(300, TimeUnit.SECONDS);
             httpClient.connectTimeout(300, TimeUnit.SECONDS);
             httpClient.writeTimeout(300, TimeUnit.SECONDS);
 
             // PLAY STORE
-            if (SHOW_LOGS)
-                httpClient.addInterceptor(new LoggingInterceptor());
+          /*  if (SHOW_LOGS)
+                httpClient.addInterceptor(new LoggingInterceptor());*/
 
             OkHttpClient client = httpClient.build();
             Retrofit retrofit = getBuilder().client(client).build();
