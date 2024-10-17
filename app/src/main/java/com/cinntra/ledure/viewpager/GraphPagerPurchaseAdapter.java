@@ -177,7 +177,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         customer_barChart.setDrawBarShadow(false);
         customer_barChart.setPinchZoom(false);
         //
-        customer_barChart.setScaleEnabled(false);
+        customer_barChart.setScaleEnabled(true);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -319,7 +319,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         customer_barChart.setDrawBarShadow(false);
         customer_barChart.setPinchZoom(false);
         //
-        customer_barChart.setScaleEnabled(false);
+        customer_barChart.setScaleEnabled(true);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -448,7 +448,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
         customer_barChart.setTouchEnabled(true);
         customer_barChart.setDrawBarShadow(false);
-        customer_barChart.setScaleEnabled(false);//todo stop zoom out chart functionality--
+        customer_barChart.setScaleEnabled(true);//todo stop zoom out chart functionality--
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
