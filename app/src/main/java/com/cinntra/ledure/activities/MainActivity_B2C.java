@@ -88,7 +88,7 @@ import com.cinntra.ledure.fragments.Graph_;
 import com.cinntra.ledure.fragments.ItemsBottomFragment;
 import com.cinntra.ledure.fragments.MoreViewsFragmnet;
 import com.cinntra.ledure.fragments.PartyFragment;
-import com.cinntra.ledure.fragments.PurchaseFragment;
+
 import com.cinntra.ledure.globals.Globals;
 import com.cinntra.ledure.globals.MainBaseActivity;
 import com.cinntra.ledure.globals.SessionManagement;
@@ -98,22 +98,21 @@ import com.cinntra.ledure.model.ContactPerson;
 import com.cinntra.ledure.model.ContactPersonData;
 import com.cinntra.ledure.model.CounterResponse;
 import com.cinntra.ledure.model.CountryResponse;
-import com.cinntra.ledure.model.CustomerBusinessRes;
+
 import com.cinntra.ledure.model.DashboardCounterData;
 import com.cinntra.ledure.model.DashboardCounterResponse;
 import com.cinntra.ledure.model.EventResponse;
 import com.cinntra.ledure.model.EventValue;
 import com.cinntra.ledure.model.ExpenseDataModel;
 import com.cinntra.ledure.model.ExpenseResponse;
-import com.cinntra.ledure.model.GraphModel;
+
 import com.cinntra.ledure.model.LeadFilter;
 import com.cinntra.ledure.model.MapData;
 import com.cinntra.ledure.model.MapResponse;
-import com.cinntra.ledure.model.NewEvent;
+
 import com.cinntra.ledure.model.QuotationItem;
 import com.cinntra.ledure.model.QuotationResponse;
-import com.cinntra.ledure.model.ReceiptCustomerBusinessRes;
-import com.cinntra.ledure.model.ReceivableResponse;
+
 import com.cinntra.ledure.model.ResponseTripCheckIn;
 import com.cinntra.ledure.model.ResponseTripCheckOut;
 import com.cinntra.ledure.model.SalesEmployeeItem;
@@ -150,11 +149,11 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -170,7 +169,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -334,8 +333,7 @@ public class MainActivity_B2C extends AppCompatActivity {
 
         dataTypeValue = binding.typeDropdown.getSelectedItem().toString();
 
-        Log.e(TAG, "onCreate: " + dataTypeValue);
-        Log.e(TAG, "CheckPefOn--: " + Prefs.getString(Globals.IS_SALE_OR_PURCHASE, ""));
+
 
 
         if (Prefs.getString(Globals.IS_SALE_OR_PURCHASE, "").equalsIgnoreCase("")) {

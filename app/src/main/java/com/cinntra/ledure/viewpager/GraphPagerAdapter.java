@@ -19,15 +19,14 @@ import com.cinntra.ledure.R;
 
 import com.cinntra.ledure.activities.MainActivity_B2C;
 
-import com.cinntra.ledure.customUI.CustomMarkerBhoop;
+
 import com.cinntra.ledure.customUI.CustomMarkerView;
 import com.cinntra.ledure.customUI.CustomMarkerViewReceipt;
 import com.cinntra.ledure.customUI.CustomMarkerViewReceivables;
-import com.cinntra.ledure.customUI.MarkerForChart;
-import com.cinntra.ledure.customUI.MyXAxisValueFormatter;
+
 import com.cinntra.ledure.customUI.RoundedBarChart;
 import com.cinntra.ledure.globals.Globals;
-import com.cinntra.ledure.graph.MonthAxisValueFormatter;
+
 import com.cinntra.ledure.model.GraphModel;
 import com.cinntra.ledure.model.SalesGraphResponse;
 import com.cinntra.ledure.webservices.NewApiClient;
@@ -39,12 +38,11 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
+
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
+
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import java.util.ArrayList;
@@ -133,8 +131,8 @@ public class GraphPagerAdapter extends PagerAdapter {
         dataSet.setDrawValues(false);
 
 
-        dataSet.setHighLightColor(Color.WHITE); // Set the color
-        dataSet.setHighLightAlpha(100);
+        /*dataSet.setHighLightColor(Color.WHITE); // Set the color
+        dataSet.setHighLightAlpha(100);*/
         //todo new thing
         dataSet.setHighlightEnabled(true);
 
@@ -188,7 +186,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         customer_barChart.setDrawBarShadow(false);
         customer_barChart.setPinchZoom(false);
         //
-        customer_barChart.setScaleEnabled(true);
+        customer_barChart.setScaleEnabled(false);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -221,7 +219,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
 
 
-        CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, MainActivity_B2C.SalesValueForMarker, MainActivity_B2C.previousSalesValueForMarker);
+        CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, MainActivity_B2C.previousSalesValueForMarker,MainActivity_B2C.SalesValueForMarker);
         customer_barChart.setMarker(markerView);
 
 
@@ -451,8 +449,8 @@ public class GraphPagerAdapter extends PagerAdapter {
         dataSet.setDrawValues(false);
 
 
-        dataSet.setHighLightColor(Color.WHITE); // Set the color
-        dataSet.setHighLightAlpha(100);
+      /*  dataSet.setHighLightColor(Color.WHITE); // Set the color
+        dataSet.setHighLightAlpha(100);*/
         //todo new thing
         dataSet.setHighlightEnabled(true);
 
@@ -508,7 +506,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         customer_barChart.setDrawBarShadow(false);
         customer_barChart.setPinchZoom(false);
         //
-        customer_barChart.setScaleEnabled(true);
+        customer_barChart.setScaleEnabled(false);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -541,7 +539,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
 
 
-        CustomMarkerViewReceipt markerView = new CustomMarkerViewReceipt(context, R.layout.barchart_marker, MainActivity_B2C.ReceiptValueForMarker,MainActivity_B2C.previousReceiptValueForMarker);
+        CustomMarkerViewReceipt markerView = new CustomMarkerViewReceipt(context, R.layout.barchart_marker,MainActivity_B2C.previousReceiptValueForMarker,MainActivity_B2C.ReceiptValueForMarker);
 
         customer_barChart.setMarker(markerView);
 
@@ -561,7 +559,7 @@ public class GraphPagerAdapter extends PagerAdapter {
 
 
         List<String> xvalues = Arrays.asList(">90", "61-90", "0-30", "31-60");
-        //   List<String> xvalues= Arrays.asList("Jan","Feb","March","April","May","June");
+        // List<String> xvalues= Arrays.asList("Jan","Feb","March","April","May","June");
 
         BarChart customer_barChart = view.findViewById(R.id.any_chart_view_dash);
 
@@ -575,7 +573,7 @@ public class GraphPagerAdapter extends PagerAdapter {
         temp.add("ss");
         temp.add("ss");
 
-     /*   CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, temp);
+        /*   CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, temp);
 
 
         customer_barChart.setMarker(markerView);

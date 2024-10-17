@@ -346,6 +346,10 @@ public class PartyFragment extends Fragment implements View.OnClickListener {
                 searchTextValue = newText;
                 if (!searchTextValue.isEmpty())
                     itemOnOnePage(searchTextValue);
+                else if (searchTextValue.isEmpty()) {
+                    itemOnOnePage("");
+
+                }
 
             }
         });

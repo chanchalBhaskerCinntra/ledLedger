@@ -79,53 +79,7 @@ public class Splash extends AppCompatActivity {
                 .into(imageView);
 
 
-//        translateScale.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//
-//                if (!isFirstAnimation) {
-//                    imageView.clearAnimation();
-//
-//
-//                }
-//
-//
-//                isFirstAnimation = true;
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        hold.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-////                imageView.clearAnimation();
-////                imageView.startAnimation(translateScale);
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {
-//
-//            }
-//        });
-//
-//        imageView.startAnimation(hold);
 
-
-        // Create a Handler
         Handler handler = new Handler();
 
         // Define the delay (5 seconds = 5000 milliseconds)

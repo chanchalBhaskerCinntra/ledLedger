@@ -53,8 +53,8 @@ public class NewApiClient {
     public Retrofit.Builder getBuilder() {
         if (mRetrofitBuilder == null) {
             OkHttpClient httpClient = new OkHttpClient.Builder()
-               /*     .addInterceptor(provideOfflineCacheInterceptor())
-                    .addNetworkInterceptor(provideCacheInterceptor()) //FOR PLAY STORE*/
+                    .addInterceptor(provideOfflineCacheInterceptor())
+                    .addNetworkInterceptor(provideCacheInterceptor()) //FOR PLAY STORE
                     .cache(provideCache()).build();
 
             mRetrofitBuilder = new Retrofit.Builder()
@@ -75,7 +75,7 @@ public class NewApiClient {
 
         if (apiServices == null) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-          //  interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY); //FOR PLAY STORE
             CookieHandler cookieHandler = new CookieManager();
             CookieManager cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -125,7 +125,7 @@ public class NewApiClient {
                 }
             });
 
-         //   httpClient.addInterceptor(interceptor); //FOR PLAY STORE
+         //  httpClient.addInterceptor(interceptor); //FOR PLAY STORE
             httpClient.readTimeout(300, TimeUnit.SECONDS);
             httpClient.connectTimeout(300, TimeUnit.SECONDS);
             httpClient.writeTimeout(300, TimeUnit.SECONDS);

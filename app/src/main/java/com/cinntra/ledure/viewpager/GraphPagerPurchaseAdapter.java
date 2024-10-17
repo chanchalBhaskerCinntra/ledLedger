@@ -31,19 +31,14 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.pixplicity.easyprefs.library.Prefs;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -125,8 +120,8 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         dataSet.setDrawValues(false);
 
 
-        dataSet.setHighLightColor(Color.WHITE); // Set the color
-        dataSet.setHighLightAlpha(100);
+     /*   dataSet.setHighLightColor(Color.WHITE); // Set the color
+        dataSet.setHighLightAlpha(100);*/
         //todo new thing
         dataSet.setHighlightEnabled(true);
 
@@ -182,7 +177,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         customer_barChart.setDrawBarShadow(false);
         customer_barChart.setPinchZoom(false);
         //
-        customer_barChart.setScaleEnabled(true);
+        customer_barChart.setScaleEnabled(false);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -215,7 +210,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
 
 
-        CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, MainActivity_B2C.SalesValueForMarker, MainActivity_B2C.previousSalesValueForMarker);
+        CustomMarkerView markerView = new CustomMarkerView(context, R.layout.barchart_marker, MainActivity_B2C.previousSalesValueForMarker,MainActivity_B2C.SalesValueForMarker);
         customer_barChart.setMarker(markerView);
 
 
@@ -267,8 +262,8 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         dataSet.setDrawValues(false);
 
 
-        dataSet.setHighLightColor(Color.WHITE); // Set the color
-        dataSet.setHighLightAlpha(100);
+    /*    dataSet.setHighLightColor(Color.WHITE); // Set the color
+        dataSet.setHighLightAlpha(100);*/
         //todo new thing
         dataSet.setHighlightEnabled(true);
 
@@ -324,7 +319,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         customer_barChart.setDrawBarShadow(false);
         customer_barChart.setPinchZoom(false);
         //
-        customer_barChart.setScaleEnabled(true);
+        customer_barChart.setScaleEnabled(false);
 
         //hide grid lines
         customer_barChart.getAxisLeft().setDrawGridLines(false);
@@ -357,7 +352,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
 
 
 
-        CustomMarkerViewReceipt markerView = new CustomMarkerViewReceipt(context, R.layout.barchart_marker, MainActivity_B2C.ReceiptValueForMarker,MainActivity_B2C.previousReceiptValueForMarker);
+        CustomMarkerViewReceipt markerView = new CustomMarkerViewReceipt(context, R.layout.barchart_marker,MainActivity_B2C.previousReceiptValueForMarker,MainActivity_B2C.ReceiptValueForMarker);
 
         customer_barChart.setMarker(markerView);
 
@@ -433,7 +428,7 @@ public class GraphPagerPurchaseAdapter extends PagerAdapter {
         customer_barChart.getXAxis().setGranularity(1f);
 
 
-        customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(DashboardFragmentFromActivity.ReceivableentriesXaxis));
+        customer_barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(MainActivity_B2C.ReceivableentriesXaxis));
 
 
         YAxis yAxis = customer_barChart.getAxisLeft();

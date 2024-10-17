@@ -21,7 +21,6 @@ import com.cinntra.ledure.fragments.CustomersFragment;
 import com.cinntra.ledure.globals.MainBaseActivity;
 import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

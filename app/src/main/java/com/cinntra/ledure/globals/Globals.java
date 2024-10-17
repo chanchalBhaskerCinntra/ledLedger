@@ -192,7 +192,7 @@ public class Globals {
 
     /************ Test Development *******************/
 
-    /*public static String NewBaseUrl = "http://103.107.67.160:8005/";
+  /*  public static String NewBaseUrl = "http://103.107.67.160:8005/";
     public static String PDFURL = "http://103.234.187.197:4309/assets/newhtml/";
     public static String ImageURL = "http://103.107.67.160:8005";*/
     public static String pdfGlobalUrl = "http://103.234.187.197:4214/";
