@@ -125,7 +125,7 @@ public class NewApiClient {
                 }
             });
 
-         //  httpClient.addInterceptor(interceptor); //FOR PLAY STORE
+           httpClient.addInterceptor(interceptor); //FOR PLAY STORE
             httpClient.readTimeout(300, TimeUnit.SECONDS);
             httpClient.connectTimeout(300, TimeUnit.SECONDS);
             httpClient.writeTimeout(300, TimeUnit.SECONDS);
